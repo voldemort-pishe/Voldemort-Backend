@@ -1,0 +1,51 @@
+{
+  "fluentMethods": true,
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "paymentTransaction",
+      "otherEntityName": "paymentTransactionEntity",
+      "otherEntityRelationshipName": "invoice"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "relationshipName": "user",
+      "otherEntityName": "userEntity",
+      "otherEntityField": "id"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "subscription",
+      "fieldType": "SubscribeState",
+      "fieldValues": "MONTHLY,ANNUALLY,EXPIRED"
+    },
+    {
+      "fieldName": "paymentType",
+      "fieldType": "PaymentType",
+      "fieldValues": "PASARGARD,SAMAN"
+    },
+    {
+      "fieldName": "paymentDate",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "amountWithTax",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "InvoiceStatus",
+      "fieldValues": "SUCCESS,FAILED"
+    }
+  ],
+  "changelogDate": "20180619154439",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "invoice_entity"
+}

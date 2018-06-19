@@ -1,0 +1,30 @@
+{
+  "fluentMethods": true,
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "relationshipName": "invoice",
+      "otherEntityName": "invoiceEntity",
+      "otherEntityField": "id"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "userId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "refrenceId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "Integer"
+    }
+  ],
+  "changelogDate": "20180619154447",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "payment_transaction_entity"
+}

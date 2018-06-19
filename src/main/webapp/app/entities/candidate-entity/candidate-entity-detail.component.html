@@ -1,0 +1,56 @@
+
+<div *ngIf="candidateEntity">
+    <h2><span>Candidate Entity</span> {{candidateEntity.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>First Name</span></dt>
+        <dd>
+            <span>{{candidateEntity.firstName}}</span>
+        </dd>
+        <dt><span>Last Name</span></dt>
+        <dd>
+            <span>{{candidateEntity.lastName}}</span>
+        </dd>
+        <dt><span>File Id</span></dt>
+        <dd>
+            <span>{{candidateEntity.fileId}}</span>
+        </dd>
+        <dt><span>State</span></dt>
+        <dd>
+            <span>{{candidateEntity.state}}</span>
+        </dd>
+        <dt><span>Cellphone</span></dt>
+        <dd>
+            <span>{{candidateEntity.cellphone}}</span>
+        </dd>
+        <dt><span>Email</span></dt>
+        <dd>
+            <span>{{candidateEntity.email}}</span>
+        </dd>
+        <dt><span>Candidate Pipeline</span></dt>
+        <dd>
+            <span>{{candidateEntity.candidatePipeline}}</span>
+        </dd>
+        <dt><span>File</span></dt>
+        <dd>
+            <div *ngIf="candidateEntity.file">
+                <a [routerLink]="['/file-entity', candidateEntity.file?.id]">{{candidateEntity.file?.id}}</a>
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'candidate-entity/'+ candidateEntity.id + '/edit'} }]"
+            replaceUrl="true"
+            queryParamsHandling="merge"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>

@@ -1,0 +1,66 @@
+<div>
+    <h2>
+        <span>Candidate Schedule Entities</span>
+        <button class="btn btn-primary float-right jh-create-entity create-candidate-schedule-entity" [routerLink]="['/', { outlets: { popup: ['candidate-schedule-entity-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span >
+            Create new Candidate Schedule Entity
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="candidateScheduleEntities">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span>ID</span></th>
+            <th><span>Owner</span></th>
+            <th><span>Schedule Date</span></th>
+            <th><span>Candidate</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let candidateScheduleEntity of candidateScheduleEntities ;trackBy: trackId">
+                <td><a [routerLink]="['../candidate-schedule-entity', candidateScheduleEntity.id ]">{{candidateScheduleEntity.id}}</a></td>
+                <td>{{candidateScheduleEntity.owner}}</td>
+                <td>{{candidateScheduleEntity.scheduleDate | date:'medium'}}</td>
+                <td>
+                    <div *ngIf="candidateScheduleEntity.candidate">
+                        <a [routerLink]="['../candidate-entity', candidateScheduleEntity.candidate?.id ]" >{{candidateScheduleEntity.candidate?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../candidate-schedule-entity', candidateScheduleEntity.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'candidate-schedule-entity/'+ candidateScheduleEntity.id + '/edit'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'candidate-schedule-entity/'+ candidateScheduleEntity.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

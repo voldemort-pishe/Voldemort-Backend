@@ -1,0 +1,74 @@
+<div>
+    <h2>
+        <span>User Entities</span>
+        <button class="btn btn-primary float-right jh-create-entity create-user-entity" [routerLink]="['/', { outlets: { popup: ['user-entity-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span >
+            Create new User Entity
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="userEntities">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span>ID</span></th>
+            <th><span>Login</span></th>
+            <th><span>Password Hash</span></th>
+            <th><span>First Name</span></th>
+            <th><span>Last Name</span></th>
+            <th><span>Email</span></th>
+            <th><span>Activated</span></th>
+            <th><span>Activation Key</span></th>
+            <th><span>Reset Key</span></th>
+            <th><span>Reset Date</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let userEntity of userEntities ;trackBy: trackId">
+                <td><a [routerLink]="['../user-entity', userEntity.id ]">{{userEntity.id}}</a></td>
+                <td>{{userEntity.login}}</td>
+                <td>{{userEntity.passwordHash}}</td>
+                <td>{{userEntity.firstName}}</td>
+                <td>{{userEntity.lastName}}</td>
+                <td>{{userEntity.email}}</td>
+                <td>{{userEntity.activated}}</td>
+                <td>{{userEntity.activationKey}}</td>
+                <td>{{userEntity.resetKey}}</td>
+                <td>{{userEntity.resetDate | date:'medium'}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../user-entity', userEntity.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'user-entity/'+ userEntity.id + '/edit'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'user-entity/'+ userEntity.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

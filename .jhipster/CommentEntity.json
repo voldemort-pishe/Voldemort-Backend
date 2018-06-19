@@ -1,0 +1,31 @@
+{
+  "fluentMethods": true,
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "relationshipName": "candidate",
+      "otherEntityName": "candidateEntity",
+      "otherEntityField": "id"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "userId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "commentText",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "Boolean"
+    }
+  ],
+  "changelogDate": "20180619154443",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "comment_entity"
+}

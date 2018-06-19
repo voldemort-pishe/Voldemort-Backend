@@ -1,0 +1,52 @@
+
+<div *ngIf="talentPoolEntity">
+    <h2><span>Talent Pool Entity</span> {{talentPoolEntity.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>First Name</span></dt>
+        <dd>
+            <span>{{talentPoolEntity.firstName}}</span>
+        </dd>
+        <dt><span>Last Name</span></dt>
+        <dd>
+            <span>{{talentPoolEntity.lastName}}</span>
+        </dd>
+        <dt><span>File Id</span></dt>
+        <dd>
+            <span>{{talentPoolEntity.fileId}}</span>
+        </dd>
+        <dt><span>State</span></dt>
+        <dd>
+            <span>{{talentPoolEntity.state}}</span>
+        </dd>
+        <dt><span>Cellphone</span></dt>
+        <dd>
+            <span>{{talentPoolEntity.cellphone}}</span>
+        </dd>
+        <dt><span>Email</span></dt>
+        <dd>
+            <span>{{talentPoolEntity.email}}</span>
+        </dd>
+        <dt><span>User</span></dt>
+        <dd>
+            <div *ngIf="talentPoolEntity.user">
+                <a [routerLink]="['/user-entity', talentPoolEntity.user?.id]">{{talentPoolEntity.user?.id}}</a>
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'talent-pool-entity/'+ talentPoolEntity.id + '/edit'} }]"
+            replaceUrl="true"
+            queryParamsHandling="merge"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>

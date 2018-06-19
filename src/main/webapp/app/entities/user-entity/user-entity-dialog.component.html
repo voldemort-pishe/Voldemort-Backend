@@ -1,0 +1,72 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="myUserEntityLabel">Create or edit a User Entity</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" [hidden]="!userEntity.id">
+            <label for="id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                   [(ngModel)]="userEntity.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_login">Login</label>
+            <input type="text" class="form-control" name="login" id="field_login"
+                [(ngModel)]="userEntity.login" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_passwordHash">Password Hash</label>
+            <input type="text" class="form-control" name="passwordHash" id="field_passwordHash"
+                [(ngModel)]="userEntity.passwordHash" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_firstName">First Name</label>
+            <input type="text" class="form-control" name="firstName" id="field_firstName"
+                [(ngModel)]="userEntity.firstName" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_lastName">Last Name</label>
+            <input type="text" class="form-control" name="lastName" id="field_lastName"
+                [(ngModel)]="userEntity.lastName" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_email">Email</label>
+            <input type="text" class="form-control" name="email" id="field_email"
+                [(ngModel)]="userEntity.email" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_activated">Activated</label>
+            <input type="checkbox" class="form-control" name="activated" id="field_activated"
+                [(ngModel)]="userEntity.activated" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_activationKey">Activation Key</label>
+            <input type="text" class="form-control" name="activationKey" id="field_activationKey"
+                [(ngModel)]="userEntity.activationKey" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_resetKey">Reset Key</label>
+            <input type="text" class="form-control" name="resetKey" id="field_resetKey"
+                [(ngModel)]="userEntity.resetKey" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_resetDate">Reset Date</label>
+            <div class="d-flex">
+                <input id="field_resetDate" type="datetime-local" class="form-control" name="resetDate" [(ngModel)]="userEntity.resetDate"
+                />
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <span class="fa fa-ban"></span>&nbsp;<span>Cancel</span>
+        </button>
+        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+            <span class="fa fa-save"></span>&nbsp;<span>Save</span>
+        </button>
+    </div>
+</form>

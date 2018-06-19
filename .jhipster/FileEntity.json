@@ -1,0 +1,28 @@
+{
+  "fluentMethods": true,
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required",
+      "relationshipName": "candidate",
+      "otherEntityName": "candidateEntity",
+      "ownerSide": false,
+      "otherEntityRelationshipName": "file"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "filename",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "filetype",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20180619154442",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "file_entity"
+}

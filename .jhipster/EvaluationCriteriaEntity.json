@@ -1,0 +1,26 @@
+{
+  "fluentMethods": true,
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "relationshipName": "company",
+      "otherEntityName": "companyEntity",
+      "otherEntityField": "id"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "title",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20180619154449",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "evaluation_criteria_entity"
+}

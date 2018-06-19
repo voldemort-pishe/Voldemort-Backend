@@ -1,0 +1,82 @@
+{
+  "fluentMethods": true,
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "feedback",
+      "otherEntityName": "feedbackEntity",
+      "otherEntityRelationshipName": "candidate"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "comment",
+      "otherEntityName": "commentEntity",
+      "otherEntityRelationshipName": "candidate"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "candidateSchedule",
+      "otherEntityName": "candidateScheduleEntity",
+      "otherEntityRelationshipName": "candidate"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "candidateEvaluationCriteria",
+      "otherEntityName": "candidateEvaluationCriteriaEntity",
+      "otherEntityRelationshipName": "candidate"
+    },
+    {
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required",
+      "relationshipName": "file",
+      "otherEntityName": "fileEntity",
+      "otherEntityField": "id",
+      "ownerSide": true,
+      "otherEntityRelationshipName": "candidate"
+    },
+    {
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required",
+      "relationshipName": "job",
+      "otherEntityName": "jobEntity",
+      "ownerSide": false,
+      "otherEntityRelationshipName": "candidate"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "firstName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "lastName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "fileId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "state",
+      "fieldType": "CandidateState",
+      "fieldValues": "ACCEPTED,REJECTED"
+    },
+    {
+      "fieldName": "cellphone",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "candidatePipeline",
+      "fieldType": "Long"
+    }
+  ],
+  "changelogDate": "20180619154436",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "candidate_entity"
+}

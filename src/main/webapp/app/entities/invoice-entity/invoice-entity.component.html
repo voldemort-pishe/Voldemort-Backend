@@ -1,0 +1,74 @@
+<div>
+    <h2>
+        <span>Invoice Entities</span>
+        <button class="btn btn-primary float-right jh-create-entity create-invoice-entity" [routerLink]="['/', { outlets: { popup: ['invoice-entity-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span >
+            Create new Invoice Entity
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="invoiceEntities">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span>ID</span></th>
+            <th><span>Subscription</span></th>
+            <th><span>Payment Type</span></th>
+            <th><span>Payment Date</span></th>
+            <th><span>Amount</span></th>
+            <th><span>Amount With Tax</span></th>
+            <th><span>Status</span></th>
+            <th><span>User</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let invoiceEntity of invoiceEntities ;trackBy: trackId">
+                <td><a [routerLink]="['../invoice-entity', invoiceEntity.id ]">{{invoiceEntity.id}}</a></td>
+                <td>{{invoiceEntity.subscription}}</td>
+                <td>{{invoiceEntity.paymentType}}</td>
+                <td>{{invoiceEntity.paymentDate | date:'medium'}}</td>
+                <td>{{invoiceEntity.amount}}</td>
+                <td>{{invoiceEntity.amountWithTax}}</td>
+                <td>{{invoiceEntity.status}}</td>
+                <td>
+                    <div *ngIf="invoiceEntity.user">
+                        <a [routerLink]="['../user-entity', invoiceEntity.user?.id ]" >{{invoiceEntity.user?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../invoice-entity', invoiceEntity.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'invoice-entity/'+ invoiceEntity.id + '/edit'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'invoice-entity/'+ invoiceEntity.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

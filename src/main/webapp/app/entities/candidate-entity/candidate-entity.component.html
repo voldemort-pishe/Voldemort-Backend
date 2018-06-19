@@ -1,0 +1,76 @@
+<div>
+    <h2>
+        <span>Candidate Entities</span>
+        <button class="btn btn-primary float-right jh-create-entity create-candidate-entity" [routerLink]="['/', { outlets: { popup: ['candidate-entity-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span >
+            Create new Candidate Entity
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="candidateEntities">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span>ID</span></th>
+            <th><span>First Name</span></th>
+            <th><span>Last Name</span></th>
+            <th><span>File Id</span></th>
+            <th><span>State</span></th>
+            <th><span>Cellphone</span></th>
+            <th><span>Email</span></th>
+            <th><span>Candidate Pipeline</span></th>
+            <th><span>File</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let candidateEntity of candidateEntities ;trackBy: trackId">
+                <td><a [routerLink]="['../candidate-entity', candidateEntity.id ]">{{candidateEntity.id}}</a></td>
+                <td>{{candidateEntity.firstName}}</td>
+                <td>{{candidateEntity.lastName}}</td>
+                <td>{{candidateEntity.fileId}}</td>
+                <td>{{candidateEntity.state}}</td>
+                <td>{{candidateEntity.cellphone}}</td>
+                <td>{{candidateEntity.email}}</td>
+                <td>{{candidateEntity.candidatePipeline}}</td>
+                <td>
+                    <div *ngIf="candidateEntity.file">
+                        <a [routerLink]="['../file-entity', candidateEntity.file?.id ]" >{{candidateEntity.file?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../candidate-entity', candidateEntity.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'candidate-entity/'+ candidateEntity.id + '/edit'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'candidate-entity/'+ candidateEntity.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

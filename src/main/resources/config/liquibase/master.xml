@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154433_added_entity_UserEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154434_added_entity_UserAuthorityEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154435_added_entity_AuthorityEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154436_added_entity_CandidateEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154437_added_entity_JobEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154438_added_entity_CompanyEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154439_added_entity_InvoiceEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154440_added_entity_PlanEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154441_added_entity_AbstractAuditingEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154442_added_entity_FileEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154443_added_entity_CommentEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154444_added_entity_FeedbackEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154445_added_entity_UserPermissionEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154446_added_entity_CandidateScheduleEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154447_added_entity_PaymentTransactionEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154448_added_entity_TalentPoolEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154449_added_entity_EvaluationCriteriaEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154450_added_entity_CompanyPipelineEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154451_added_entity_CandidateEvaluationCriteriaEntity.xml" relativeToChangelogFile="false"/>
+    <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20180619154434_added_entity_constraints_UserAuthorityEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154436_added_entity_constraints_CandidateEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154437_added_entity_constraints_JobEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154438_added_entity_constraints_CompanyEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154439_added_entity_constraints_InvoiceEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154443_added_entity_constraints_CommentEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154444_added_entity_constraints_FeedbackEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154445_added_entity_constraints_UserPermissionEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154446_added_entity_constraints_CandidateScheduleEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154447_added_entity_constraints_PaymentTransactionEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154448_added_entity_constraints_TalentPoolEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154449_added_entity_constraints_EvaluationCriteriaEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154450_added_entity_constraints_CompanyPipelineEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154451_added_entity_constraints_CandidateEvaluationCriteriaEntity.xml" relativeToChangelogFile="false"/>
+    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
+</databaseChangeLog>

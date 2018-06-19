@@ -1,0 +1,40 @@
+
+<div *ngIf="candidateEvaluationCriteriaEntity">
+    <h2><span>Candidate Evaluation Criteria Entity</span> {{candidateEvaluationCriteriaEntity.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>User Id</span></dt>
+        <dd>
+            <span>{{candidateEvaluationCriteriaEntity.userId}}</span>
+        </dd>
+        <dt><span>User Comment</span></dt>
+        <dd>
+            <span>{{candidateEvaluationCriteriaEntity.userComment}}</span>
+        </dd>
+        <dt><span>Evaluation Criteria Id</span></dt>
+        <dd>
+            <span>{{candidateEvaluationCriteriaEntity.evaluationCriteriaId}}</span>
+        </dd>
+        <dt><span>Candidate</span></dt>
+        <dd>
+            <div *ngIf="candidateEvaluationCriteriaEntity.candidate">
+                <a [routerLink]="['/candidate-entity', candidateEvaluationCriteriaEntity.candidate?.id]">{{candidateEvaluationCriteriaEntity.candidate?.id}}</a>
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'candidate-evaluation-criteria-entity/'+ candidateEvaluationCriteriaEntity.id + '/edit'} }]"
+            replaceUrl="true"
+            queryParamsHandling="merge"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>

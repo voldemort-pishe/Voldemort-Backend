@@ -1,0 +1,70 @@
+<div>
+    <h2>
+        <span>Job Entities</span>
+        <button class="btn btn-primary float-right jh-create-entity create-job-entity" [routerLink]="['/', { outlets: { popup: ['job-entity-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span >
+            Create new Job Entity
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="jobEntities">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span>ID</span></th>
+            <th><span>Name</span></th>
+            <th><span>Candidate</span></th>
+            <th><span>Company</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let jobEntity of jobEntities ;trackBy: trackId">
+                <td><a [routerLink]="['../job-entity', jobEntity.id ]">{{jobEntity.id}}</a></td>
+                <td>{{jobEntity.name}}</td>
+                <td>
+                    <div *ngIf="jobEntity.candidate">
+                        <a [routerLink]="['../candidate-entity', jobEntity.candidate?.id ]" >{{jobEntity.candidate?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="jobEntity.company">
+                        <a [routerLink]="['../company-entity', jobEntity.company?.id ]" >{{jobEntity.company?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../job-entity', jobEntity.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'job-entity/'+ jobEntity.id + '/edit'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'job-entity/'+ jobEntity.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+{
+  "fluentMethods": true,
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "relationshipName": "user",
+      "otherEntityName": "userEntity",
+      "otherEntityField": "id"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "firstName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "lastName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "fileId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "state",
+      "fieldType": "CandidateState",
+      "fieldValues": "ACCEPTED,REJECTED"
+    },
+    {
+      "fieldName": "cellphone",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20180619154448",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "talent_pool_entity"
+}

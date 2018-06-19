@@ -1,0 +1,19 @@
+{
+  "fluentMethods": true,
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "title",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "Integer"
+    }
+  ],
+  "changelogDate": "20180619154440",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "plan_entity"
+}

@@ -1,0 +1,72 @@
+{
+  "fluentMethods": true,
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "userAuthority",
+      "otherEntityName": "userAuthorityEntity",
+      "otherEntityRelationshipName": "user"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "company",
+      "otherEntityName": "companyEntity",
+      "otherEntityRelationshipName": "user"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "talentPool",
+      "otherEntityName": "talentPoolEntity",
+      "otherEntityRelationshipName": "user"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "invoice",
+      "otherEntityName": "invoiceEntity",
+      "otherEntityRelationshipName": "user"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "login",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "passwordHash",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "firstName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "lastName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "activated",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "activationKey",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "resetKey",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "resetDate",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "changelogDate": "20180619154433",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "entityTableName": "user_entity"
+}

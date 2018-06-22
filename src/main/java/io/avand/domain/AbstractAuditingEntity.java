@@ -2,6 +2,12 @@ package io.avand.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -12,37 +18,28 @@ import java.util.Objects;
 /**
  * A AbstractAuditingEntity.
  */
-@Entity
-@Table(name = "abstract_auditing_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AbstractAuditingEntity implements Serializable {
+@MappedSuperclass
+@Audited
+@EntityListeners(AuditingEntityListener.class)
+public abstract class AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @CreatedBy
     @Column(name = "created_by")
     private String createdBy;
 
+    @CreatedDate
     @Column(name = "created_date")
     private ZonedDateTime createdDate;
 
+    @LastModifiedBy
     @Column(name = "last_modified_by")
     private String lastModifiedBy;
 
+    @LastModifiedDate
     @Column(name = "last_modified_date")
     private ZonedDateTime lastModifiedDate;
-
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getCreatedBy() {
         return createdBy;
@@ -97,34 +94,4 @@ public class AbstractAuditingEntity implements Serializable {
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        AbstractAuditingEntity abstractAuditingEntity = (AbstractAuditingEntity) o;
-        if (abstractAuditingEntity.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), abstractAuditingEntity.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "AbstractAuditingEntity{" +
-            "id=" + getId() +
-            ", createdBy='" + getCreatedBy() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", lastModifiedBy='" + getLastModifiedBy() + "'" +
-            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
-            "}";
-    }
 }

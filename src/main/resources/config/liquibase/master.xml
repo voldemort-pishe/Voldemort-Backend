@@ -13,7 +13,6 @@
     <include file="config/liquibase/changelog/20180619154438_added_entity_CompanyEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154439_added_entity_InvoiceEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154440_added_entity_PlanEntity.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20180619154441_added_entity_AbstractAuditingEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154442_added_entity_FileEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154443_added_entity_CommentEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154444_added_entity_FeedbackEntity.xml" relativeToChangelogFile="false"/>

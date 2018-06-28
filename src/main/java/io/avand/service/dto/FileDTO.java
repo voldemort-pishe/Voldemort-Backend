@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -12,6 +14,7 @@ public class FileDTO implements Serializable {
 
     private String fileType;
 
+    @JsonIgnore
     private CandidateDTO candidate;
 
     public Long getId() {
@@ -52,7 +55,6 @@ public class FileDTO implements Serializable {
             "id=" + id +
             ", filename='" + filename + '\'' +
             ", fileType='" + fileType + '\'' +
-            ", candidate=" + candidate +
             '}';
     }
 }

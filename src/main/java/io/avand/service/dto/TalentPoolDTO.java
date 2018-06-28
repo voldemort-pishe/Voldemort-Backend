@@ -1,5 +1,6 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.CandidateState;
 
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class TalentPoolDTO implements Serializable {
 
     private String email;
 
+    @JsonIgnore
     private UserDTO user;
 
     public Long getId() {
@@ -98,7 +100,6 @@ public class TalentPoolDTO implements Serializable {
             ", state=" + state +
             ", cellphone='" + cellphone + '\'' +
             ", email='" + email + '\'' +
-            ", user=" + user +
             '}';
     }
 }

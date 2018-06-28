@@ -1,5 +1,6 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.CandidateState;
 
 import javax.validation.constraints.NotNull;
@@ -30,8 +31,11 @@ public class CandidateDTO implements Serializable {
 
     private Set<CandidateEvaluationCriteriaDTO> candidateEvaluationCriteria = new HashSet<>();
 
+    private Set<CandidateScheduleDTO> candidateSchedule = new HashSet<>();
+
     private FileDTO file;
 
+    @JsonIgnore
     private JobDTO job;
 
     public Long getId() {
@@ -114,6 +118,14 @@ public class CandidateDTO implements Serializable {
         this.candidateEvaluationCriteria = candidateEvaluationCriteria;
     }
 
+    public Set<CandidateScheduleDTO> getCandidateSchedule() {
+        return candidateSchedule;
+    }
+
+    public void setCandidateSchedule(Set<CandidateScheduleDTO> candidateSchedule) {
+        this.candidateSchedule = candidateSchedule;
+    }
+
     public FileDTO getFile() {
         return file;
     }
@@ -143,8 +155,8 @@ public class CandidateDTO implements Serializable {
             ", feedbacks=" + feedbacks +
             ", comments=" + comments +
             ", candidateEvaluationCriteria=" + candidateEvaluationCriteria +
+            ", candidateSchedule=" + candidateSchedule +
             ", file=" + file +
-            ", job=" + job +
             '}';
     }
 }

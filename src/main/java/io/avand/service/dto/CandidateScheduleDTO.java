@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -13,6 +15,7 @@ public class CandidateScheduleDTO implements Serializable {
 
     private ZonedDateTime scheduleDate;
 
+    @JsonIgnore
     private CandidateDTO candidate;
 
     public Long getId() {
@@ -53,7 +56,6 @@ public class CandidateScheduleDTO implements Serializable {
             "id=" + id +
             ", owner=" + owner +
             ", scheduleDate=" + scheduleDate +
-            ", candidate=" + candidate +
             '}';
     }
 }

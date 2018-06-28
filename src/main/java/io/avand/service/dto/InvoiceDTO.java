@@ -1,5 +1,6 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.InvoiceStatus;
 import io.avand.domain.enumeration.PaymentType;
 import io.avand.domain.enumeration.SubscribeState;
@@ -27,6 +28,7 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
 
     private Set<PaymentTransactionDTO> paymentTransactions = new HashSet<>();
 
+    @JsonIgnore
     private UserDTO user;
 
     @Override
@@ -105,7 +107,6 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
             ", amount=" + amount +
             ", status=" + status +
             ", paymentTransactions=" + paymentTransactions +
-            ", user=" + user +
             '}';
     }
 }

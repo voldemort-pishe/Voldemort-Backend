@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -14,6 +16,7 @@ public class CandidateEvaluationCriteriaDTO implements Serializable {
 
     private Long evaluationCriteriaId;
 
+    @JsonIgnore
     private CandidateDTO candidateDTO;
 
     public Long getId() {
@@ -63,7 +66,6 @@ public class CandidateEvaluationCriteriaDTO implements Serializable {
             ", userId=" + userId +
             ", userComment='" + userComment + '\'' +
             ", evaluationCriteriaId=" + evaluationCriteriaId +
-            ", candidateDTO=" + candidateDTO +
             '}';
     }
 }

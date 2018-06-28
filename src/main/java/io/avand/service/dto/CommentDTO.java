@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -14,6 +16,7 @@ public class CommentDTO implements Serializable {
 
     private Boolean Status;
 
+    @JsonIgnore
     private CandidateDTO candidate;
 
     public Long getId() {
@@ -63,7 +66,6 @@ public class CommentDTO implements Serializable {
             ", userId=" + userId +
             ", commentText='" + commentText + '\'' +
             ", Status=" + Status +
-            ", candidate=" + candidate +
             '}';
     }
 }

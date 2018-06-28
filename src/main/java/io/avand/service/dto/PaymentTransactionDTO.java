@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -14,6 +16,7 @@ public class PaymentTransactionDTO implements Serializable {
 
     private Integer amount;
 
+    @JsonIgnore
     private InvoiceDTO invoice;
 
     public Long getId() {
@@ -63,7 +66,6 @@ public class PaymentTransactionDTO implements Serializable {
             ", userId=" + userId +
             ", refrenceId=" + refrenceId +
             ", amount=" + amount +
-            ", invoice=" + invoice +
             '}';
     }
 }

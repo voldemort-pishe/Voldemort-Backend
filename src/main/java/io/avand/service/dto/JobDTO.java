@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -12,6 +14,7 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
     private CandidateDTO candidate;
 
+    @JsonIgnore
     private CompanyDTO company;
 
     @Override
@@ -54,7 +57,6 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
             "id=" + id +
             ", name='" + name + '\'' +
             ", candidate=" + candidate +
-            ", company=" + company +
             '}';
     }
 }

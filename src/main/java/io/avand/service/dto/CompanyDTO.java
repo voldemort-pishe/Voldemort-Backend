@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -18,6 +20,7 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
     private Set<CompanyPipelineDTO> companyPipelines = new HashSet<>();
 
+    @JsonIgnore
     private UserDTO user;
 
     @Override
@@ -78,7 +81,6 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
             ", jobs=" + jobs +
             ", evaluationCriteria=" + evaluationCriteria +
             ", companyPipelines=" + companyPipelines +
-            ", user=" + user +
             '}';
     }
 }

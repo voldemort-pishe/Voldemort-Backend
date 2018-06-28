@@ -1,5 +1,6 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.PermissionAction;
 
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ public class UserPermissionDTO implements Serializable {
 
     private PermissionAction action;
 
+    @JsonIgnore
     private UserAuthorityDTO userAuthority;
 
     public Long getId() {
@@ -43,7 +45,6 @@ public class UserPermissionDTO implements Serializable {
         return "UserPermissionDTO{" +
             "id=" + id +
             ", action=" + action +
-            ", userAuthority=" + userAuthority +
             '}';
     }
 }

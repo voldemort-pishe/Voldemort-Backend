@@ -1,5 +1,6 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.FeedbackRate;
 
 import javax.validation.constraints.NotNull;
@@ -16,6 +17,7 @@ public class FeedbackDTO implements Serializable {
 
     private FeedbackRate rating;
 
+    @JsonIgnore
     private CandidateDTO candidate;
 
     public Long getId() {
@@ -65,7 +67,6 @@ public class FeedbackDTO implements Serializable {
             ", userId=" + userId +
             ", feedbackText='" + feedbackText + '\'' +
             ", rating=" + rating +
-            ", candidate=" + candidate +
             '}';
     }
 }

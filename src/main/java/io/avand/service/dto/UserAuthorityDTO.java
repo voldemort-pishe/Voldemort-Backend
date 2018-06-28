@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ public class UserAuthorityDTO implements Serializable {
 
     private Set<UserPermissionDTO> userPermissions = new HashSet<>();
 
+    @JsonIgnore
     private UserDTO user;
 
     public Long getId() {
@@ -54,7 +57,6 @@ public class UserAuthorityDTO implements Serializable {
             "id=" + id +
             ", authorityName='" + authorityName + '\'' +
             ", userPermissions=" + userPermissions +
-            ", user=" + user +
             '}';
     }
 }

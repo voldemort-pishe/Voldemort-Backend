@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -12,6 +14,7 @@ public class CompanyPipelineDTO implements Serializable {
 
     private Integer weight;
 
+    @JsonIgnore
     private CompanyDTO company;
 
     public Long getId() {
@@ -52,7 +55,6 @@ public class CompanyPipelineDTO implements Serializable {
             "id=" + id +
             ", title='" + title + '\'' +
             ", weight=" + weight +
-            ", company=" + company +
             '}';
     }
 }

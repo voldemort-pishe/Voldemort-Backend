@@ -95,4 +95,13 @@ public class ExceptionTranslator implements ProblemHandling {
             .build();
         return create(ex, problem, request);
     }
+
+    @ExceptionHandler(ServerErrorException.class)
+    public ResponseEntity<Problem> handleServerMessage(ServerErrorException ex, NativeWebRequest request) {
+        Problem problem = Problem.builder()
+            .withStatus(Status.NOT_ACCEPTABLE)
+            .with("message", ex.getMessage())
+            .build();
+        return create(ex, problem, request);
+    }
 }

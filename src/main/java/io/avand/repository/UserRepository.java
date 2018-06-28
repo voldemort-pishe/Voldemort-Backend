@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.*;
 
+import java.util.Optional;
 
 /**
  * Spring Data JPA repository for the UserEntity entity.
@@ -12,5 +13,9 @@ import org.springframework.data.jpa.repository.*;
 @SuppressWarnings("unused")
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
+    Optional<UserEntity> findById(Long id);
+
+    Optional<UserEntity> findByLogin(String login);
 
 }

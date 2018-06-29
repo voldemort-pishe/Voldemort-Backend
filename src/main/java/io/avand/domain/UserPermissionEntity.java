@@ -29,6 +29,7 @@ public class UserPermissionEntity implements Serializable {
     private PermissionAction action;
 
     @ManyToOne
+    @JoinColumn(name = "user_authority_id",nullable = false)
     private UserAuthorityEntity userAuthority;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

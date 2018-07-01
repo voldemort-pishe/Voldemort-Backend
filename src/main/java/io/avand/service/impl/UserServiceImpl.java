@@ -183,7 +183,7 @@ public class UserServiceImpl implements UserService {
                 user.setActivated(true);
                 user.setActivationKey(null);
                 user = userRepository.save(user);
-                return authorizeByUser(user);
+                return authorize(user.getLogin(), user.getPasswordHash(), true);
             } else {
                 throw new IllegalStateException("User Is Active");
             }

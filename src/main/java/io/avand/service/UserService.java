@@ -1,5 +1,6 @@
 package io.avand.service;
 
+import io.avand.domain.UserEntity;
 import io.avand.service.dto.TokenDTO;
 import io.avand.service.dto.UserDTO;
 import javassist.NotFoundException;

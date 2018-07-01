@@ -56,7 +56,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<UserAuthorityEntity> userAuthorities = new HashSet<>();
+    private Set<UserAuthorityEntity> authorities = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -200,28 +200,28 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     }
 
     public Set<UserAuthorityEntity> getUserAuthorities() {
-        return userAuthorities;
+        return authorities;
     }
 
     public UserEntity userAuthorities(Set<UserAuthorityEntity> userAuthorityEntities) {
-        this.userAuthorities = userAuthorityEntities;
+        this.authorities = userAuthorityEntities;
         return this;
     }
 
     public UserEntity addUserAuthority(UserAuthorityEntity userAuthorityEntity) {
-        this.userAuthorities.add(userAuthorityEntity);
+        this.authorities.add(userAuthorityEntity);
         userAuthorityEntity.setUser(this);
         return this;
     }
 
     public UserEntity removeUserAuthority(UserAuthorityEntity userAuthorityEntity) {
-        this.userAuthorities.remove(userAuthorityEntity);
+        this.authorities.remove(userAuthorityEntity);
         userAuthorityEntity.setUser(null);
         return this;
     }
 
     public void setUserAuthorities(Set<UserAuthorityEntity> userAuthorityEntities) {
-        this.userAuthorities = userAuthorityEntities;
+        this.authorities = userAuthorityEntities;
     }
 
     public Set<CompanyEntity> getCompanies() {

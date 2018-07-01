@@ -8,6 +8,7 @@ import io.avand.domain.enumeration.PermissionAction;
 import io.avand.repository.AuthorityRepository;
 import io.avand.repository.UserRepository;
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.UserNotActivatedException;
 import io.avand.security.jwt.TokenProvider;
 import io.avand.service.MailService;
 import io.avand.service.UserService;
@@ -22,7 +23,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -179,7 +183,7 @@ public class UserServiceImpl implements UserService {
                 user.setActivated(true);
                 user.setActivationKey(null);
                 user = userRepository.save(user);
-                return authorize(user.getLogin(), "1234", true);
+                return authorizeByUser(user);
             } else {
                 throw new IllegalStateException("User Is Active");
             }
@@ -195,7 +199,7 @@ public class UserServiceImpl implements UserService {
         try {
             Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            boolean rememberMe = (isRemember) ? false : isRemember;
+            boolean rememberMe = (isRemember == null) ? false : isRemember;
             String jwt = tokenProvider.createToken(authentication, rememberMe);
             TokenDTO tokenDTO = new TokenDTO();
             tokenDTO.setToken(jwt);

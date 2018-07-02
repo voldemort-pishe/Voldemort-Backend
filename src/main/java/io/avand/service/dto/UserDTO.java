@@ -29,6 +29,8 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     private ZonedDateTime resetDate;
 
+    private String  planTitle;
+
     private Set<UserAuthorityDTO> userAuthorities = new HashSet<>();
 
     private Set<CompanyDTO> companies = new HashSet<>();
@@ -117,6 +119,14 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
         this.resetDate = resetDate;
     }
 
+    public String getPlanTitle() {
+        return planTitle;
+    }
+
+    public void setPlanTitle(String planTitle) {
+        this.planTitle = planTitle;
+    }
+
     public Set<UserAuthorityDTO> getUserAuthorities() {
         return userAuthorities;
     }
@@ -162,6 +172,7 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
             ", activationKey='" + activationKey + '\'' +
             ", resetKey='" + resetKey + '\'' +
             ", resetDate=" + resetDate +
+            ", planTitle=" + planTitle +
             ", userAuthorities=" + userAuthorities +
             ", companies=" + companies +
             ", talentPools=" + talentPools +

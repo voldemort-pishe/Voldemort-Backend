@@ -91,6 +91,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO update(UserDTO userDTO) {
+        log.debug("Request to update user : {}", userDTO);
+        UserEntity userEntity = userMapper.toEntity(userDTO);
+        userEntity = userRepository.save(userEntity);
+
+        return userMapper.toDto(userEntity);
+    }
+
+    @Override
     public Optional<UserDTO> findById(Long id) {
         log.debug("Request to find user by id : {}", id);
         return userRepository.findById(id)

@@ -53,6 +53,9 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "reset_date")
     private ZonedDateTime resetDate;
 
+    @Column(name = "plan_title")
+    private String planTitle;
+
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -188,6 +191,14 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     public ZonedDateTime getResetDate() {
         return resetDate;
+    }
+
+    public String getPlanTitle() {
+        return planTitle;
+    }
+
+    public void setPlanTitle(String planTitle) {
+        this.planTitle = planTitle;
     }
 
     public UserEntity resetDate(ZonedDateTime resetDate) {
@@ -330,6 +341,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
             ", lastName='" + getLastName() + "'" +
             ", email='" + getEmail() + "'" +
             ", activated='" + isActivated() + "'" +
+            ", planTitle='" + getPlanTitle() + "'" +
             ", activationKey='" + getActivationKey() + "'" +
             ", resetKey='" + getResetKey() + "'" +
             ", resetDate='" + getResetDate() + "'" +

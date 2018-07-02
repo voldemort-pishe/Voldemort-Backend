@@ -8,19 +8,29 @@ import io.avand.domain.enumeration.PermissionAction;
 import io.avand.repository.AuthorityRepository;
 import io.avand.repository.UserRepository;
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.UserNotActivatedException;
+import io.avand.security.jwt.TokenProvider;
+import io.avand.service.MailService;
 import io.avand.service.UserService;
+import io.avand.service.dto.TokenDTO;
 import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.UserMapper;
 import io.avand.service.util.RandomUtil;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,14 +45,26 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final TokenProvider tokenProvider;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final MailService mailService;
+
     public UserServiceImpl(UserRepository userRepository,
                            AuthorityRepository authorityRepository,
                            UserMapper userMapper,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           TokenProvider tokenProvider,
+                           AuthenticationManager authenticationManager,
+                           MailService mailService) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
+        this.authenticationManager = authenticationManager;
+        this.mailService = mailService;
     }
 
     @Override
@@ -87,6 +109,8 @@ public class UserServiceImpl implements UserService {
 
         userEntity = userRepository.save(userEntity);
 
+        mailService.sendActivationEmail(userEntity);
+
         return userMapper.toDto(userEntity);
     }
 
@@ -123,7 +147,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long id) {
+        log.debug("Request to delete user : {}", id);
+        userRepository.delete(id);
+    }
 
+    @Override
+    public void requestToResendActivationEmail(String email) throws NotFoundException {
+        log.debug("Request to resend activation email : {}", email);
+        Optional<UserEntity> userOptional = userRepository.findByLogin(email);
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+
+            if (!user.isActivated()) {
+                user.setActivated(false);
+                user.setActivationKey(RandomUtil.generateActivationKey());
+                user = userRepository.save(user);
+
+                mailService.sendActivationEmail(user);
+            } else {
+                throw new IllegalStateException("User Is Active");
+            }
+        } else {
+            throw new NotFoundException("User Not Available");
+        }
     }
 
     @Override
@@ -137,8 +183,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> activateUser(String login, String activationKey) {
-        return null;
+    public TokenDTO activate(String activationKey) throws NotFoundException {
+        log.debug("Request to activate user by activationKey : {}", activationKey);
+        Optional<UserEntity> userOptional = userRepository.findByActivationKey(activationKey);
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+            if (!user.isActivated()) {
+                user.setActivated(true);
+                user.setActivationKey(null);
+                user = userRepository.save(user);
+                return authorize(user.getLogin(), user.getPasswordHash(), true);
+            } else {
+                throw new IllegalStateException("User Is Active");
+            }
+        } else {
+            throw new NotFoundException("User Not Found By Activation Key");
+        }
+    }
+
+    @Override
+    public TokenDTO authorize(String username, String password, Boolean isRemember) throws NotFoundException {
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(username, password);
+        try {
+            Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            boolean rememberMe = (isRemember == null) ? false : isRemember;
+            String jwt = tokenProvider.createToken(authentication, rememberMe);
+            TokenDTO tokenDTO = new TokenDTO();
+            tokenDTO.setToken(jwt);
+            return tokenDTO;
+        } catch (AuthenticationException ae) {
+            throw new NotFoundException("اطلاعات کاربری صحیح نمی باشد");
+        }
     }
 
     @Override

@@ -34,7 +34,7 @@ public class CacheConfiguration {
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
             cm.createCache(io.avand.domain.UserEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.UserEntity.class.getName() + ".userAuthorities", jcacheConfiguration);
+            cm.createCache(io.avand.domain.UserEntity.class.getName() + ".authorities", jcacheConfiguration);
             cm.createCache(io.avand.domain.UserEntity.class.getName() + ".companies", jcacheConfiguration);
             cm.createCache(io.avand.domain.UserEntity.class.getName() + ".talentPools", jcacheConfiguration);
             cm.createCache(io.avand.domain.UserEntity.class.getName() + ".invoices", jcacheConfiguration);

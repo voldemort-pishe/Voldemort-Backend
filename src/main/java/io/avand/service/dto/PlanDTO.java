@@ -10,7 +10,11 @@ public class PlanDTO implements Serializable {
 
     private String title;
 
+    private String description;
+
     private Integer amount;
+
+    private Boolean active;
 
     public Long getId() {
         return id;
@@ -36,12 +40,30 @@ public class PlanDTO implements Serializable {
         this.amount = amount;
     }
 
+    public Boolean isActive() {
+        return active;
+    }
+
+    public void setActivation(Boolean activation) {
+        this.active = activation;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "PlanDTO{" +
             "id=" + id +
             ", title='" + title + '\'' +
+            ", description='" + description + '\'' +
             ", amount=" + amount +
+            ", active=" + active +
             '}';
     }
 }

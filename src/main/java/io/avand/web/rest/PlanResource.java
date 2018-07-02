@@ -4,11 +4,14 @@ import com.codahale.metrics.annotation.Timed;
 import io.avand.domain.PlanEntity;
 
 import io.avand.repository.PlanRepository;
+import io.avand.service.PlanService;
+import io.avand.service.dto.PlanDTO;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +34,12 @@ public class PlanResource {
 
     private final PlanRepository planRepository;
 
-    public PlanResource(PlanRepository planRepository) {
+    private final PlanService planService;
+
+    public PlanResource(PlanRepository planRepository,
+                        PlanService planService) {
         this.planRepository = planRepository;
+        this.planService = planService;
     }
 
     /**
@@ -42,7 +49,7 @@ public class PlanResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new planEntity, or with status 400 (Bad Request) if the planEntity has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PostMapping("/plan-entities")
+    @PostMapping("/plan")
     @Timed
     public ResponseEntity<PlanEntity> createPlanEntity(@RequestBody PlanEntity planEntity) throws URISyntaxException {
         log.debug("REST request to save PlanEntity : {}", planEntity);
@@ -64,7 +71,7 @@ public class PlanResource {
      * or with status 500 (Internal Server Error) if the planEntity couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/plan-entities")
+    @PutMapping("/plan")
     @Timed
     public ResponseEntity<PlanEntity> updatePlanEntity(@RequestBody PlanEntity planEntity) throws URISyntaxException {
         log.debug("REST request to update PlanEntity : {}", planEntity);
@@ -82,7 +89,7 @@ public class PlanResource {
      *
      * @return the ResponseEntity with status 200 (OK) and the list of planEntities in body
      */
-    @GetMapping("/plan-entities")
+    @GetMapping("/plan")
     @Timed
     public List<PlanEntity> getAllPlanEntities() {
         log.debug("REST request to get all PlanEntities");
@@ -95,12 +102,20 @@ public class PlanResource {
      * @param id the id of the planEntity to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the planEntity, or with status 404 (Not Found)
      */
-    @GetMapping("/plan-entities/{id}")
+    @GetMapping("/plan/{id}")
     @Timed
-    public ResponseEntity<PlanEntity> getPlanEntity(@PathVariable Long id) {
+    public ResponseEntity getPlanEntity(@PathVariable Long id) {
         log.debug("REST request to get PlanEntity : {}", id);
-        PlanEntity planEntity = planRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(planEntity));
+        Optional<PlanDTO> planDTO = planService.findOneById(id);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(planDTO));
+    }
+
+    @GetMapping("/active-plans")
+    @Timed
+    public ResponseEntity<List<PlanDTO>> getActivePlans() {
+        log.debug("REST request to get active plans");
+        List<PlanDTO> planDTOS = planService.getActivePlans();
+        return new ResponseEntity<>(planDTOS, HttpStatus.OK);
     }
 
     /**
@@ -109,7 +124,7 @@ public class PlanResource {
      * @param id the id of the planEntity to delete
      * @return the ResponseEntity with status 200 (OK)
      */
-    @DeleteMapping("/plan-entities/{id}")
+    @DeleteMapping("/plan/{id}")
     @Timed
     public ResponseEntity<Void> deletePlanEntity(@PathVariable Long id) {
         log.debug("REST request to delete PlanEntity : {}", id);

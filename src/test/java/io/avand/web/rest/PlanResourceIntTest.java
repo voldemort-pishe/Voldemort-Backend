@@ -4,6 +4,7 @@ import io.avand.VoldemortApp;
 
 import io.avand.domain.PlanEntity;
 import io.avand.repository.PlanRepository;
+import io.avand.service.PlanService;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -48,6 +49,9 @@ public class PlanResourceIntTest {
     private PlanRepository planRepository;
 
     @Autowired
+    private PlanService planService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -66,7 +70,7 @@ public class PlanResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PlanResource planResource = new PlanResource(planRepository);
+        final PlanResource planResource = new PlanResource(planRepository, planService);
         this.restPlanEntityMockMvc = MockMvcBuilders.standaloneSetup(planResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

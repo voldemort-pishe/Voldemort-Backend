@@ -23,6 +23,8 @@
     <include file="config/liquibase/changelog/20180619154449_added_entity_EvaluationCriteriaEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154450_added_entity_CompanyPipelineEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154451_added_entity_CandidateEvaluationCriteriaEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180703100000_added_entity_SubscriptionEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180703100900_added_entity_SubscriptionHistory.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20180619154434_added_entity_constraints_UserAuthorityEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154436_added_entity_constraints_CandidateEntity.xml" relativeToChangelogFile="false"/>
@@ -38,5 +40,6 @@
     <include file="config/liquibase/changelog/20180619154449_added_entity_constraints_EvaluationCriteriaEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154450_added_entity_constraints_CompanyPipelineEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154451_added_entity_constraints_CandidateEvaluationCriteriaEntity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180703101900_added_entity_constraints_SubscriptionEntity.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

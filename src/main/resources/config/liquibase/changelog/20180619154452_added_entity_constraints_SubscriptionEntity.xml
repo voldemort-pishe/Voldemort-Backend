@@ -6,7 +6,7 @@
     <!--
         Added the constraints for entity SubscriptionEntity.
     -->
-    <changeSet id="201800703101900-2" author="Morteza">
+    <changeSet id="20180619154452-2" author="Morteza">
 
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="subscription_entity"

@@ -16,6 +16,7 @@ import io.avand.service.dto.TokenDTO;
 import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.UserMapper;
 import io.avand.service.util.RandomUtil;
+import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,7 +211,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> changePassword(String login, String oldPassword, String newPassword) {
-        return null;
+    public void changePassword(String login, String oldPassword, String newPassword) throws NotFoundException {
+        log.debug("Request to change password by login : {}", login);
+        Optional<UserEntity> userOptional = userRepository.findByLogin(login);
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+            if (passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+                user.setPasswordHash(passwordEncoder.encode(newPassword));
+                userRepository.save(user);
+            } else {
+                throw new ServerErrorException("پسورد وارد شده اشتباه است");
+            }
+        } else {
+            throw new NotFoundException("User Not Found");
+        }
     }
 }

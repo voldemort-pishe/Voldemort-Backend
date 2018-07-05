@@ -30,6 +30,6 @@ public interface UserService {
 
     TokenDTO authorize(String username,String password,Boolean isRemember) throws NotFoundException;
 
-    Optional<UserDTO> changePassword(String login,String oldPassword,String newPassword);
+    void changePassword(String login,String oldPassword,String newPassword) throws NotFoundException;
 
 }

@@ -3,7 +3,7 @@ package io.avand.web.rest.vm;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-public class UserVM implements Serializable {
+public class UserRegisterVM implements Serializable {
 
     @NotNull
     private String firstName;

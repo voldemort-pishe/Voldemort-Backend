@@ -1,15 +1,29 @@
 package io.avand.security;
 
+import io.avand.service.UserService;
+import io.avand.service.dto.UserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 /**
  * Utility class for Spring Security.
  */
 public final class SecurityUtils {
+
+    private static UserService userLocalService;
+
+    @Autowired
+    private UserService userService;
+
+    @PostConstruct
+    private void initStaticService() {
+        userLocalService = this.userService;
+    }
 
     private SecurityUtils() {
     }
@@ -31,6 +45,11 @@ public final class SecurityUtils {
                 }
                 return null;
             });
+    }
+
+    public static Long getCurrentUserId() {
+        UserDTO userDTO = userLocalService.findByLogin(getCurrentUserLogin().get()).get();
+        return userDTO.getId();
     }
 
     /**

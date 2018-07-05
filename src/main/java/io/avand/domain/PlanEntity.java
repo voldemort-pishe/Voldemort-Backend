@@ -25,8 +25,15 @@ public class PlanEntity implements Serializable {
     @Column(name = "title")
     private String title;
 
+    @Lob
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "amount")
     private Integer amount;
+
+    @Column(name = "active")
+    private Boolean active;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -64,6 +71,15 @@ public class PlanEntity implements Serializable {
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
+
+    public Boolean isActive() {
+        return active;
+    }
+
+    public void setActivation(Boolean activation) {
+        this.active = activation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -87,9 +103,10 @@ public class PlanEntity implements Serializable {
     @Override
     public String toString() {
         return "PlanEntity{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            ", amount=" + getAmount() +
-            "}";
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", amount=" + amount +
+            ", active=" + active +
+            '}';
     }
 }

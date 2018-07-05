@@ -12,6 +12,8 @@ public interface UserService {
 
     UserDTO save(String login,String firstName,String lastName,String email,String password);
 
+    UserDTO update(UserDTO userDTO);
+
     Optional<UserDTO> findById(Long id);
 
     Optional<UserDTO> findByLogin(String login);

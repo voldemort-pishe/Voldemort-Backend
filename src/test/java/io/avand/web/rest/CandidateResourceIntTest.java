@@ -6,6 +6,7 @@ import io.avand.domain.CandidateEntity;
 import io.avand.domain.FileEntity;
 import io.avand.domain.JobEntity;
 import io.avand.repository.CandidateRepository;
+import io.avand.service.dto.JobDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -107,15 +108,15 @@ public class CandidateResourceIntTest {
             .email(DEFAULT_EMAIL)
             .candidatePipeline(DEFAULT_CANDIDATE_PIPELINE);
         // Add required entity
-        FileEntity file = FileResourceIntTest.createEntity(em);
-        em.persist(file);
-        em.flush();
-        candidateEntity.setFile(file);
-        // Add required entity
-        JobEntity job = JobResourceIntTest.createEntity(em);
-        em.persist(job);
-        em.flush();
-        candidateEntity.setJob(job);
+//        FileEntity file = FileResourceIntTest.createEntity(em);
+//        em.persist(file);
+//        em.flush();
+//        candidateEntity.setFile(file);
+//        // Add required entity
+//        JobDTO job = JobResourceIntTest.createEntity(em);
+//        em.persist(job);
+//        em.flush();
+//        candidateEntity.setJob(job);
         return candidateEntity;
     }
 

@@ -1,17 +1,23 @@
 package io.avand.web.rest.vm;
 
-import javax.validation.constraints.NotNull;
+import io.avand.config.Constants;
+
+import javax.validation.constraints.*;
 import java.io.Serializable;
 
 public class UserRegisterVM implements Serializable {
 
     @NotNull
+    @Pattern(regexp = Constants.NAME_REGEX)
     private String firstName;
     @NotNull
+    @Pattern(regexp = Constants.LAST_NAME_REGEX)
     private String lastName;
     @NotNull
+    @Size(min = 4)
     private String password;
     @NotNull
+    @Pattern(regexp = Constants.EMAIL_REGEX)
     private String email;
 
     public String getFirstName() {

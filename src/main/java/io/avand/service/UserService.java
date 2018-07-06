@@ -24,9 +24,9 @@ public interface UserService {
 
     void requestToResendActivationEmail(String email) throws NotFoundException;
 
-    Optional<UserDTO> requestToResetPassword(String email);
+    void requestToResetPassword(String email) throws NotFoundException;
 
-    Optional<UserDTO> completeResetPassword(String resetKey,String newPassword);
+    void completeResetPassword(String resetKey,String newPassword) throws NotFoundException;
 
     TokenDTO activate(String activationKey) throws NotFoundException;
 

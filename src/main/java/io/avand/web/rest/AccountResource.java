@@ -8,17 +8,12 @@ import io.avand.service.dto.UserDTO;
 import io.avand.web.rest.errors.ServerErrorConstants;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.errors.ServerMessage;
-import io.avand.web.rest.vm.UserActivationVM;
-import io.avand.web.rest.vm.UserChangePasswordVM;
-import io.avand.web.rest.vm.UserLoginVM;
-import io.avand.web.rest.vm.UserRegisterVM;
+import io.avand.web.rest.vm.*;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +33,7 @@ public class AccountResource {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Validated UserRegisterVM userRegisterVM) {
+    public ResponseEntity register(@RequestBody @Valid UserRegisterVM userRegisterVM) {
         log.debug("REST Request to register user : {}", userRegisterVM);
         Optional<UserDTO> userDTOOptional = userService.findByLogin(userRegisterVM.getEmail());
         if (userDTOOptional.isPresent()) {
@@ -114,6 +109,32 @@ public class AccountResource {
             }
         } else {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PostMapping("/reset-password/init")
+    public ResponseEntity requestToInitResetPassword(@RequestBody @Valid UserResetPasswordInitVM resetPasswordInitVM) {
+        log.debug("REST Request to init reset password by : {}", resetPasswordInitVM);
+        try {
+            userService.requestToResetPassword(resetPasswordInitVM.getEmail());
+            ServerMessage serverMessage = new ServerMessage();
+            serverMessage.setMessage("برای ادامه فرآیند بازیابی رمز عبور به پست الکترونیکی خود مراجعه کنید.");
+            return new ResponseEntity<>(serverMessage, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password/finish")
+    public ResponseEntity requestToFinishResetPassword(@RequestBody @Valid UserResetPasswordFinishVM resetPasswordFinishVM) {
+        log.debug("REST Request to finish reset password by : {}", resetPasswordFinishVM);
+        try {
+            userService.completeResetPassword(resetPasswordFinishVM.getKey(), resetPasswordFinishVM.getPassword());
+            ServerMessage serverMessage = new ServerMessage();
+            serverMessage.setMessage("عملیات تغییر رمز عبور با موفقیت انجام شد");
+            return new ResponseEntity<>(serverMessage, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
         }
     }
 }

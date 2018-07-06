@@ -48,7 +48,9 @@
             <column name="file_id" type="bigint">
                 <constraints unique="true" nullable="false" />
             </column>
-
+            <column name="job_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
             <column name="created_by" type="varchar(255)">
                 <constraints nullable="true" />
             </column>

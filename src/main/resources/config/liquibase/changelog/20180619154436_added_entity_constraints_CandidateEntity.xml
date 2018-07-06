@@ -7,7 +7,13 @@
         Added the constraints for entity CandidateEntity.
     -->
     <changeSet id="20180619154436-2" author="jhipster">
-        
+
+        <addForeignKeyConstraint baseColumnNames="job_id"
+                                 baseTableName="candidate_entity"
+                                 constraintName="fk_candidate_entity_job_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="job_entity"/>
+
         <addForeignKeyConstraint baseColumnNames="file_id"
                                  baseTableName="candidate_entity"
                                  constraintName="fk_candidate_entity_file_id"

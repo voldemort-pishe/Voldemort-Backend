@@ -72,8 +72,7 @@ public class CandidateEntity implements Serializable {
     @JoinColumn(unique = true)
     private FileEntity file;
 
-    @OneToOne(mappedBy = "candidate")
-    @JsonIgnore
+    @ManyToOne
     private JobEntity job;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

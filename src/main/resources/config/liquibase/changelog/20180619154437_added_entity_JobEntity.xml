@@ -25,9 +25,6 @@
             <column name="name" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="candidate_id" type="bigint">
-                <constraints unique="true" nullable="false" />
-            </column>
             <column name="company_id" type="bigint">
                 <constraints nullable="false" />
             </column>

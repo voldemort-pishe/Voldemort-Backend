@@ -14,8 +14,8 @@ public class EvaluationCriteriaDTO implements Serializable {
 
     private String description;
 
-    @JsonIgnore
-    private CompanyDTO company;
+    @NotNull
+    private Long companyId;
 
     public Long getId() {
         return id;
@@ -41,12 +41,12 @@ public class EvaluationCriteriaDTO implements Serializable {
         this.description = description;
     }
 
-    public CompanyDTO getCompany() {
-        return company;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany(CompanyDTO company) {
-        this.company = company;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     @Override

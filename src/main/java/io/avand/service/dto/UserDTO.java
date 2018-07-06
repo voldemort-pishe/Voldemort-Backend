@@ -8,9 +8,6 @@ import java.util.Set;
 
 public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
-    @NotNull
-    private Long id;
-
     private String login;
 
     private String passwordHash;
@@ -36,14 +33,6 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
     private Set<TalentPoolDTO> talentPools = new HashSet<>();
 
     private Set<InvoiceDTO> invoices = new HashSet<>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getLogin() {
         return login;
@@ -152,8 +141,7 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
     @Override
     public String toString() {
         return "UserDTO{" +
-            "id=" + id +
-            ", login='" + login + '\'' +
+            "login='" + login + '\'' +
             ", passwordHash='" + passwordHash + '\'' +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +

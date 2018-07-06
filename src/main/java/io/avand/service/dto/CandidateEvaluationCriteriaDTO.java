@@ -16,8 +16,8 @@ public class CandidateEvaluationCriteriaDTO implements Serializable {
 
     private Long evaluationCriteriaId;
 
-    @JsonIgnore
-    private CandidateDTO candidateDTO;
+    @NotNull
+    private Long candidateId;
 
     public Long getId() {
         return id;
@@ -51,12 +51,12 @@ public class CandidateEvaluationCriteriaDTO implements Serializable {
         this.evaluationCriteriaId = evaluationCriteriaId;
     }
 
-    public CandidateDTO getCandidateDTO() {
-        return candidateDTO;
+    public Long getCandidateId() {
+        return candidateId;
     }
 
-    public void setCandidateDTO(CandidateDTO candidateDTO) {
-        this.candidateDTO = candidateDTO;
+    public void setCandidateId(Long candidateId) {
+        this.candidateId = candidateId;
     }
 
     @Override

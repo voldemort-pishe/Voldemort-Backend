@@ -13,8 +13,8 @@ public class UserPermissionDTO implements Serializable {
 
     private PermissionAction action;
 
-    @JsonIgnore
-    private UserAuthorityDTO userAuthority;
+    @NotNull
+    private Long userAuthorityId;
 
     public Long getId() {
         return id;
@@ -32,12 +32,12 @@ public class UserPermissionDTO implements Serializable {
         this.action = action;
     }
 
-    public UserAuthorityDTO getUserAuthority() {
-        return userAuthority;
+    public Long getUserAuthorityId() {
+        return userAuthorityId;
     }
 
-    public void setUserAuthority(UserAuthorityDTO userAuthority) {
-        this.userAuthority = userAuthority;
+    public void setUserAuthorityId(Long userAuthorityId) {
+        this.userAuthorityId = userAuthorityId;
     }
 
     @Override

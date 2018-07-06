@@ -5,18 +5,7 @@ import java.io.Serializable;
 
 public class AuthorityDTO extends AbstractAuditingDTO implements Serializable {
 
-    @NotNull
-    private Long id;
-
     private String name;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -29,8 +18,7 @@ public class AuthorityDTO extends AbstractAuditingDTO implements Serializable {
     @Override
     public String toString() {
         return "AuthorityDTO{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
+            "name='" + name + '\'' +
             '}';
     }
 }

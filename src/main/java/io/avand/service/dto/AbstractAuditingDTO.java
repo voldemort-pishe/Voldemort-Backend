@@ -6,7 +6,6 @@ import java.time.ZonedDateTime;
 
 public class AbstractAuditingDTO implements Serializable {
 
-    @NotNull
     private Long id;
 
     private String createdBy;

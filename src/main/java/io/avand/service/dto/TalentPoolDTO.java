@@ -11,7 +11,7 @@ public class TalentPoolDTO implements Serializable {
     @NotNull
     private Long id;
 
-    private String firrstName;
+    private String firstName;
 
     private String lastName;
 
@@ -23,8 +23,8 @@ public class TalentPoolDTO implements Serializable {
 
     private String email;
 
-    @JsonIgnore
-    private UserDTO user;
+    @NotNull
+    private Long userId;
 
     public Long getId() {
         return id;
@@ -34,12 +34,12 @@ public class TalentPoolDTO implements Serializable {
         this.id = id;
     }
 
-    public String getFirrstName() {
-        return firrstName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirrstName(String firrstName) {
-        this.firrstName = firrstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -82,19 +82,19 @@ public class TalentPoolDTO implements Serializable {
         this.email = email;
     }
 
-    public UserDTO getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
         return "TalentPoolDTO{" +
             "id=" + id +
-            ", firrstName='" + firrstName + '\'' +
+            ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", fileId=" + fileId +
             ", state=" + state +

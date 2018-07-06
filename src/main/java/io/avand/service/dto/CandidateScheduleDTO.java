@@ -15,8 +15,8 @@ public class CandidateScheduleDTO implements Serializable {
 
     private ZonedDateTime scheduleDate;
 
-    @JsonIgnore
-    private CandidateDTO candidate;
+    @NotNull
+    private Long candidateId;
 
     public Long getId() {
         return id;
@@ -42,12 +42,12 @@ public class CandidateScheduleDTO implements Serializable {
         this.scheduleDate = scheduleDate;
     }
 
-    public CandidateDTO getCandidate() {
-        return candidate;
+    public Long getCandidateId() {
+        return candidateId;
     }
 
-    public void setCandidate(CandidateDTO candidate) {
-        this.candidate = candidate;
+    public void setCandidateId(Long candidateId) {
+        this.candidateId = candidateId;
     }
 
     @Override

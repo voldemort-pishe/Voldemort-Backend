@@ -13,9 +13,6 @@ import java.util.Set;
 
 public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
 
-    @NotNull
-    private Long id;
-
     private SubscribeState subscribeState;
 
     private PaymentType paymentType;
@@ -28,18 +25,8 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
 
     private Set<PaymentTransactionDTO> paymentTransactions = new HashSet<>();
 
-    @JsonIgnore
-    private UserDTO user;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @NotNull
+    private Long userId;
 
     public SubscribeState getSubscribeState() {
         return subscribeState;
@@ -89,19 +76,18 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
         this.paymentTransactions = paymentTransactions;
     }
 
-    public UserDTO getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
         return "InvoiceDTO{" +
-            "id=" + id +
-            ", subscribeState=" + subscribeState +
+            "subscribeState=" + subscribeState +
             ", paymentType=" + paymentType +
             ", paymentDate=" + paymentDate +
             ", amount=" + amount +

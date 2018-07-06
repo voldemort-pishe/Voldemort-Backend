@@ -16,8 +16,8 @@ public class PaymentTransactionDTO implements Serializable {
 
     private Integer amount;
 
-    @JsonIgnore
-    private InvoiceDTO invoice;
+    @NotNull
+    private Long invoiceId;
 
     public Long getId() {
         return id;
@@ -51,12 +51,12 @@ public class PaymentTransactionDTO implements Serializable {
         this.amount = amount;
     }
 
-    public InvoiceDTO getInvoice() {
-        return invoice;
+    public Long getInvoiceId() {
+        return invoiceId;
     }
 
-    public void setInvoice(InvoiceDTO invoice) {
-        this.invoice = invoice;
+    public void setInvoiceId(Long invoiceId) {
+        this.invoiceId = invoiceId;
     }
 
     @Override

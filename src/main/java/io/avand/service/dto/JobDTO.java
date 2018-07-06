@@ -7,25 +7,12 @@ import java.io.Serializable;
 
 public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
-    @NotNull
-    private Long id;
-
     private String name;
 
     private CandidateDTO candidate;
 
-    @JsonIgnore
-    private CompanyDTO company;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @NotNull
+    private Long companyId;
 
     public String getName() {
         return name;
@@ -43,19 +30,18 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
         this.candidate = candidate;
     }
 
-    public CompanyDTO getCompany() {
-        return company;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany(CompanyDTO company) {
-        this.company = company;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     @Override
     public String toString() {
         return "JobDTO{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
+            "name='" + name + '\'' +
             ", candidate=" + candidate +
             '}';
     }

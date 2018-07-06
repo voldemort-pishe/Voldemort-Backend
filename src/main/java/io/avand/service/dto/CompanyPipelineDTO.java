@@ -14,8 +14,8 @@ public class CompanyPipelineDTO implements Serializable {
 
     private Integer weight;
 
-    @JsonIgnore
-    private CompanyDTO company;
+    @NotNull
+    private Long companyId;
 
     public Long getId() {
         return id;
@@ -41,12 +41,12 @@ public class CompanyPipelineDTO implements Serializable {
         this.weight = weight;
     }
 
-    public CompanyDTO getCompany() {
-        return company;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany(CompanyDTO company) {
-        this.company = company;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     @Override

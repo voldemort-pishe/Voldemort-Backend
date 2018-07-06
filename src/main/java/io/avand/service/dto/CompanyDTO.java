@@ -9,9 +9,6 @@ import java.util.Set;
 
 public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
-    @NotNull
-    private Long id;
-
     private String name;
 
     private Set<JobDTO> jobs = new HashSet<>();
@@ -20,18 +17,8 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
     private Set<CompanyPipelineDTO> companyPipelines = new HashSet<>();
 
-    @JsonIgnore
-    private UserDTO user;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @NotNull
+    private Long userId;
 
     public String getName() {
         return name;
@@ -65,19 +52,18 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
         this.companyPipelines = companyPipelines;
     }
 
-    public UserDTO getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
         return "CompanyDTO{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
+            "name='" + name + '\'' +
             ", jobs=" + jobs +
             ", evaluationCriteria=" + evaluationCriteria +
             ", companyPipelines=" + companyPipelines +

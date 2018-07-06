@@ -35,8 +35,8 @@ public class CandidateDTO implements Serializable {
 
     private FileDTO file;
 
-    @JsonIgnore
-    private JobDTO job;
+    @NotNull
+    private Long jobId;
 
     public Long getId() {
         return id;
@@ -134,12 +134,12 @@ public class CandidateDTO implements Serializable {
         this.file = file;
     }
 
-    public JobDTO getJob() {
-        return job;
+    public Long getJobId() {
+        return jobId;
     }
 
-    public void setJob(JobDTO job) {
-        this.job = job;
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
     }
 
     @Override

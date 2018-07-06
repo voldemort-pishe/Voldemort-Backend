@@ -6,6 +6,7 @@ import io.avand.domain.JobEntity;
 import io.avand.domain.CandidateEntity;
 import io.avand.domain.CompanyEntity;
 import io.avand.repository.JobRepository;
+import io.avand.service.dto.CompanyDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -88,10 +89,10 @@ public class JobResourceIntTest {
         em.flush();
         jobEntity.setCandidate(candidate);
         // Add required entity
-        CompanyEntity company = CompanyResourceIntTest.createEntity(em);
+        CompanyDTO company = CompanyResourceIntTest.createEntity(em);
         em.persist(company);
         em.flush();
-        jobEntity.setCompany(company);
+//        jobEntity.setCompany(company);
         return jobEntity;
     }
 

@@ -5,6 +5,9 @@ import io.avand.VoldemortApp;
 import io.avand.domain.CompanyEntity;
 import io.avand.domain.JobEntity;
 import io.avand.repository.CompanyRepository;
+import io.avand.service.CompanyService;
+import io.avand.service.dto.CompanyDTO;
+import io.avand.service.dto.JobDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -43,7 +46,7 @@ public class CompanyResourceIntTest {
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
     @Autowired
-    private CompanyRepository companyRepository;
+    private CompanyService companyService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -59,12 +62,12 @@ public class CompanyResourceIntTest {
 
     private MockMvc restCompanyEntityMockMvc;
 
-    private CompanyEntity companyEntity;
+    private CompanyDTO companyEntity;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final CompanyResource companyResource = new CompanyResource(companyRepository);
+        final CompanyResource companyResource = new CompanyResource(companyService);
         this.restCompanyEntityMockMvc = MockMvcBuilders.standaloneSetup(companyResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -78,14 +81,10 @@ public class CompanyResourceIntTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static CompanyEntity createEntity(EntityManager em) {
-        CompanyEntity companyEntity = new CompanyEntity()
-            .name(DEFAULT_NAME);
+    public static CompanyDTO createEntity(EntityManager em) {
+        CompanyDTO companyEntity = new CompanyDTO();
+        companyEntity.setName(DEFAULT_NAME);
         // Add required entity
-        JobEntity job = JobResourceIntTest.createEntity(em);
-        em.persist(job);
-        em.flush();
-        companyEntity.getJobs().add(job);
         return companyEntity;
     }
 
@@ -97,48 +96,46 @@ public class CompanyResourceIntTest {
     @Test
     @Transactional
     public void createCompanyEntity() throws Exception {
-        int databaseSizeBeforeCreate = companyRepository.findAll().size();
+        int databaseSizeBeforeCreate = companyService.findAll().size();
 
         // Create the CompanyEntity
-        restCompanyEntityMockMvc.perform(post("/api/company-entities")
+        restCompanyEntityMockMvc.perform(post("/api/company")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(companyEntity)))
             .andExpect(status().isCreated());
 
         // Validate the CompanyEntity in the database
-        List<CompanyEntity> companyEntityList = companyRepository.findAll();
+        List<CompanyDTO> companyEntityList = companyService.findAll();
         assertThat(companyEntityList).hasSize(databaseSizeBeforeCreate + 1);
-        CompanyEntity testCompanyEntity = companyEntityList.get(companyEntityList.size() - 1);
+        CompanyDTO testCompanyEntity = companyEntityList.get(companyEntityList.size() - 1);
         assertThat(testCompanyEntity.getName()).isEqualTo(DEFAULT_NAME);
     }
 
     @Test
     @Transactional
     public void createCompanyEntityWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = companyRepository.findAll().size();
+        int databaseSizeBeforeCreate = companyService.findAll().size();
 
         // Create the CompanyEntity with an existing ID
         companyEntity.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restCompanyEntityMockMvc.perform(post("/api/company-entities")
+        restCompanyEntityMockMvc.perform(post("/api/company")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(companyEntity)))
             .andExpect(status().isBadRequest());
 
         // Validate the CompanyEntity in the database
-        List<CompanyEntity> companyEntityList = companyRepository.findAll();
+        List<CompanyDTO> companyEntityList = companyService.findAll();
         assertThat(companyEntityList).hasSize(databaseSizeBeforeCreate);
     }
 
     @Test
     @Transactional
     public void getAllCompanyEntities() throws Exception {
-        // Initialize the database
-        companyRepository.saveAndFlush(companyEntity);
 
         // Get all the companyEntityList
-        restCompanyEntityMockMvc.perform(get("/api/company-entities?sort=id,desc"))
+        restCompanyEntityMockMvc.perform(get("/api/company?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(companyEntity.getId().intValue())))
@@ -148,11 +145,9 @@ public class CompanyResourceIntTest {
     @Test
     @Transactional
     public void getCompanyEntity() throws Exception {
-        // Initialize the database
-        companyRepository.saveAndFlush(companyEntity);
 
         // Get the companyEntity
-        restCompanyEntityMockMvc.perform(get("/api/company-entities/{id}", companyEntity.getId()))
+        restCompanyEntityMockMvc.perform(get("/api/company/{id}", companyEntity.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(companyEntity.getId().intValue()))
@@ -163,7 +158,7 @@ public class CompanyResourceIntTest {
     @Transactional
     public void getNonExistingCompanyEntity() throws Exception {
         // Get the companyEntity
-        restCompanyEntityMockMvc.perform(get("/api/company-entities/{id}", Long.MAX_VALUE))
+        restCompanyEntityMockMvc.perform(get("/api/company/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
     }
 
@@ -171,43 +166,43 @@ public class CompanyResourceIntTest {
     @Transactional
     public void updateCompanyEntity() throws Exception {
         // Initialize the database
-        companyRepository.saveAndFlush(companyEntity);
-        int databaseSizeBeforeUpdate = companyRepository.findAll().size();
+        companyService.save(companyEntity);
+        int databaseSizeBeforeUpdate = companyService.findAll().size();
 
         // Update the companyEntity
-        CompanyEntity updatedCompanyEntity = companyRepository.findOne(companyEntity.getId());
+        CompanyDTO updatedCompanyEntity = companyService.findById(companyEntity.getId());
         // Disconnect from session so that the updates on updatedCompanyEntity are not directly saved in db
         em.detach(updatedCompanyEntity);
         updatedCompanyEntity
-            .name(UPDATED_NAME);
+            .setName(UPDATED_NAME);
 
-        restCompanyEntityMockMvc.perform(put("/api/company-entities")
+        restCompanyEntityMockMvc.perform(put("/api/company")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(updatedCompanyEntity)))
             .andExpect(status().isOk());
 
         // Validate the CompanyEntity in the database
-        List<CompanyEntity> companyEntityList = companyRepository.findAll();
+        List<CompanyDTO> companyEntityList = companyService.findAll();
         assertThat(companyEntityList).hasSize(databaseSizeBeforeUpdate);
-        CompanyEntity testCompanyEntity = companyEntityList.get(companyEntityList.size() - 1);
+        CompanyDTO testCompanyEntity = companyEntityList.get(companyEntityList.size() - 1);
         assertThat(testCompanyEntity.getName()).isEqualTo(UPDATED_NAME);
     }
 
     @Test
     @Transactional
     public void updateNonExistingCompanyEntity() throws Exception {
-        int databaseSizeBeforeUpdate = companyRepository.findAll().size();
+        int databaseSizeBeforeUpdate = companyService.findAll().size();
 
         // Create the CompanyEntity
 
         // If the entity doesn't have an ID, it will be created instead of just being updated
-        restCompanyEntityMockMvc.perform(put("/api/company-entities")
+        restCompanyEntityMockMvc.perform(put("/api/company")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(companyEntity)))
             .andExpect(status().isCreated());
 
         // Validate the CompanyEntity in the database
-        List<CompanyEntity> companyEntityList = companyRepository.findAll();
+        List<CompanyDTO> companyEntityList = companyService.findAll();
         assertThat(companyEntityList).hasSize(databaseSizeBeforeUpdate + 1);
     }
 
@@ -215,16 +210,16 @@ public class CompanyResourceIntTest {
     @Transactional
     public void deleteCompanyEntity() throws Exception {
         // Initialize the database
-        companyRepository.saveAndFlush(companyEntity);
-        int databaseSizeBeforeDelete = companyRepository.findAll().size();
+        companyService.save(companyEntity);
+        int databaseSizeBeforeDelete = companyService.findAll().size();
 
         // Get the companyEntity
-        restCompanyEntityMockMvc.perform(delete("/api/company-entities/{id}", companyEntity.getId())
+        restCompanyEntityMockMvc.perform(delete("/api/company/{id}", companyEntity.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
         // Validate the database is empty
-        List<CompanyEntity> companyEntityList = companyRepository.findAll();
+        List<CompanyDTO> companyEntityList = companyService.findAll();
         assertThat(companyEntityList).hasSize(databaseSizeBeforeDelete - 1);
     }
 

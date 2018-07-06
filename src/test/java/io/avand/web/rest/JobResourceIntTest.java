@@ -6,7 +6,9 @@ import io.avand.domain.JobEntity;
 import io.avand.domain.CandidateEntity;
 import io.avand.domain.CompanyEntity;
 import io.avand.repository.JobRepository;
+import io.avand.service.JobService;
 import io.avand.service.dto.CompanyDTO;
+import io.avand.service.dto.JobDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -45,7 +47,7 @@ public class JobResourceIntTest {
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
     @Autowired
-    private JobRepository jobRepository;
+    private JobService jobService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -61,12 +63,12 @@ public class JobResourceIntTest {
 
     private MockMvc restJobEntityMockMvc;
 
-    private JobEntity jobEntity;
+    private JobDTO jobEntity;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final JobResource jobResource = new JobResource(jobRepository);
+        final JobResource jobResource = new JobResource(jobService);
         this.restJobEntityMockMvc = MockMvcBuilders.standaloneSetup(jobResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -80,18 +82,18 @@ public class JobResourceIntTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static JobEntity createEntity(EntityManager em) {
-        JobEntity jobEntity = new JobEntity()
-            .name(DEFAULT_NAME);
+    public static JobDTO createEntity(EntityManager em) {
+        JobDTO jobEntity = new JobDTO();
+            jobEntity.setName(DEFAULT_NAME);
         // Add required entity
-        CandidateEntity candidate = CandidateResourceIntTest.createEntity(em);
-        em.persist(candidate);
-        em.flush();
+//        CandidateEntity candidate = CandidateResourceIntTest.createEntity(em);
+//        em.persist(candidate);
+//        em.flush();
 //        jobEntity.setCandidate(candidate);
         // Add required entity
-        CompanyDTO company = CompanyResourceIntTest.createEntity(em);
-        em.persist(company);
-        em.flush();
+//        CompanyDTO company = CompanyResourceIntTest.createEntity(em);
+//        em.persist(company);
+//        em.flush();
 //        jobEntity.setCompany(company);
         return jobEntity;
     }
@@ -104,7 +106,7 @@ public class JobResourceIntTest {
     @Test
     @Transactional
     public void createJobEntity() throws Exception {
-        int databaseSizeBeforeCreate = jobRepository.findAll().size();
+        int databaseSizeBeforeCreate = jobService.findAll().size();
 
         // Create the JobEntity
         restJobEntityMockMvc.perform(post("/api/job-entities")
@@ -113,16 +115,16 @@ public class JobResourceIntTest {
             .andExpect(status().isCreated());
 
         // Validate the JobEntity in the database
-        List<JobEntity> jobEntityList = jobRepository.findAll();
+        List<JobDTO> jobEntityList = jobService.findAll();
         assertThat(jobEntityList).hasSize(databaseSizeBeforeCreate + 1);
-        JobEntity testJobEntity = jobEntityList.get(jobEntityList.size() - 1);
+        JobDTO testJobEntity = jobEntityList.get(jobEntityList.size() - 1);
         assertThat(testJobEntity.getName()).isEqualTo(DEFAULT_NAME);
     }
 
     @Test
     @Transactional
     public void createJobEntityWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = jobRepository.findAll().size();
+        int databaseSizeBeforeCreate = jobService.findAll().size();
 
         // Create the JobEntity with an existing ID
         jobEntity.setId(1L);
@@ -134,7 +136,7 @@ public class JobResourceIntTest {
             .andExpect(status().isBadRequest());
 
         // Validate the JobEntity in the database
-        List<JobEntity> jobEntityList = jobRepository.findAll();
+        List<JobDTO> jobEntityList = jobService.findAll();
         assertThat(jobEntityList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -142,7 +144,7 @@ public class JobResourceIntTest {
     @Transactional
     public void getAllJobEntities() throws Exception {
         // Initialize the database
-        jobRepository.saveAndFlush(jobEntity);
+        jobService.save(jobEntity);
 
         // Get all the jobEntityList
         restJobEntityMockMvc.perform(get("/api/job-entities?sort=id,desc"))
@@ -156,7 +158,7 @@ public class JobResourceIntTest {
     @Transactional
     public void getJobEntity() throws Exception {
         // Initialize the database
-        jobRepository.saveAndFlush(jobEntity);
+        jobService.save(jobEntity);
 
         // Get the jobEntity
         restJobEntityMockMvc.perform(get("/api/job-entities/{id}", jobEntity.getId()))
@@ -178,15 +180,14 @@ public class JobResourceIntTest {
     @Transactional
     public void updateJobEntity() throws Exception {
         // Initialize the database
-        jobRepository.saveAndFlush(jobEntity);
-        int databaseSizeBeforeUpdate = jobRepository.findAll().size();
+        jobService.save(jobEntity);
+        int databaseSizeBeforeUpdate = jobService.findAll().size();
 
         // Update the jobEntity
-        JobEntity updatedJobEntity = jobRepository.findOne(jobEntity.getId());
+        JobDTO updatedJobEntity = jobService.findById(jobEntity.getId());
         // Disconnect from session so that the updates on updatedJobEntity are not directly saved in db
         em.detach(updatedJobEntity);
-        updatedJobEntity
-            .name(UPDATED_NAME);
+        updatedJobEntity.setName(UPDATED_NAME);
 
         restJobEntityMockMvc.perform(put("/api/job-entities")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -194,16 +195,16 @@ public class JobResourceIntTest {
             .andExpect(status().isOk());
 
         // Validate the JobEntity in the database
-        List<JobEntity> jobEntityList = jobRepository.findAll();
+        List<JobDTO> jobEntityList = jobService.findAll();
         assertThat(jobEntityList).hasSize(databaseSizeBeforeUpdate);
-        JobEntity testJobEntity = jobEntityList.get(jobEntityList.size() - 1);
+        JobDTO testJobEntity = jobEntityList.get(jobEntityList.size() - 1);
         assertThat(testJobEntity.getName()).isEqualTo(UPDATED_NAME);
     }
 
     @Test
     @Transactional
     public void updateNonExistingJobEntity() throws Exception {
-        int databaseSizeBeforeUpdate = jobRepository.findAll().size();
+        int databaseSizeBeforeUpdate = jobService.findAll().size();
 
         // Create the JobEntity
 
@@ -214,7 +215,7 @@ public class JobResourceIntTest {
             .andExpect(status().isCreated());
 
         // Validate the JobEntity in the database
-        List<JobEntity> jobEntityList = jobRepository.findAll();
+        List<JobDTO> jobEntityList = jobService.findAll();
         assertThat(jobEntityList).hasSize(databaseSizeBeforeUpdate + 1);
     }
 
@@ -222,8 +223,8 @@ public class JobResourceIntTest {
     @Transactional
     public void deleteJobEntity() throws Exception {
         // Initialize the database
-        jobRepository.saveAndFlush(jobEntity);
-        int databaseSizeBeforeDelete = jobRepository.findAll().size();
+        jobService.save(jobEntity);
+        int databaseSizeBeforeDelete = jobService.findAll().size();
 
         // Get the jobEntity
         restJobEntityMockMvc.perform(delete("/api/job-entities/{id}", jobEntity.getId())
@@ -231,7 +232,7 @@ public class JobResourceIntTest {
             .andExpect(status().isOk());
 
         // Validate the database is empty
-        List<JobEntity> jobEntityList = jobRepository.findAll();
+        List<JobDTO> jobEntityList = jobService.findAll();
         assertThat(jobEntityList).hasSize(databaseSizeBeforeDelete - 1);
     }
 

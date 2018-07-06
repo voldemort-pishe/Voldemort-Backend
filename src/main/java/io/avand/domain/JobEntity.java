@@ -1,5 +1,6 @@
 package io.avand.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -7,7 +8,9 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A JobEntity.
@@ -26,10 +29,10 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToOne(optional = false)
-    @NotNull
-    @JoinColumn(unique = true)
-    private CandidateEntity candidate;
+    @OneToMany(mappedBy = "job")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<CandidateEntity> candidate = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
@@ -57,17 +60,12 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
         this.name = name;
     }
 
-    public CandidateEntity getCandidate() {
+    public Set<CandidateEntity> getCandidate() {
         return candidate;
     }
 
-    public JobEntity candidate(CandidateEntity candidateEntity) {
-        this.candidate = candidateEntity;
-        return this;
-    }
-
-    public void setCandidate(CandidateEntity candidateEntity) {
-        this.candidate = candidateEntity;
+    public void setCandidate(Set<CandidateEntity> candidate) {
+        this.candidate = candidate;
     }
 
     public CompanyEntity getCompany() {

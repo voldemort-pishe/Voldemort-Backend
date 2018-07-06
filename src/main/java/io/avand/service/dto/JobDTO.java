@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
     private String name;
 
-    private CandidateDTO candidate;
+    private Set<CandidateDTO> candidate = new HashSet<>();
 
     @NotNull
     private Long companyId;
@@ -22,11 +24,11 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
         this.name = name;
     }
 
-    public CandidateDTO getCandidate() {
+    public Set<CandidateDTO> getCandidate() {
         return candidate;
     }
 
-    public void setCandidate(CandidateDTO candidate) {
+    public void setCandidate(Set<CandidateDTO> candidate) {
         this.candidate = candidate;
     }
 

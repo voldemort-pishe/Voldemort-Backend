@@ -47,6 +47,7 @@ public class CacheConfiguration {
             cm.createCache(io.avand.domain.CandidateEntity.class.getName() + ".candidateSchedules", jcacheConfiguration);
             cm.createCache(io.avand.domain.CandidateEntity.class.getName() + ".candidateEvaluationCriteria", jcacheConfiguration);
             cm.createCache(io.avand.domain.JobEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(io.avand.domain.JobEntity.class.getName() + ".candidate", jcacheConfiguration);
             cm.createCache(io.avand.domain.CompanyEntity.class.getName(), jcacheConfiguration);
             cm.createCache(io.avand.domain.CompanyEntity.class.getName() + ".jobs", jcacheConfiguration);
             cm.createCache(io.avand.domain.CompanyEntity.class.getName() + ".evaluationCriteria", jcacheConfiguration);

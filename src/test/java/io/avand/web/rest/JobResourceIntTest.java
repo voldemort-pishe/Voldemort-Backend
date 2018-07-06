@@ -87,7 +87,7 @@ public class JobResourceIntTest {
         CandidateEntity candidate = CandidateResourceIntTest.createEntity(em);
         em.persist(candidate);
         em.flush();
-        jobEntity.setCandidate(candidate);
+//        jobEntity.setCandidate(candidate);
         // Add required entity
         CompanyDTO company = CompanyResourceIntTest.createEntity(em);
         em.persist(company);

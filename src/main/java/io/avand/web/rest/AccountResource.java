@@ -88,7 +88,7 @@ public class AccountResource {
                                     HttpServletRequest request) {
         log.debug("REST Request to authorize user : {}", userLoginVM);
         try {
-            TokenDTO tokenDTO = userService.authorize(userLoginVM.getUsername(), userLoginVM.getPassword(), userLoginVM.isRememberMe());
+            TokenDTO tokenDTO = userService.authorize(userLoginVM.getEmail(), userLoginVM.getPassword(), userLoginVM.isRememberMe());
             response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
             return new ResponseEntity<>(tokenDTO, HttpStatus.OK);
         } catch (NotFoundException e) {

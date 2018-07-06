@@ -31,8 +31,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceDTO save(InvoiceDTO invoiceDTO) {
         logger.debug("Request for service to save an invoice : {}", invoiceDTO);
         invoiceDTO.setStatus(InvoiceStatus.INITIALIZED);
-        invoiceDTO.setCreatedBy(invoiceDTO.getUser().getLogin());
-        invoiceDTO.setCreatedDate(ZonedDateTime.now());
 
         InvoiceEntity invoiceEntity = invoiceRepository.save(invoiceMapper.toEntity(invoiceDTO));
         return invoiceMapper.toDto(invoiceEntity);

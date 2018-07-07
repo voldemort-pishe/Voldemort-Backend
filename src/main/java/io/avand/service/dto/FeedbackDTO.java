@@ -8,10 +8,7 @@ import java.io.Serializable;
 
 public class FeedbackDTO implements Serializable {
 
-    @NotNull
     private Long id;
-
-    private Long userId;
 
     private String feedbackText;
 
@@ -26,14 +23,6 @@ public class FeedbackDTO implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public String getFeedbackText() {
@@ -64,7 +53,6 @@ public class FeedbackDTO implements Serializable {
     public String toString() {
         return "FeedbackDTO{" +
             "id=" + id +
-            ", userId=" + userId +
             ", feedbackText='" + feedbackText + '\'' +
             ", rating=" + rating +
             '}';

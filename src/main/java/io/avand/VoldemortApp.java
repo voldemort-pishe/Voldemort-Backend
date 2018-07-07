@@ -3,6 +3,7 @@ package io.avand;
 import io.avand.config.ApplicationProperties;
 import io.avand.config.DefaultProfileUtil;
 
+import io.avand.config.StorageProperties;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import java.util.Collection;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class})
-@EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
+@EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class, StorageProperties.class})
 public class VoldemortApp {
 
     private static final Logger log = LoggerFactory.getLogger(VoldemortApp.class);

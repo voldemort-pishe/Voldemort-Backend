@@ -144,3 +144,5 @@ jhipster:
 # ===================================================================
 
 application:
+storage:
+  location: /Users/pouya/Project/Avand/static-files

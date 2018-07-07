@@ -27,12 +27,8 @@ public class FileEntity implements Serializable {
     @Column(name = "filename")
     private String filename;
 
-    @Column(name = "filetype")
-    private String filetype;
-
-    @OneToOne(mappedBy = "file")
-    @JsonIgnore
-    private CandidateEntity candidate;
+    @Column(name = "file_type")
+    private String fileType;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -56,32 +52,13 @@ public class FileEntity implements Serializable {
         this.filename = filename;
     }
 
-    public String getFiletype() {
-        return filetype;
+    public String getFileType() {
+        return fileType;
     }
 
-    public FileEntity filetype(String filetype) {
-        this.filetype = filetype;
-        return this;
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
-
-    public void setFiletype(String filetype) {
-        this.filetype = filetype;
-    }
-
-    public CandidateEntity getCandidate() {
-        return candidate;
-    }
-
-    public FileEntity candidate(CandidateEntity candidateEntity) {
-        this.candidate = candidateEntity;
-        return this;
-    }
-
-    public void setCandidate(CandidateEntity candidateEntity) {
-        this.candidate = candidateEntity;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -108,7 +85,7 @@ public class FileEntity implements Serializable {
         return "FileEntity{" +
             "id=" + getId() +
             ", filename='" + getFilename() + "'" +
-            ", filetype='" + getFiletype() + "'" +
+            ", fileType='" + getFileType() + "'" +
             "}";
     }
 }

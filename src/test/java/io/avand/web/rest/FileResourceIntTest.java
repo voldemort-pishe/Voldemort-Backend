@@ -5,6 +5,10 @@ import io.avand.VoldemortApp;
 import io.avand.domain.FileEntity;
 import io.avand.domain.CandidateEntity;
 import io.avand.repository.FileRepository;
+import io.avand.service.FileService;
+import io.avand.service.StorageService;
+import io.avand.service.dto.CandidateDTO;
+import io.avand.service.dto.FileDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -46,7 +50,10 @@ public class FileResourceIntTest {
     private static final String UPDATED_FILETYPE = "BBBBBBBBBB";
 
     @Autowired
-    private FileRepository fileRepository;
+    private FileService fileService;
+
+    @Autowired
+    private StorageService storageService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -62,12 +69,12 @@ public class FileResourceIntTest {
 
     private MockMvc restFileEntityMockMvc;
 
-    private FileEntity fileEntity;
+    private FileDTO fileEntity;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final FileResource fileResource = new FileResource(fileRepository);
+        final FileResource fileResource = new FileResource(storageService, fileService);
         this.restFileEntityMockMvc = MockMvcBuilders.standaloneSetup(fileResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -77,19 +84,19 @@ public class FileResourceIntTest {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static FileEntity createEntity(EntityManager em) {
-        FileEntity fileEntity = new FileEntity()
-            .filename(DEFAULT_FILENAME)
-            .filetype(DEFAULT_FILETYPE);
+    public static FileDTO createEntity(EntityManager em) {
+        FileDTO fileEntity = new FileDTO();
+        fileEntity.setFilename(DEFAULT_FILENAME);
+        fileEntity.setFileType(DEFAULT_FILETYPE);
         // Add required entity
-        CandidateEntity candidate = CandidateResourceIntTest.createEntity(em);
+        CandidateDTO candidate = CandidateResourceIntTest.createEntity(em);
         em.persist(candidate);
         em.flush();
-        fileEntity.setCandidate(candidate);
+//        fileEntity.setCandidate(candidate);
         return fileEntity;
     }
 
@@ -101,38 +108,38 @@ public class FileResourceIntTest {
     @Test
     @Transactional
     public void createFileEntity() throws Exception {
-        int databaseSizeBeforeCreate = fileRepository.findAll().size();
+        int databaseSizeBeforeCreate = fileService.findAll().size();
 
         // Create the FileEntity
-        restFileEntityMockMvc.perform(post("/api/file-entities")
+        restFileEntityMockMvc.perform(post("/api/file")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(fileEntity)))
             .andExpect(status().isCreated());
 
         // Validate the FileEntity in the database
-        List<FileEntity> fileEntityList = fileRepository.findAll();
+        List<FileDTO> fileEntityList = fileService.findAll();
         assertThat(fileEntityList).hasSize(databaseSizeBeforeCreate + 1);
-        FileEntity testFileEntity = fileEntityList.get(fileEntityList.size() - 1);
+        FileDTO testFileEntity = fileEntityList.get(fileEntityList.size() - 1);
         assertThat(testFileEntity.getFilename()).isEqualTo(DEFAULT_FILENAME);
-        assertThat(testFileEntity.getFiletype()).isEqualTo(DEFAULT_FILETYPE);
+        assertThat(testFileEntity.getFileType()).isEqualTo(DEFAULT_FILETYPE);
     }
 
     @Test
     @Transactional
     public void createFileEntityWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = fileRepository.findAll().size();
+        int databaseSizeBeforeCreate = fileService.findAll().size();
 
         // Create the FileEntity with an existing ID
         fileEntity.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restFileEntityMockMvc.perform(post("/api/file-entities")
+        restFileEntityMockMvc.perform(post("/api/file")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(fileEntity)))
             .andExpect(status().isBadRequest());
 
         // Validate the FileEntity in the database
-        List<FileEntity> fileEntityList = fileRepository.findAll();
+        List<FileDTO> fileEntityList = fileService.findAll();
         assertThat(fileEntityList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -140,10 +147,10 @@ public class FileResourceIntTest {
     @Transactional
     public void getAllFileEntities() throws Exception {
         // Initialize the database
-        fileRepository.saveAndFlush(fileEntity);
+        fileService.save(fileEntity);
 
         // Get all the fileEntityList
-        restFileEntityMockMvc.perform(get("/api/file-entities?sort=id,desc"))
+        restFileEntityMockMvc.perform(get("/api/file?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(fileEntity.getId().intValue())))
@@ -155,10 +162,10 @@ public class FileResourceIntTest {
     @Transactional
     public void getFileEntity() throws Exception {
         // Initialize the database
-        fileRepository.saveAndFlush(fileEntity);
+        fileService.save(fileEntity);
 
         // Get the fileEntity
-        restFileEntityMockMvc.perform(get("/api/file-entities/{id}", fileEntity.getId()))
+        restFileEntityMockMvc.perform(get("/api/file/{id}", fileEntity.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(fileEntity.getId().intValue()))
@@ -170,7 +177,7 @@ public class FileResourceIntTest {
     @Transactional
     public void getNonExistingFileEntity() throws Exception {
         // Get the fileEntity
-        restFileEntityMockMvc.perform(get("/api/file-entities/{id}", Long.MAX_VALUE))
+        restFileEntityMockMvc.perform(get("/api/file/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
     }
 
@@ -178,45 +185,44 @@ public class FileResourceIntTest {
     @Transactional
     public void updateFileEntity() throws Exception {
         // Initialize the database
-        fileRepository.saveAndFlush(fileEntity);
-        int databaseSizeBeforeUpdate = fileRepository.findAll().size();
+        fileService.save(fileEntity);
+        int databaseSizeBeforeUpdate = fileService.findAll().size();
 
         // Update the fileEntity
-        FileEntity updatedFileEntity = fileRepository.findOne(fileEntity.getId());
+        FileDTO updatedFileEntity = fileService.findById(fileEntity.getId());
         // Disconnect from session so that the updates on updatedFileEntity are not directly saved in db
         em.detach(updatedFileEntity);
-        updatedFileEntity
-            .filename(UPDATED_FILENAME)
-            .filetype(UPDATED_FILETYPE);
+        updatedFileEntity.setFilename(UPDATED_FILENAME);
+        updatedFileEntity.setFileType(UPDATED_FILETYPE);
 
-        restFileEntityMockMvc.perform(put("/api/file-entities")
+        restFileEntityMockMvc.perform(put("/api/file")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(updatedFileEntity)))
             .andExpect(status().isOk());
 
         // Validate the FileEntity in the database
-        List<FileEntity> fileEntityList = fileRepository.findAll();
+        List<FileDTO> fileEntityList = fileService.findAll();
         assertThat(fileEntityList).hasSize(databaseSizeBeforeUpdate);
-        FileEntity testFileEntity = fileEntityList.get(fileEntityList.size() - 1);
+        FileDTO testFileEntity = fileEntityList.get(fileEntityList.size() - 1);
         assertThat(testFileEntity.getFilename()).isEqualTo(UPDATED_FILENAME);
-        assertThat(testFileEntity.getFiletype()).isEqualTo(UPDATED_FILETYPE);
+        assertThat(testFileEntity.getFileType()).isEqualTo(UPDATED_FILETYPE);
     }
 
     @Test
     @Transactional
     public void updateNonExistingFileEntity() throws Exception {
-        int databaseSizeBeforeUpdate = fileRepository.findAll().size();
+        int databaseSizeBeforeUpdate = fileService.findAll().size();
 
         // Create the FileEntity
 
         // If the entity doesn't have an ID, it will be created instead of just being updated
-        restFileEntityMockMvc.perform(put("/api/file-entities")
+        restFileEntityMockMvc.perform(put("/api/file")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(fileEntity)))
             .andExpect(status().isCreated());
 
         // Validate the FileEntity in the database
-        List<FileEntity> fileEntityList = fileRepository.findAll();
+        List<FileDTO> fileEntityList = fileService.findAll();
         assertThat(fileEntityList).hasSize(databaseSizeBeforeUpdate + 1);
     }
 
@@ -224,16 +230,16 @@ public class FileResourceIntTest {
     @Transactional
     public void deleteFileEntity() throws Exception {
         // Initialize the database
-        fileRepository.saveAndFlush(fileEntity);
-        int databaseSizeBeforeDelete = fileRepository.findAll().size();
+        fileService.save(fileEntity);
+        int databaseSizeBeforeDelete = fileService.findAll().size();
 
         // Get the fileEntity
-        restFileEntityMockMvc.perform(delete("/api/file-entities/{id}", fileEntity.getId())
+        restFileEntityMockMvc.perform(delete("/api/file/{id}", fileEntity.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
         // Validate the database is empty
-        List<FileEntity> fileEntityList = fileRepository.findAll();
+        List<FileDTO> fileEntityList = fileService.findAll();
         assertThat(fileEntityList).hasSize(databaseSizeBeforeDelete - 1);
     }
 

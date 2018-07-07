@@ -7,15 +7,11 @@ import java.io.Serializable;
 
 public class FileDTO implements Serializable {
 
-    @NotNull
     private Long id;
 
     private String filename;
 
     private String fileType;
-
-    @NotNull
-    private Long candidateId;
 
     public Long getId() {
         return id;
@@ -39,14 +35,6 @@ public class FileDTO implements Serializable {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
-    }
-
-    public Long getCandidateId() {
-        return candidateId;
-    }
-
-    public void setCandidateId(Long candidateId) {
-        this.candidateId = candidateId;
     }
 
     @Override

@@ -66,6 +66,8 @@ public class CacheConfiguration {
             cm.createCache(io.avand.domain.EvaluationCriteriaEntity.class.getName(), jcacheConfiguration);
             cm.createCache(io.avand.domain.CompanyPipelineEntity.class.getName(), jcacheConfiguration);
             cm.createCache(io.avand.domain.CandidateEvaluationCriteriaEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(io.avand.domain.SubscriptionEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(io.avand.domain.SubscriptionHistoryEntity.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

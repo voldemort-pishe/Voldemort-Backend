@@ -11,4 +11,25 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
+    private final ApplicationProperties.Base base = new ApplicationProperties.Base();
+    public ApplicationProperties.Base getBase() {
+        return this.base;
+    }
+
+    public static class Base {
+        private String url = "";
+
+        public Base() {
+
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+    }
+
 }

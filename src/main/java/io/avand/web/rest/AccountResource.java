@@ -27,9 +27,12 @@ public class AccountResource {
 
     private final Logger log = LoggerFactory.getLogger(AccountResource.class);
     private final UserService userService;
+    private final SecurityUtils securityUtils;
 
-    public AccountResource(UserService userService) {
+    public AccountResource(UserService userService,
+                           SecurityUtils securityUtils) {
         this.userService = userService;
+        this.securityUtils = securityUtils;
     }
 
     @PostMapping("/register")
@@ -99,7 +102,7 @@ public class AccountResource {
     @PostMapping("/change-password")
     public ResponseEntity changePassword(@RequestBody @Valid UserChangePasswordVM changePasswordVM) {
         log.debug("REST Request to change password");
-        Optional<String> login = SecurityUtils.getCurrentUserLogin();
+        Optional<String> login = securityUtils.getCurrentUserLogin();
         if (login.isPresent()) {
             try {
                 userService.changePassword(login.get(), changePasswordVM.getOldPassword(), changePasswordVM.getNewPassword());

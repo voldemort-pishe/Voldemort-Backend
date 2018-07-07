@@ -2,10 +2,11 @@ package io.avand.security;
 
 import io.avand.service.UserService;
 import io.avand.service.dto.UserDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import javassist.NotFoundException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Optional;
@@ -13,19 +14,14 @@ import java.util.Optional;
 /**
  * Utility class for Spring Security.
  */
-public final class SecurityUtils {
+@Component
+public class SecurityUtils {
 
-    private static UserService userLocalService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @PostConstruct
-    private void initStaticService() {
-        userLocalService = this.userService;
-    }
-
-    private SecurityUtils() {
+    private SecurityUtils(UserService userService) {
+        this.userService = userService;
     }
 
     /**
@@ -33,7 +29,7 @@ public final class SecurityUtils {
      *
      * @return the login of the current user
      */
-    public static Optional<String> getCurrentUserLogin() {
+    public Optional<String> getCurrentUserLogin() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(securityContext.getAuthentication())
             .map(authentication -> {
@@ -47,9 +43,18 @@ public final class SecurityUtils {
             });
     }
 
-    public static Long getCurrentUserId() {
-        UserDTO userDTO = userLocalService.findByLogin(getCurrentUserLogin().get()).get();
-        return userDTO.getId();
+    public Long getCurrentUserId() throws NotFoundException {
+        Optional<String> currentUserLogin = getCurrentUserLogin();
+        if (currentUserLogin.isPresent()) {
+            Optional<UserDTO> userDTO = userService.findByLogin(currentUserLogin.get());
+            if (userDTO.isPresent()) {
+                return userDTO.get().getId();
+            } else {
+                throw new NotFoundException("You Should Login First");
+            }
+        } else {
+            throw new NotFoundException("You Should Login First");
+        }
     }
 
     /**
@@ -57,7 +62,7 @@ public final class SecurityUtils {
      *
      * @return the JWT of the current user
      */
-    public static Optional<String> getCurrentUserJWT() {
+    public Optional<String> getCurrentUserJWT() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(securityContext.getAuthentication())
             .filter(authentication -> authentication.getCredentials() instanceof String)
@@ -69,7 +74,7 @@ public final class SecurityUtils {
      *
      * @return true if the user is authenticated, false otherwise
      */
-    public static boolean isAuthenticated() {
+    public boolean isAuthenticated() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(securityContext.getAuthentication())
             .map(authentication -> authentication.getAuthorities().stream()
@@ -85,7 +90,7 @@ public final class SecurityUtils {
      * @param authority the authority to check
      * @return true if the current user has the authority, false otherwise
      */
-    public static boolean isCurrentUserInRole(String authority) {
+    public boolean isCurrentUserInRole(String authority) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(securityContext.getAuthentication())
             .map(authentication -> authentication.getAuthorities().stream()

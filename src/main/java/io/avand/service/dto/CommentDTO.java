@@ -7,14 +7,11 @@ import java.io.Serializable;
 
 public class CommentDTO implements Serializable {
 
-    @NotNull
     private Long id;
-
-    private Long userId;
 
     private String commentText;
 
-    private Boolean Status;
+    private Boolean status;
 
     @NotNull
     private Long candidateId;
@@ -27,14 +24,6 @@ public class CommentDTO implements Serializable {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public String getCommentText() {
         return commentText;
     }
@@ -44,11 +33,11 @@ public class CommentDTO implements Serializable {
     }
 
     public Boolean getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(Boolean status) {
-        Status = status;
+        this.status = status;
     }
 
     public Long getCandidateId() {
@@ -63,9 +52,8 @@ public class CommentDTO implements Serializable {
     public String toString() {
         return "CommentDTO{" +
             "id=" + id +
-            ", userId=" + userId +
             ", commentText='" + commentText + '\'' +
-            ", Status=" + Status +
+            ", status=" + status +
             '}';
     }
 }

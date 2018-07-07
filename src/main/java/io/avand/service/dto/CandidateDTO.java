@@ -8,10 +8,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CandidateDTO implements Serializable {
-
-    @NotNull
-    private Long id;
+public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
 
     private String firstName;
 
@@ -25,7 +22,7 @@ public class CandidateDTO implements Serializable {
 
     private Long candidatePipeline;
 
-    private Set<FeedbackDTO> feedbacks = new HashSet<>();
+    private Set<FeedbackDTO> feedback = new HashSet<>();
 
     private Set<CommentDTO> comments = new HashSet<>();
 
@@ -33,18 +30,10 @@ public class CandidateDTO implements Serializable {
 
     private Set<CandidateScheduleDTO> candidateSchedule = new HashSet<>();
 
-    private FileDTO file;
+    private Long fileId;
 
     @NotNull
     private Long jobId;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -94,12 +83,12 @@ public class CandidateDTO implements Serializable {
         this.candidatePipeline = candidatePipeline;
     }
 
-    public Set<FeedbackDTO> getFeedbacks() {
-        return feedbacks;
+    public Set<FeedbackDTO> getFeedback() {
+        return feedback;
     }
 
-    public void setFeedbacks(Set<FeedbackDTO> feedbacks) {
-        this.feedbacks = feedbacks;
+    public void setFeedback(Set<FeedbackDTO> feedback) {
+        this.feedback = feedback;
     }
 
     public Set<CommentDTO> getComments() {
@@ -126,12 +115,12 @@ public class CandidateDTO implements Serializable {
         this.candidateSchedule = candidateSchedule;
     }
 
-    public FileDTO getFile() {
-        return file;
+    public Long getFileId() {
+        return fileId;
     }
 
-    public void setFile(FileDTO file) {
-        this.file = file;
+    public void setFileId(Long fileId) {
+        this.fileId = fileId;
     }
 
     public Long getJobId() {
@@ -145,18 +134,17 @@ public class CandidateDTO implements Serializable {
     @Override
     public String toString() {
         return "CandidateDTO{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
+            "firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", state=" + state +
             ", cellphone='" + cellphone + '\'' +
             ", email='" + email + '\'' +
             ", candidatePipeline=" + candidatePipeline +
-            ", feedbacks=" + feedbacks +
+            ", feedback=" + feedback +
             ", comments=" + comments +
             ", candidateEvaluationCriteria=" + candidateEvaluationCriteria +
             ", candidateSchedule=" + candidateSchedule +
-            ", file=" + file +
+            ", fileId=" + fileId +
             '}';
     }
 }

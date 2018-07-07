@@ -20,7 +20,7 @@ import io.avand.domain.enumeration.CandidateState;
 @Entity
 @Table(name = "candidate_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class CandidateEntity implements Serializable {
+public class CandidateEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -67,8 +67,9 @@ public class CandidateEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<CandidateEvaluationCriteriaEntity> candidateEvaluationCriteria = new HashSet<>();
 
+    //TODO should un comment this
     @OneToOne(optional = false)
-    @NotNull
+//    @NotNull
     @JoinColumn(unique = true)
     private FileEntity file;
 

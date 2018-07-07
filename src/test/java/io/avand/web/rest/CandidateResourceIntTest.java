@@ -6,6 +6,8 @@ import io.avand.domain.CandidateEntity;
 import io.avand.domain.FileEntity;
 import io.avand.domain.JobEntity;
 import io.avand.repository.CandidateRepository;
+import io.avand.service.CandidateService;
+import io.avand.service.dto.CandidateDTO;
 import io.avand.service.dto.JobDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import io.avand.domain.enumeration.CandidateState;
+
 /**
  * Test class for the CandidateEntityResource REST controller.
  *
@@ -64,7 +67,7 @@ public class CandidateResourceIntTest {
     private static final Long UPDATED_CANDIDATE_PIPELINE = 2L;
 
     @Autowired
-    private CandidateRepository candidateRepository;
+    private CandidateService candidateService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -80,12 +83,12 @@ public class CandidateResourceIntTest {
 
     private MockMvc restCandidateEntityMockMvc;
 
-    private CandidateEntity candidateEntity;
+    private CandidateDTO candidateEntity;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final CandidateResource candidateResource = new CandidateResource(candidateRepository);
+        final CandidateResource candidateResource = new CandidateResource(candidateService);
         this.restCandidateEntityMockMvc = MockMvcBuilders.standaloneSetup(candidateResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,18 +98,18 @@ public class CandidateResourceIntTest {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static CandidateEntity createEntity(EntityManager em) {
-        CandidateEntity candidateEntity = new CandidateEntity()
-            .firstName(DEFAULT_FIRST_NAME)
-            .lastName(DEFAULT_LAST_NAME)
-            .state(DEFAULT_STATE)
-            .cellphone(DEFAULT_CELLPHONE)
-            .email(DEFAULT_EMAIL)
-            .candidatePipeline(DEFAULT_CANDIDATE_PIPELINE);
+    public static CandidateDTO createEntity(EntityManager em) {
+        CandidateDTO candidateEntity = new CandidateDTO();
+        candidateEntity.setFirstName(DEFAULT_FIRST_NAME);
+        candidateEntity.setLastName(DEFAULT_LAST_NAME);
+        candidateEntity.setState(DEFAULT_STATE);
+        candidateEntity.setCellphone(DEFAULT_CELLPHONE);
+        candidateEntity.setEmail(DEFAULT_EMAIL);
+        candidateEntity.setCandidatePipeline(DEFAULT_CANDIDATE_PIPELINE);
         // Add required entity
 //        FileEntity file = FileResourceIntTest.createEntity(em);
 //        em.persist(file);
@@ -128,18 +131,18 @@ public class CandidateResourceIntTest {
     @Test
     @Transactional
     public void createCandidateEntity() throws Exception {
-        int databaseSizeBeforeCreate = candidateRepository.findAll().size();
+        int databaseSizeBeforeCreate = candidateService.findAll().size();
 
         // Create the CandidateEntity
-        restCandidateEntityMockMvc.perform(post("/api/candidate-entities")
+        restCandidateEntityMockMvc.perform(post("/api/candidate")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(candidateEntity)))
             .andExpect(status().isCreated());
 
         // Validate the CandidateEntity in the database
-        List<CandidateEntity> candidateEntityList = candidateRepository.findAll();
+        List<CandidateDTO> candidateEntityList = candidateService.findAll();
         assertThat(candidateEntityList).hasSize(databaseSizeBeforeCreate + 1);
-        CandidateEntity testCandidateEntity = candidateEntityList.get(candidateEntityList.size() - 1);
+        CandidateDTO testCandidateEntity = candidateEntityList.get(candidateEntityList.size() - 1);
         assertThat(testCandidateEntity.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
         assertThat(testCandidateEntity.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
         assertThat(testCandidateEntity.getState()).isEqualTo(DEFAULT_STATE);
@@ -151,19 +154,19 @@ public class CandidateResourceIntTest {
     @Test
     @Transactional
     public void createCandidateEntityWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = candidateRepository.findAll().size();
+        int databaseSizeBeforeCreate = candidateService.findAll().size();
 
         // Create the CandidateEntity with an existing ID
         candidateEntity.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restCandidateEntityMockMvc.perform(post("/api/candidate-entities")
+        restCandidateEntityMockMvc.perform(post("/api/candidate")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(candidateEntity)))
             .andExpect(status().isBadRequest());
 
         // Validate the CandidateEntity in the database
-        List<CandidateEntity> candidateEntityList = candidateRepository.findAll();
+        List<CandidateDTO> candidateEntityList = candidateService.findAll();
         assertThat(candidateEntityList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -171,10 +174,10 @@ public class CandidateResourceIntTest {
     @Transactional
     public void getAllCandidateEntities() throws Exception {
         // Initialize the database
-        candidateRepository.saveAndFlush(candidateEntity);
+        candidateService.save(candidateEntity);
 
         // Get all the candidateEntityList
-        restCandidateEntityMockMvc.perform(get("/api/candidate-entities?sort=id,desc"))
+        restCandidateEntityMockMvc.perform(get("/api/candidate?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(candidateEntity.getId().intValue())))
@@ -191,10 +194,10 @@ public class CandidateResourceIntTest {
     @Transactional
     public void getCandidateEntity() throws Exception {
         // Initialize the database
-        candidateRepository.saveAndFlush(candidateEntity);
+        candidateService.save(candidateEntity);
 
         // Get the candidateEntity
-        restCandidateEntityMockMvc.perform(get("/api/candidate-entities/{id}", candidateEntity.getId()))
+        restCandidateEntityMockMvc.perform(get("/api/candidate/{id}", candidateEntity.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(candidateEntity.getId().intValue()))
@@ -211,7 +214,7 @@ public class CandidateResourceIntTest {
     @Transactional
     public void getNonExistingCandidateEntity() throws Exception {
         // Get the candidateEntity
-        restCandidateEntityMockMvc.perform(get("/api/candidate-entities/{id}", Long.MAX_VALUE))
+        restCandidateEntityMockMvc.perform(get("/api/candidate/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
     }
 
@@ -219,30 +222,30 @@ public class CandidateResourceIntTest {
     @Transactional
     public void updateCandidateEntity() throws Exception {
         // Initialize the database
-        candidateRepository.saveAndFlush(candidateEntity);
-        int databaseSizeBeforeUpdate = candidateRepository.findAll().size();
+        candidateService.save(candidateEntity);
+        int databaseSizeBeforeUpdate = candidateService.findAll().size();
 
         // Update the candidateEntity
-        CandidateEntity updatedCandidateEntity = candidateRepository.findOne(candidateEntity.getId());
+        CandidateDTO updatedCandidateEntity = candidateService.findById(candidateEntity.getId());
         // Disconnect from session so that the updates on updatedCandidateEntity are not directly saved in db
         em.detach(updatedCandidateEntity);
         updatedCandidateEntity
-            .firstName(UPDATED_FIRST_NAME)
-            .lastName(UPDATED_LAST_NAME)
-            .state(UPDATED_STATE)
-            .cellphone(UPDATED_CELLPHONE)
-            .email(UPDATED_EMAIL)
-            .candidatePipeline(UPDATED_CANDIDATE_PIPELINE);
+            .setFirstName(UPDATED_FIRST_NAME);
+        updatedCandidateEntity.setLastName(UPDATED_LAST_NAME);
+        updatedCandidateEntity.setState(UPDATED_STATE);
+        updatedCandidateEntity.setCellphone(UPDATED_CELLPHONE);
+        updatedCandidateEntity.setEmail(UPDATED_EMAIL);
+        updatedCandidateEntity.setCandidatePipeline(UPDATED_CANDIDATE_PIPELINE);
 
-        restCandidateEntityMockMvc.perform(put("/api/candidate-entities")
+        restCandidateEntityMockMvc.perform(put("/api/candidate")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(updatedCandidateEntity)))
             .andExpect(status().isOk());
 
         // Validate the CandidateEntity in the database
-        List<CandidateEntity> candidateEntityList = candidateRepository.findAll();
+        List<CandidateDTO> candidateEntityList = candidateService.findAll();
         assertThat(candidateEntityList).hasSize(databaseSizeBeforeUpdate);
-        CandidateEntity testCandidateEntity = candidateEntityList.get(candidateEntityList.size() - 1);
+        CandidateDTO testCandidateEntity = candidateEntityList.get(candidateEntityList.size() - 1);
         assertThat(testCandidateEntity.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
         assertThat(testCandidateEntity.getLastName()).isEqualTo(UPDATED_LAST_NAME);
         assertThat(testCandidateEntity.getState()).isEqualTo(UPDATED_STATE);
@@ -254,18 +257,18 @@ public class CandidateResourceIntTest {
     @Test
     @Transactional
     public void updateNonExistingCandidateEntity() throws Exception {
-        int databaseSizeBeforeUpdate = candidateRepository.findAll().size();
+        int databaseSizeBeforeUpdate = candidateService.findAll().size();
 
         // Create the CandidateEntity
 
         // If the entity doesn't have an ID, it will be created instead of just being updated
-        restCandidateEntityMockMvc.perform(put("/api/candidate-entities")
+        restCandidateEntityMockMvc.perform(put("/api/candidate")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(candidateEntity)))
             .andExpect(status().isCreated());
 
         // Validate the CandidateEntity in the database
-        List<CandidateEntity> candidateEntityList = candidateRepository.findAll();
+        List<CandidateDTO> candidateEntityList = candidateService.findAll();
         assertThat(candidateEntityList).hasSize(databaseSizeBeforeUpdate + 1);
     }
 
@@ -273,16 +276,16 @@ public class CandidateResourceIntTest {
     @Transactional
     public void deleteCandidateEntity() throws Exception {
         // Initialize the database
-        candidateRepository.saveAndFlush(candidateEntity);
-        int databaseSizeBeforeDelete = candidateRepository.findAll().size();
+        candidateService.save(candidateEntity);
+        int databaseSizeBeforeDelete = candidateService.findAll().size();
 
         // Get the candidateEntity
-        restCandidateEntityMockMvc.perform(delete("/api/candidate-entities/{id}", candidateEntity.getId())
+        restCandidateEntityMockMvc.perform(delete("/api/candidate/{id}", candidateEntity.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
         // Validate the database is empty
-        List<CandidateEntity> candidateEntityList = candidateRepository.findAll();
+        List<CandidateDTO> candidateEntityList = candidateService.findAll();
         assertThat(candidateEntityList).hasSize(databaseSizeBeforeDelete - 1);
     }
 

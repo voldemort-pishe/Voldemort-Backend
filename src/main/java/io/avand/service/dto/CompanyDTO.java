@@ -17,9 +17,6 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
     private Set<CompanyPipelineDTO> companyPipelines = new HashSet<>();
 
-    @NotNull
-    private Long userId;
-
     public String getName() {
         return name;
     }
@@ -50,14 +47,6 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setCompanyPipelines(Set<CompanyPipelineDTO> companyPipelines) {
         this.companyPipelines = companyPipelines;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     @Override

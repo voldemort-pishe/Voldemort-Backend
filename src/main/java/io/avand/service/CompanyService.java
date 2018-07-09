@@ -11,8 +11,8 @@ public interface CompanyService {
 
     CompanyDTO findById(Long id) throws NotFoundException;
 
-    List<CompanyDTO> findAll();
+    List<CompanyDTO> findAll() throws NotFoundException;
 
-    void delete(Long id);
+    void delete(Long id) throws NotFoundException;
 
 }

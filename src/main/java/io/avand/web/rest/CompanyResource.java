@@ -101,8 +101,12 @@ public class CompanyResource {
     @Timed
     public ResponseEntity getAllCompany() {
         log.debug("REST request to get all CompanyEntities");
-        List<CompanyDTO> companyDTOS = companyService.findAll();
-        return new ResponseEntity<>(companyDTOS, HttpStatus.OK);
+        try {
+            List<CompanyDTO> companyDTOS = companyService.findAll();
+            return new ResponseEntity<>(companyDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     /**
@@ -118,7 +122,7 @@ public class CompanyResource {
         CompanyDTO companyDTO = null;
         try {
             companyDTO = companyService.findById(id);
-            return new ResponseEntity<>(companyDTO,HttpStatus.OK);
+            return new ResponseEntity<>(companyDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
@@ -134,7 +138,11 @@ public class CompanyResource {
     @Timed
     public ResponseEntity<Void> deleteCompanyEntity(@PathVariable Long id) {
         log.debug("REST request to delete CompanyEntity : {}", id);
-        companyService.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        try {
+            companyService.delete(id);
+            return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 }

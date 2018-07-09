@@ -54,7 +54,7 @@ public class CompanyServiceImpl implements CompanyService {
             if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
                 return companyMapper.toDto(companyEntity);
             } else {
-                throw new NotFoundException("You Don't have access to find this company");
+                throw new SecurityException("You Don't have access to find this company");
             }
         } else {
             throw new NotFoundException("Company Not Found By Id");
@@ -78,7 +78,7 @@ public class CompanyServiceImpl implements CompanyService {
             if (companyEntity.getUser().getId().equals(userId)) {
                 companyRepository.delete(companyEntity);
             } else {
-                throw new NotFoundException("You Don't have access to delete this company");
+                throw new SecurityException("You Don't have access to delete this company");
             }
         } else {
             throw new NotFoundException("Company Not Found By Id");

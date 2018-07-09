@@ -123,7 +123,7 @@ public class CompanyResource {
         try {
             companyDTO = companyService.findById(id);
             return new ResponseEntity<>(companyDTO, HttpStatus.OK);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -141,7 +141,7 @@ public class CompanyResource {
         try {
             companyService.delete(id);
             return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }

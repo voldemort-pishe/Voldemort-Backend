@@ -4,6 +4,7 @@ import io.avand.domain.CompanyEntity;
 import io.avand.domain.JobEntity;
 import io.avand.repository.CompanyRepository;
 import io.avand.repository.JobRepository;
+import io.avand.security.SecurityUtils;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
 import io.avand.service.mapper.JobMapper;
@@ -22,13 +23,16 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final CompanyRepository companyRepository;
     private final JobMapper jobMapper;
+    private final SecurityUtils securityUtils;
 
     public JobServiceImpl(JobRepository jobRepository,
                           CompanyRepository companyRepository,
-                          JobMapper jobMapper) {
+                          JobMapper jobMapper,
+                          SecurityUtils securityUtils) {
         this.jobRepository = jobRepository;
         this.companyRepository = companyRepository;
         this.jobMapper = jobMapper;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -36,10 +40,14 @@ public class JobServiceImpl implements JobService {
         log.debug("Request to save job : {}", jobDTO);
         CompanyEntity companyEntity = companyRepository.findOne(jobDTO.getCompanyId());
         if (companyEntity != null) {
-            JobEntity jobEntity = jobMapper.toEntity(jobDTO);
-            jobEntity.setCompany(companyEntity);
-            jobEntity = jobRepository.save(jobEntity);
-            return jobMapper.toDto(jobEntity);
+            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
+                JobEntity jobEntity = jobMapper.toEntity(jobDTO);
+                jobEntity.setCompany(companyEntity);
+                jobEntity = jobRepository.save(jobEntity);
+                return jobMapper.toDto(jobEntity);
+            } else {
+                throw new SecurityException("You Don't Have Access To Create Job For This Company");
+            }
         } else {
             throw new NotFoundException("Company Not Available");
         }
@@ -50,24 +58,37 @@ public class JobServiceImpl implements JobService {
         log.debug("Request to find job by id : {}", id);
         JobEntity jobEntity = jobRepository.findOne(id);
         if (jobEntity != null) {
-            return jobMapper.toDto(jobEntity);
+            if (jobEntity.getCompany().getUser().getId().equals(securityUtils.getCurrentUserId())) {
+                return jobMapper.toDto(jobEntity);
+            } else {
+                throw new SecurityException("You Don't Have Access To Find This Job");
+            }
         } else {
             throw new NotFoundException("Job Not Available");
         }
     }
 
     @Override
-    public List<JobDTO> findAll() {
+    public List<JobDTO> findAll() throws NotFoundException {
         log.debug("Request to find all job");
-        return jobRepository.findAll()
+        return jobRepository.findAllByCompany_User_Id(securityUtils.getCurrentUserId())
             .stream()
             .map(jobMapper::toDto)
             .collect(Collectors.toList());
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws NotFoundException {
         log.debug("Request to delete job by id : {}", id);
-        jobRepository.delete(id);
+        JobEntity jobEntity = jobRepository.findOne(id);
+        if (jobEntity != null) {
+            if (jobEntity.getCompany().getUser().getId().equals(securityUtils.getCurrentUserId())) {
+                jobRepository.delete(jobEntity);
+            }else {
+                throw new SecurityException("You Don't Have Access To Delete This Job");
+            }
+        } else {
+            throw new NotFoundException("Job Not Available");
+        }
     }
 }

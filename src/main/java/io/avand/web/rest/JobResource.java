@@ -60,7 +60,7 @@ public class JobResource {
             return ResponseEntity.created(new URI("/api/job/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
                 .body(result);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -86,7 +86,7 @@ public class JobResource {
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, jobDTO.getId().toString()))
                 .body(result);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -100,8 +100,12 @@ public class JobResource {
     @Timed
     public ResponseEntity getAllJob() {
         log.debug("REST request to get all Job");
-        List<JobDTO> jobDTOS = jobService.findAll();
-        return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
+        try {
+            List<JobDTO> jobDTOS = jobService.findAll();
+            return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     /**
@@ -117,7 +121,7 @@ public class JobResource {
         try {
             JobDTO jobDTO = jobService.findById(id);
             return ResponseUtil.wrapOrNotFound(Optional.ofNullable(jobDTO));
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -132,7 +136,11 @@ public class JobResource {
     @Timed
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         log.debug("REST request to delete Job : {}", id);
-        jobService.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        try {
+            jobService.delete(id);
+            return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        }catch (NotFoundException | SecurityException e){
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 }

@@ -11,7 +11,7 @@ public interface JobService {
 
     JobDTO findById(Long id) throws NotFoundException;
 
-    List<JobDTO> findAll();
+    List<JobDTO> findAll() throws NotFoundException;
 
-    void delete(Long id);
+    void delete(Long id) throws NotFoundException;
 }

@@ -1,4 +1,4 @@
-package io.avand.repository;
+package io.avand.repository.jpa;
 
 import io.avand.domain.CompanyEntity;
 import io.avand.domain.UserEntity;

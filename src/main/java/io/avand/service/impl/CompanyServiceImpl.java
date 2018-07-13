@@ -1,9 +1,8 @@
 package io.avand.service.impl;
 
 import io.avand.domain.CompanyEntity;
-import io.avand.domain.UserEntity;
-import io.avand.repository.CompanyRepository;
-import io.avand.repository.UserRepository;
+import io.avand.repository.jpa.CompanyRepository;
+import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CompanyService;
 import io.avand.service.dto.CompanyDTO;

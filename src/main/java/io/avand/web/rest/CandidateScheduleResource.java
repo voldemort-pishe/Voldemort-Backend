@@ -3,7 +3,7 @@ package io.avand.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.avand.domain.CandidateScheduleEntity;
 
-import io.avand.repository.CandidateScheduleRepository;
+import io.avand.repository.jpa.CandidateScheduleRepository;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;

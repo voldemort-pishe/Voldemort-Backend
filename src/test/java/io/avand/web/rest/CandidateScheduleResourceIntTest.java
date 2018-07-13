@@ -3,7 +3,7 @@ package io.avand.web.rest;
 import io.avand.VoldemortApp;
 
 import io.avand.domain.CandidateScheduleEntity;
-import io.avand.repository.CandidateScheduleRepository;
+import io.avand.repository.jpa.CandidateScheduleRepository;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;

@@ -3,8 +3,6 @@ package io.avand.web.rest;
 import io.avand.VoldemortApp;
 
 import io.avand.domain.FileEntity;
-import io.avand.domain.CandidateEntity;
-import io.avand.repository.FileRepository;
 import io.avand.service.FileService;
 import io.avand.service.StorageService;
 import io.avand.service.dto.CandidateDTO;

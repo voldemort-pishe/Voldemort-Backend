@@ -1,4 +1,4 @@
 /**
  * Spring Data JPA repositories.
  */
-package io.avand.repository;
+package io.avand.repository.jpa;

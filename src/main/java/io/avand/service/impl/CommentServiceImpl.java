@@ -2,8 +2,8 @@ package io.avand.service.impl;
 
 import io.avand.domain.CandidateEntity;
 import io.avand.domain.CommentEntity;
-import io.avand.repository.CandidateRepository;
-import io.avand.repository.CommentRepository;
+import io.avand.repository.jpa.CandidateRepository;
+import io.avand.repository.jpa.CommentRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CommentService;
 import io.avand.service.dto.CommentDTO;

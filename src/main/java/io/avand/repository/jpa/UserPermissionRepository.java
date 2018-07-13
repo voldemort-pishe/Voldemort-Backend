@@ -1,4 +1,4 @@
-package io.avand.repository;
+package io.avand.repository.jpa;
 
 import io.avand.domain.UserPermissionEntity;
 import org.springframework.stereotype.Repository;

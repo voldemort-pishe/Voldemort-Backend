@@ -3,7 +3,6 @@ package io.avand.web.rest;
 import io.avand.VoldemortApp;
 
 import io.avand.domain.FeedbackEntity;
-import io.avand.repository.FeedbackRepository;
 import io.avand.service.FeedbackService;
 import io.avand.service.dto.FeedbackDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;

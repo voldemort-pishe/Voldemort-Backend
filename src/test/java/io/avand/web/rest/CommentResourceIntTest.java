@@ -3,7 +3,6 @@ package io.avand.web.rest;
 import io.avand.VoldemortApp;
 
 import io.avand.domain.CommentEntity;
-import io.avand.repository.CommentRepository;
 import io.avand.service.CommentService;
 import io.avand.service.dto.CommentDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;

@@ -1,7 +1,6 @@
 package io.avand.service.impl;
 
-import io.avand.domain.PlanEntity;
-import io.avand.repository.PlanRepository;
+import io.avand.repository.jpa.PlanRepository;
 import io.avand.service.PlanService;
 import io.avand.service.dto.PlanDTO;
 import io.avand.service.mapper.PlanMapper;

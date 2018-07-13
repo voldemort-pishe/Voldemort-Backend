@@ -3,7 +3,7 @@ package io.avand.web.rest;
 import io.avand.VoldemortApp;
 
 import io.avand.domain.TalentPoolEntity;
-import io.avand.repository.TalentPoolRepository;
+import io.avand.repository.jpa.TalentPoolRepository;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;

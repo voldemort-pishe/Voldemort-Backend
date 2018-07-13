@@ -2,7 +2,7 @@ package io.avand.security;
 
 
 import io.avand.domain.UserEntity;
-import io.avand.repository.UserRepository;
+import io.avand.repository.jpa.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;

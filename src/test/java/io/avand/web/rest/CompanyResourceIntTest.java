@@ -3,11 +3,8 @@ package io.avand.web.rest;
 import io.avand.VoldemortApp;
 
 import io.avand.domain.CompanyEntity;
-import io.avand.domain.JobEntity;
-import io.avand.repository.CompanyRepository;
 import io.avand.service.CompanyService;
 import io.avand.service.dto.CompanyDTO;
-import io.avand.service.dto.JobDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;

@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 
 @Configuration
-@EnableJpaRepositories("io.avand.repository")
+@EnableJpaRepositories("io.avand.repository.jpa")
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 @EnableTransactionManagement
 public class DatabaseConfiguration {

@@ -3,7 +3,7 @@ package io.avand.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.avand.domain.PaymentTransactionEntity;
 
-import io.avand.repository.PaymentTransactionRepository;
+import io.avand.repository.jpa.PaymentTransactionRepository;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;

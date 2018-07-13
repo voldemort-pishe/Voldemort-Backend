@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.InvoiceEntity;
+import io.avand.domain.entity.jpa.InvoiceEntity;
 import io.avand.repository.jpa.InvoiceRepository;
 import io.avand.web.rest.errors.ExceptionTranslator;
 

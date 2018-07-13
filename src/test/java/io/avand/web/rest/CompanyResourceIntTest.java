@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.CompanyEntity;
+import io.avand.domain.entity.jpa.CompanyEntity;
 import io.avand.service.CompanyService;
 import io.avand.service.dto.CompanyDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;

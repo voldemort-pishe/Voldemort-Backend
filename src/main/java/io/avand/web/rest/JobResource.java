@@ -1,7 +1,6 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.JobEntity;
 
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;

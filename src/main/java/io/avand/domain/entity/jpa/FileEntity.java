@@ -1,4 +1,4 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A AuthorityEntity.
+ * A FileEntity.
  */
 @Entity
-@Table(name = "authority_entity")
+@Table(name = "file_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AuthorityEntity implements Serializable {
+public class FileEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,8 +22,11 @@ public class AuthorityEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "filename")
+    private String filename;
+
+    @Column(name = "file_type")
+    private String fileType;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -34,19 +37,26 @@ public class AuthorityEntity implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFilename() {
+        return filename;
     }
 
-    public AuthorityEntity name(String name) {
-        this.name = name;
+    public FileEntity filename(String filename) {
+        this.filename = filename;
         return this;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -56,11 +66,11 @@ public class AuthorityEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AuthorityEntity authorityEntity = (AuthorityEntity) o;
-        if (authorityEntity.getId() == null || getId() == null) {
+        FileEntity fileEntity = (FileEntity) o;
+        if (fileEntity.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), authorityEntity.getId());
+        return Objects.equals(getId(), fileEntity.getId());
     }
 
     @Override
@@ -70,9 +80,10 @@ public class AuthorityEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "AuthorityEntity{" +
+        return "FileEntity{" +
             "id=" + getId() +
-            ", name='" + getName() + "'" +
+            ", filename='" + getFilename() + "'" +
+            ", fileType='" + getFileType() + "'" +
             "}";
     }
 }

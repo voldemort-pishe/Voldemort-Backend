@@ -1,4 +1,4 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

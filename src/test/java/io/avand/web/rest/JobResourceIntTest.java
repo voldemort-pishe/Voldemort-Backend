@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.JobEntity;
+import io.avand.domain.entity.jpa.JobEntity;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;

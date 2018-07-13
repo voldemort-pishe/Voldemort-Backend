@@ -1,4 +1,4 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -8,15 +8,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-import io.avand.domain.enumeration.FeedbackRate;
-
 /**
- * A FeedbackEntity.
+ * A CommentEntity.
  */
 @Entity
-@Table(name = "feedback_entity")
+@Table(name = "comment_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class FeedbackEntity implements Serializable {
+public class CommentEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,12 +26,11 @@ public class FeedbackEntity implements Serializable {
     private Long userId;
 
     @Lob
-    @Column(name = "feedback_text")
-    private String feedbackText;
+    @Column(name = "comment_text")
+    private String commentText;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "rating")
-    private FeedbackRate rating;
+    @Column(name = "status")
+    private Boolean status;
 
     @ManyToOne
     private CandidateEntity candidate;
@@ -51,7 +48,7 @@ public class FeedbackEntity implements Serializable {
         return userId;
     }
 
-    public FeedbackEntity userId(Long userId) {
+    public CommentEntity userId(Long userId) {
         this.userId = userId;
         return this;
     }
@@ -60,37 +57,37 @@ public class FeedbackEntity implements Serializable {
         this.userId = userId;
     }
 
-    public String getFeedbackText() {
-        return feedbackText;
+    public String getCommentText() {
+        return commentText;
     }
 
-    public FeedbackEntity feedbackText(String feedbackText) {
-        this.feedbackText = feedbackText;
+    public CommentEntity commentText(String commentText) {
+        this.commentText = commentText;
         return this;
     }
 
-    public void setFeedbackText(String feedbackText) {
-        this.feedbackText = feedbackText;
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
     }
 
-    public FeedbackRate getRating() {
-        return rating;
+    public Boolean isStatus() {
+        return status;
     }
 
-    public FeedbackEntity rating(FeedbackRate rating) {
-        this.rating = rating;
+    public CommentEntity status(Boolean status) {
+        this.status = status;
         return this;
     }
 
-    public void setRating(FeedbackRate rating) {
-        this.rating = rating;
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
     public CandidateEntity getCandidate() {
         return candidate;
     }
 
-    public FeedbackEntity candidate(CandidateEntity candidateEntity) {
+    public CommentEntity candidate(CandidateEntity candidateEntity) {
         this.candidate = candidateEntity;
         return this;
     }
@@ -108,11 +105,11 @@ public class FeedbackEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        FeedbackEntity feedbackEntity = (FeedbackEntity) o;
-        if (feedbackEntity.getId() == null || getId() == null) {
+        CommentEntity commentEntity = (CommentEntity) o;
+        if (commentEntity.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), feedbackEntity.getId());
+        return Objects.equals(getId(), commentEntity.getId());
     }
 
     @Override
@@ -122,11 +119,11 @@ public class FeedbackEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "FeedbackEntity{" +
+        return "CommentEntity{" +
             "id=" + getId() +
             ", userId=" + getUserId() +
-            ", feedbackText='" + getFeedbackText() + "'" +
-            ", rating='" + getRating() + "'" +
+            ", commentText='" + getCommentText() + "'" +
+            ", status='" + isStatus() + "'" +
             "}";
     }
 }

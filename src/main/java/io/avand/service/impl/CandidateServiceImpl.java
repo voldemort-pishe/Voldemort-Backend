@@ -1,8 +1,8 @@
 package io.avand.service.impl;
 
-import io.avand.domain.CandidateEntity;
-import io.avand.domain.FileEntity;
-import io.avand.domain.JobEntity;
+import io.avand.domain.entity.jpa.CandidateEntity;
+import io.avand.domain.entity.jpa.FileEntity;
+import io.avand.domain.entity.jpa.JobEntity;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.JobRepository;

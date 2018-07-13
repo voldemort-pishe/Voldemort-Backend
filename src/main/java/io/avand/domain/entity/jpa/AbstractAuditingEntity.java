@@ -1,7 +1,5 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,7 +11,6 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.Objects;
 
 /**
  * A AbstractAuditingEntity.

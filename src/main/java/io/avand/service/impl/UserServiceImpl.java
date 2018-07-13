@@ -1,9 +1,9 @@
 package io.avand.service.impl;
 
-import io.avand.domain.AuthorityEntity;
-import io.avand.domain.UserAuthorityEntity;
-import io.avand.domain.UserEntity;
-import io.avand.domain.UserPermissionEntity;
+import io.avand.domain.entity.jpa.AuthorityEntity;
+import io.avand.domain.entity.jpa.UserAuthorityEntity;
+import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.domain.entity.jpa.UserPermissionEntity;
 import io.avand.domain.enumeration.PermissionAction;
 import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.UserRepository;

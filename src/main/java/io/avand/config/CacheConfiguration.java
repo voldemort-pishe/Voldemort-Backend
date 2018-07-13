@@ -1,5 +1,6 @@
 package io.avand.config;
 
+import io.avand.domain.entity.jpa.*;
 import io.github.jhipster.config.JHipsterProperties;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -33,41 +34,41 @@ public class CacheConfiguration {
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
-            cm.createCache(io.avand.domain.UserEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.UserEntity.class.getName() + ".authorities", jcacheConfiguration);
-            cm.createCache(io.avand.domain.UserEntity.class.getName() + ".companies", jcacheConfiguration);
-            cm.createCache(io.avand.domain.UserEntity.class.getName() + ".talentPools", jcacheConfiguration);
-            cm.createCache(io.avand.domain.UserEntity.class.getName() + ".invoices", jcacheConfiguration);
-            cm.createCache(io.avand.domain.UserAuthorityEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.UserAuthorityEntity.class.getName() + ".userPermissions", jcacheConfiguration);
-            cm.createCache(io.avand.domain.AuthorityEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.CandidateEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.CandidateEntity.class.getName() + ".feedbacks", jcacheConfiguration);
-            cm.createCache(io.avand.domain.CandidateEntity.class.getName() + ".comments", jcacheConfiguration);
-            cm.createCache(io.avand.domain.CandidateEntity.class.getName() + ".candidateSchedules", jcacheConfiguration);
-            cm.createCache(io.avand.domain.CandidateEntity.class.getName() + ".candidateEvaluationCriteria", jcacheConfiguration);
-            cm.createCache(io.avand.domain.JobEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.JobEntity.class.getName() + ".candidate", jcacheConfiguration);
-            cm.createCache(io.avand.domain.CompanyEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.CompanyEntity.class.getName() + ".jobs", jcacheConfiguration);
-            cm.createCache(io.avand.domain.CompanyEntity.class.getName() + ".evaluationCriteria", jcacheConfiguration);
-            cm.createCache(io.avand.domain.CompanyEntity.class.getName() + ".companyPipelines", jcacheConfiguration);
-            cm.createCache(io.avand.domain.InvoiceEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.InvoiceEntity.class.getName() + ".paymentTransactions", jcacheConfiguration);
-            cm.createCache(io.avand.domain.PlanEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.AbstractAuditingEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.FileEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.CommentEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.FeedbackEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.UserPermissionEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.CandidateScheduleEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.PaymentTransactionEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.TalentPoolEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.EvaluationCriteriaEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.CompanyPipelineEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.CandidateEvaluationCriteriaEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.SubscriptionEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(io.avand.domain.SubscriptionHistoryEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(UserEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(UserEntity.class.getName() + ".authorities", jcacheConfiguration);
+            cm.createCache(UserEntity.class.getName() + ".companies", jcacheConfiguration);
+            cm.createCache(UserEntity.class.getName() + ".talentPools", jcacheConfiguration);
+            cm.createCache(UserEntity.class.getName() + ".invoices", jcacheConfiguration);
+            cm.createCache(UserAuthorityEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(UserAuthorityEntity.class.getName() + ".userPermissions", jcacheConfiguration);
+            cm.createCache(AuthorityEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CandidateEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CandidateEntity.class.getName() + ".feedbacks", jcacheConfiguration);
+            cm.createCache(CandidateEntity.class.getName() + ".comments", jcacheConfiguration);
+            cm.createCache(CandidateEntity.class.getName() + ".candidateSchedules", jcacheConfiguration);
+            cm.createCache(CandidateEntity.class.getName() + ".candidateEvaluationCriteria", jcacheConfiguration);
+            cm.createCache(JobEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(JobEntity.class.getName() + ".candidate", jcacheConfiguration);
+            cm.createCache(CompanyEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CompanyEntity.class.getName() + ".jobs", jcacheConfiguration);
+            cm.createCache(CompanyEntity.class.getName() + ".evaluationCriteria", jcacheConfiguration);
+            cm.createCache(CompanyEntity.class.getName() + ".companyPipelines", jcacheConfiguration);
+            cm.createCache(InvoiceEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(InvoiceEntity.class.getName() + ".paymentTransactions", jcacheConfiguration);
+            cm.createCache(PlanEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(AbstractAuditingEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(FileEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CommentEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(FeedbackEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(UserPermissionEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CandidateScheduleEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(PaymentTransactionEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(TalentPoolEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(EvaluationCriteriaEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CompanyPipelineEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CandidateEvaluationCriteriaEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(SubscriptionEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(SubscriptionHistoryEntity.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

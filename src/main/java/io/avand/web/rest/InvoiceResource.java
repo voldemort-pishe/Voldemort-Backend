@@ -1,7 +1,7 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.InvoiceEntity;
+import io.avand.domain.entity.jpa.InvoiceEntity;
 
 import io.avand.repository.jpa.InvoiceRepository;
 import io.avand.web.rest.errors.BadRequestAlertException;

@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.CompanyPipelineEntity;
+import io.avand.domain.entity.jpa.CompanyPipelineEntity;
 import io.avand.repository.jpa.CompanyPipelineRepository;
 import io.avand.web.rest.errors.ExceptionTranslator;
 

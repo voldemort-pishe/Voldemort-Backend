@@ -1,4 +1,4 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -8,13 +8,15 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+import io.avand.domain.enumeration.FeedbackRate;
+
 /**
- * A CandidateEvaluationCriteriaEntity.
+ * A FeedbackEntity.
  */
 @Entity
-@Table(name = "cec_entity")
+@Table(name = "feedback_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class CandidateEvaluationCriteriaEntity implements Serializable {
+public class FeedbackEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,11 +28,12 @@ public class CandidateEvaluationCriteriaEntity implements Serializable {
     private Long userId;
 
     @Lob
-    @Column(name = "user_comment")
-    private String userComment;
+    @Column(name = "feedback_text")
+    private String feedbackText;
 
-    @Column(name = "evaluation_criteria_id")
-    private Long evaluationCriteriaId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rating")
+    private FeedbackRate rating;
 
     @ManyToOne
     private CandidateEntity candidate;
@@ -48,7 +51,7 @@ public class CandidateEvaluationCriteriaEntity implements Serializable {
         return userId;
     }
 
-    public CandidateEvaluationCriteriaEntity userId(Long userId) {
+    public FeedbackEntity userId(Long userId) {
         this.userId = userId;
         return this;
     }
@@ -57,37 +60,37 @@ public class CandidateEvaluationCriteriaEntity implements Serializable {
         this.userId = userId;
     }
 
-    public String getUserComment() {
-        return userComment;
+    public String getFeedbackText() {
+        return feedbackText;
     }
 
-    public CandidateEvaluationCriteriaEntity userComment(String userComment) {
-        this.userComment = userComment;
+    public FeedbackEntity feedbackText(String feedbackText) {
+        this.feedbackText = feedbackText;
         return this;
     }
 
-    public void setUserComment(String userComment) {
-        this.userComment = userComment;
+    public void setFeedbackText(String feedbackText) {
+        this.feedbackText = feedbackText;
     }
 
-    public Long getEvaluationCriteriaId() {
-        return evaluationCriteriaId;
+    public FeedbackRate getRating() {
+        return rating;
     }
 
-    public CandidateEvaluationCriteriaEntity evaluationCriteriaId(Long evaluationCriteriaId) {
-        this.evaluationCriteriaId = evaluationCriteriaId;
+    public FeedbackEntity rating(FeedbackRate rating) {
+        this.rating = rating;
         return this;
     }
 
-    public void setEvaluationCriteriaId(Long evaluationCriteriaId) {
-        this.evaluationCriteriaId = evaluationCriteriaId;
+    public void setRating(FeedbackRate rating) {
+        this.rating = rating;
     }
 
     public CandidateEntity getCandidate() {
         return candidate;
     }
 
-    public CandidateEvaluationCriteriaEntity candidate(CandidateEntity candidateEntity) {
+    public FeedbackEntity candidate(CandidateEntity candidateEntity) {
         this.candidate = candidateEntity;
         return this;
     }
@@ -105,11 +108,11 @@ public class CandidateEvaluationCriteriaEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CandidateEvaluationCriteriaEntity candidateEvaluationCriteriaEntity = (CandidateEvaluationCriteriaEntity) o;
-        if (candidateEvaluationCriteriaEntity.getId() == null || getId() == null) {
+        FeedbackEntity feedbackEntity = (FeedbackEntity) o;
+        if (feedbackEntity.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), candidateEvaluationCriteriaEntity.getId());
+        return Objects.equals(getId(), feedbackEntity.getId());
     }
 
     @Override
@@ -119,11 +122,11 @@ public class CandidateEvaluationCriteriaEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "CandidateEvaluationCriteriaEntity{" +
+        return "FeedbackEntity{" +
             "id=" + getId() +
             ", userId=" + getUserId() +
-            ", userComment='" + getUserComment() + "'" +
-            ", evaluationCriteriaId=" + getEvaluationCriteriaId() +
+            ", feedbackText='" + getFeedbackText() + "'" +
+            ", rating='" + getRating() + "'" +
             "}";
     }
 }

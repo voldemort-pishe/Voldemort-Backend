@@ -1,7 +1,7 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.EvaluationCriteriaEntity;
+import io.avand.domain.entity.jpa.EvaluationCriteriaEntity;
 
 import io.avand.repository.jpa.EvaluationCriteriaRepository;
 import io.avand.web.rest.errors.BadRequestAlertException;

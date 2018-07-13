@@ -1,7 +1,6 @@
 package io.avand.repository.jpa;
 
-import io.avand.domain.CompanyEntity;
-import io.avand.domain.UserEntity;
+import io.avand.domain.entity.jpa.CompanyEntity;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.*;

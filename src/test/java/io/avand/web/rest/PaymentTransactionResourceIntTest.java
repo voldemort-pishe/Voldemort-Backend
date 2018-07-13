@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.PaymentTransactionEntity;
+import io.avand.domain.entity.jpa.PaymentTransactionEntity;
 import io.avand.repository.jpa.PaymentTransactionRepository;
 import io.avand.web.rest.errors.ExceptionTranslator;
 

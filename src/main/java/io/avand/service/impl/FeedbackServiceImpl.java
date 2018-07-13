@@ -1,7 +1,7 @@
 package io.avand.service.impl;
 
-import io.avand.domain.CandidateEntity;
-import io.avand.domain.FeedbackEntity;
+import io.avand.domain.entity.jpa.CandidateEntity;
+import io.avand.domain.entity.jpa.FeedbackEntity;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FeedbackRepository;
 import io.avand.security.SecurityUtils;

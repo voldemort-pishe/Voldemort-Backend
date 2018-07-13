@@ -1,4 +1,4 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.JobType;

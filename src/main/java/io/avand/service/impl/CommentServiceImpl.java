@@ -1,7 +1,7 @@
 package io.avand.service.impl;
 
-import io.avand.domain.CandidateEntity;
-import io.avand.domain.CommentEntity;
+import io.avand.domain.entity.jpa.CandidateEntity;
+import io.avand.domain.entity.jpa.CommentEntity;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.CommentRepository;
 import io.avand.security.SecurityUtils;

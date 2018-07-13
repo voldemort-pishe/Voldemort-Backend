@@ -1,7 +1,7 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.CandidateScheduleEntity;
+import io.avand.domain.entity.jpa.CandidateScheduleEntity;
 
 import io.avand.repository.jpa.CandidateScheduleRepository;
 import io.avand.web.rest.errors.BadRequestAlertException;

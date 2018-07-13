@@ -1,7 +1,6 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.CandidateEntity;
 
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
@@ -22,8 +21,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing CandidateEntity.

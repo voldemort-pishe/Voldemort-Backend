@@ -1,6 +1,6 @@
 package io.avand.service.mapper;
 
-import io.avand.domain.PlanEntity;
+import io.avand.domain.entity.jpa.PlanEntity;
 import io.avand.service.dto.PlanDTO;
 import org.mapstruct.Mapper;
 

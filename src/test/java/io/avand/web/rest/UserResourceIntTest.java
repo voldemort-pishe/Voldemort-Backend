@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.UserEntity;
+import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.web.rest.errors.ExceptionTranslator;
 

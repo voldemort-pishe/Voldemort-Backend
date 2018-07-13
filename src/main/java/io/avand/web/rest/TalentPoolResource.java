@@ -1,7 +1,7 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.TalentPoolEntity;
+import io.avand.domain.entity.jpa.TalentPoolEntity;
 
 import io.avand.repository.jpa.TalentPoolRepository;
 import io.avand.web.rest.errors.BadRequestAlertException;

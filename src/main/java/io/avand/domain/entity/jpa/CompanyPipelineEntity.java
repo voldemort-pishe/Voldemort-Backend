@@ -1,4 +1,4 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A EvaluationCriteriaEntity.
+ * A CompanyPipelineEntity.
  */
 @Entity
-@Table(name = "evaluation_criteria_entity")
+@Table(name = "company_pipeline_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class EvaluationCriteriaEntity implements Serializable {
+public class CompanyPipelineEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,8 +25,8 @@ public class EvaluationCriteriaEntity implements Serializable {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "weight")
+    private Integer weight;
 
     @ManyToOne
     private CompanyEntity company;
@@ -44,7 +44,7 @@ public class EvaluationCriteriaEntity implements Serializable {
         return title;
     }
 
-    public EvaluationCriteriaEntity title(String title) {
+    public CompanyPipelineEntity title(String title) {
         this.title = title;
         return this;
     }
@@ -53,24 +53,24 @@ public class EvaluationCriteriaEntity implements Serializable {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public Integer getWeight() {
+        return weight;
     }
 
-    public EvaluationCriteriaEntity description(String description) {
-        this.description = description;
+    public CompanyPipelineEntity weight(Integer weight) {
+        this.weight = weight;
         return this;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 
     public CompanyEntity getCompany() {
         return company;
     }
 
-    public EvaluationCriteriaEntity company(CompanyEntity companyEntity) {
+    public CompanyPipelineEntity company(CompanyEntity companyEntity) {
         this.company = companyEntity;
         return this;
     }
@@ -88,11 +88,11 @@ public class EvaluationCriteriaEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        EvaluationCriteriaEntity evaluationCriteriaEntity = (EvaluationCriteriaEntity) o;
-        if (evaluationCriteriaEntity.getId() == null || getId() == null) {
+        CompanyPipelineEntity companyPipelineEntity = (CompanyPipelineEntity) o;
+        if (companyPipelineEntity.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), evaluationCriteriaEntity.getId());
+        return Objects.equals(getId(), companyPipelineEntity.getId());
     }
 
     @Override
@@ -102,10 +102,10 @@ public class EvaluationCriteriaEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "EvaluationCriteriaEntity{" +
+        return "CompanyPipelineEntity{" +
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
-            ", description='" + getDescription() + "'" +
+            ", weight=" + getWeight() +
             "}";
     }
 }

@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.PlanEntity;
+import io.avand.domain.entity.jpa.PlanEntity;
 import io.avand.repository.jpa.PlanRepository;
 import io.avand.service.PlanService;
 import io.avand.web.rest.errors.ExceptionTranslator;

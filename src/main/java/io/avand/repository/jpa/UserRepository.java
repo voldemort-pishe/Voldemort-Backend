@@ -1,6 +1,6 @@
 package io.avand.repository.jpa;
 
-import io.avand.domain.UserEntity;
+import io.avand.domain.entity.jpa.UserEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 

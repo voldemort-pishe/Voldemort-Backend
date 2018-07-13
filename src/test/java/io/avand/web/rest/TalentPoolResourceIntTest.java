@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.TalentPoolEntity;
+import io.avand.domain.entity.jpa.TalentPoolEntity;
 import io.avand.repository.jpa.TalentPoolRepository;
 import io.avand.web.rest.errors.ExceptionTranslator;
 

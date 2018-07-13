@@ -1,22 +1,20 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A FileEntity.
+ * A AuthorityEntity.
  */
 @Entity
-@Table(name = "file_entity")
+@Table(name = "authority_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class FileEntity implements Serializable {
+public class AuthorityEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,11 +22,8 @@ public class FileEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "filename")
-    private String filename;
-
-    @Column(name = "file_type")
-    private String fileType;
+    @Column(name = "name")
+    private String name;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -39,26 +34,19 @@ public class FileEntity implements Serializable {
         this.id = id;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getName() {
+        return name;
     }
 
-    public FileEntity filename(String filename) {
-        this.filename = filename;
+    public AuthorityEntity name(String name) {
+        this.name = name;
         return this;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setName(String name) {
+        this.name = name;
     }
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
-    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -68,11 +56,11 @@ public class FileEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        FileEntity fileEntity = (FileEntity) o;
-        if (fileEntity.getId() == null || getId() == null) {
+        AuthorityEntity authorityEntity = (AuthorityEntity) o;
+        if (authorityEntity.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), fileEntity.getId());
+        return Objects.equals(getId(), authorityEntity.getId());
     }
 
     @Override
@@ -82,10 +70,9 @@ public class FileEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "FileEntity{" +
+        return "AuthorityEntity{" +
             "id=" + getId() +
-            ", filename='" + getFilename() + "'" +
-            ", fileType='" + getFileType() + "'" +
+            ", name='" + getName() + "'" +
             "}";
     }
 }

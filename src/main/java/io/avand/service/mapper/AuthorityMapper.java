@@ -1,6 +1,6 @@
 package io.avand.service.mapper;
 
-import io.avand.domain.AuthorityEntity;
+import io.avand.domain.entity.jpa.AuthorityEntity;
 import io.avand.service.dto.AuthorityDTO;
 import org.mapstruct.Mapper;
 

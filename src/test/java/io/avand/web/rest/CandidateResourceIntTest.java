@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.CandidateEntity;
+import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
 import io.avand.web.rest.errors.ExceptionTranslator;

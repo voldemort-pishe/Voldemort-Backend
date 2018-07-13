@@ -1,4 +1,4 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A CommentEntity.
+ * A CandidateEvaluationCriteriaEntity.
  */
 @Entity
-@Table(name = "comment_entity")
+@Table(name = "cec_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class CommentEntity implements Serializable {
+public class CandidateEvaluationCriteriaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,11 +26,11 @@ public class CommentEntity implements Serializable {
     private Long userId;
 
     @Lob
-    @Column(name = "comment_text")
-    private String commentText;
+    @Column(name = "user_comment")
+    private String userComment;
 
-    @Column(name = "status")
-    private Boolean status;
+    @Column(name = "evaluation_criteria_id")
+    private Long evaluationCriteriaId;
 
     @ManyToOne
     private CandidateEntity candidate;
@@ -48,7 +48,7 @@ public class CommentEntity implements Serializable {
         return userId;
     }
 
-    public CommentEntity userId(Long userId) {
+    public CandidateEvaluationCriteriaEntity userId(Long userId) {
         this.userId = userId;
         return this;
     }
@@ -57,37 +57,37 @@ public class CommentEntity implements Serializable {
         this.userId = userId;
     }
 
-    public String getCommentText() {
-        return commentText;
+    public String getUserComment() {
+        return userComment;
     }
 
-    public CommentEntity commentText(String commentText) {
-        this.commentText = commentText;
+    public CandidateEvaluationCriteriaEntity userComment(String userComment) {
+        this.userComment = userComment;
         return this;
     }
 
-    public void setCommentText(String commentText) {
-        this.commentText = commentText;
+    public void setUserComment(String userComment) {
+        this.userComment = userComment;
     }
 
-    public Boolean isStatus() {
-        return status;
+    public Long getEvaluationCriteriaId() {
+        return evaluationCriteriaId;
     }
 
-    public CommentEntity status(Boolean status) {
-        this.status = status;
+    public CandidateEvaluationCriteriaEntity evaluationCriteriaId(Long evaluationCriteriaId) {
+        this.evaluationCriteriaId = evaluationCriteriaId;
         return this;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
+    public void setEvaluationCriteriaId(Long evaluationCriteriaId) {
+        this.evaluationCriteriaId = evaluationCriteriaId;
     }
 
     public CandidateEntity getCandidate() {
         return candidate;
     }
 
-    public CommentEntity candidate(CandidateEntity candidateEntity) {
+    public CandidateEvaluationCriteriaEntity candidate(CandidateEntity candidateEntity) {
         this.candidate = candidateEntity;
         return this;
     }
@@ -105,11 +105,11 @@ public class CommentEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CommentEntity commentEntity = (CommentEntity) o;
-        if (commentEntity.getId() == null || getId() == null) {
+        CandidateEvaluationCriteriaEntity candidateEvaluationCriteriaEntity = (CandidateEvaluationCriteriaEntity) o;
+        if (candidateEvaluationCriteriaEntity.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), commentEntity.getId());
+        return Objects.equals(getId(), candidateEvaluationCriteriaEntity.getId());
     }
 
     @Override
@@ -119,11 +119,11 @@ public class CommentEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "CommentEntity{" +
+        return "CandidateEvaluationCriteriaEntity{" +
             "id=" + getId() +
             ", userId=" + getUserId() +
-            ", commentText='" + getCommentText() + "'" +
-            ", status='" + isStatus() + "'" +
+            ", userComment='" + getUserComment() + "'" +
+            ", evaluationCriteriaId=" + getEvaluationCriteriaId() +
             "}";
     }
 }

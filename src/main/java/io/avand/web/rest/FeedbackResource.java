@@ -1,7 +1,6 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.FeedbackEntity;
 
 import io.avand.service.FeedbackService;
 import io.avand.service.dto.FeedbackDTO;

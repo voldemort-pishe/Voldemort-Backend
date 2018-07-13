@@ -1,7 +1,7 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.CompanyPipelineEntity;
+import io.avand.domain.entity.jpa.CompanyPipelineEntity;
 
 import io.avand.repository.jpa.CompanyPipelineRepository;
 import io.avand.web.rest.errors.BadRequestAlertException;

@@ -1,14 +1,12 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.CompanyEntity;
 
 import io.avand.service.CompanyService;
 import io.avand.service.dto.CompanyDTO;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST controller for managing CompanyEntity.

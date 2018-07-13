@@ -2,7 +2,7 @@ package io.avand.web.rest;
 
 import io.avand.VoldemortApp;
 
-import io.avand.domain.EvaluationCriteriaEntity;
+import io.avand.domain.entity.jpa.EvaluationCriteriaEntity;
 import io.avand.repository.jpa.EvaluationCriteriaRepository;
 import io.avand.web.rest.errors.ExceptionTranslator;
 

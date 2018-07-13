@@ -1,7 +1,6 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.CommentEntity;
 
 import io.avand.service.CommentService;
 import io.avand.service.dto.CommentDTO;

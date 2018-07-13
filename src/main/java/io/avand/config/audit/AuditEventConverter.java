@@ -1,6 +1,6 @@
 package io.avand.config.audit;
 
-import io.avand.domain.PersistentAuditEvent;
+import io.avand.domain.entity.jpa.PersistentAuditEvent;
 
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;

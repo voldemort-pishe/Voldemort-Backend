@@ -1,6 +1,6 @@
 package io.avand.service.impl;
 
-import io.avand.domain.FileEntity;
+import io.avand.domain.entity.jpa.FileEntity;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.service.FileService;
 import io.avand.service.dto.FileDTO;

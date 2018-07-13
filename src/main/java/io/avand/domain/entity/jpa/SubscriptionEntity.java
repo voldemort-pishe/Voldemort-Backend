@@ -1,4 +1,4 @@
-package io.avand.domain;
+package io.avand.domain.entity.jpa;
 
 import io.avand.domain.enumeration.SubscriptionStatus;
 import org.hibernate.annotations.Cache;

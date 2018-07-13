@@ -1,6 +1,6 @@
 package io.avand.repository.jpa;
 
-import io.avand.domain.JobEntity;
+import io.avand.domain.entity.jpa.JobEntity;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.*;

@@ -1,6 +1,6 @@
 package io.avand.service.impl;
 
-import io.avand.domain.InvoiceEntity;
+import io.avand.domain.entity.jpa.InvoiceEntity;
 import io.avand.domain.enumeration.InvoiceStatus;
 import io.avand.repository.jpa.InvoiceRepository;
 import io.avand.service.InvoiceService;

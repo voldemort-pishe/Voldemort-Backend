@@ -1,6 +1,6 @@
 package io.avand.service;
 
-import io.avand.domain.UserEntity;
+import io.avand.domain.entity.jpa.UserEntity;
 import io.github.jhipster.config.JHipsterProperties;
 import org.apache.commons.lang3.CharEncoding;
 import org.slf4j.Logger;

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" dir="rtl">
+<head>
+    <title th:text="#{email.invitationMember.title}">مجوز</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}"/>
+</head>
+<body style="direction: rtl">
+<p th:text="#{email.invitationMember.greeting(${user.login})}">
+    عزیز
+</p>
+<p th:text="#{email.invitationMember.text1(${})}">
+    مجوز دسترسی به شما در سایت آوند داده شده است
+</p>
+<p>
+    <span th:text="#{email.invitationMember.text2}">با احترام،</span>
+    <br/>
+    <em th:text="#{email.signature}">آوند.</em>
+</p>
+</body>
+</html>

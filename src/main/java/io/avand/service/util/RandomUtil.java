@@ -51,6 +51,15 @@ public final class RandomUtil {
         return RandomStringUtils.randomNumeric(DEF_COUNT);
     }
 
+    /**
+     * Generate an invitation key.
+     *
+     * @return the generated invitation key
+     */
+    public static String generateInvitationKey() {
+        return RandomStringUtils.randomNumeric(DEF_COUNT);
+    }
+
 
 
     public static String shortUUID() {

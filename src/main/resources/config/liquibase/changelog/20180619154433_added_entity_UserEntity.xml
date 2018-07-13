@@ -50,6 +50,10 @@
                 <constraints nullable="true" />
             </column>
 
+            <column name="invitation_key" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
             <column name="reset_key" type="varchar(255)">
                 <constraints nullable="true" />
             </column>

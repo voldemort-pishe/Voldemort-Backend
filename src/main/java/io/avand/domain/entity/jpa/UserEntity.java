@@ -47,6 +47,9 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "activation_key")
     private String activationKey;
 
+    @Column(name = "invitation_key")
+    private String invitationKey;
+
     @Column(name = "reset_key")
     private String resetKey;
 
@@ -171,6 +174,14 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setActivationKey(String activationKey) {
         this.activationKey = activationKey;
+    }
+
+    public String getInvitationKey() {
+        return invitationKey;
+    }
+
+    public void setInvitationKey(String invitationKey) {
+        this.invitationKey = invitationKey;
     }
 
     public String getResetKey() {
@@ -331,6 +342,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
             ", email='" + getEmail() + "'" +
             ", activated='" + isActivated() + "'" +
             ", activationKey='" + getActivationKey() + "'" +
+            ", invitationKey='" + getInvitationKey() + "'" +
             ", resetKey='" + getResetKey() + "'" +
             ", resetDate='" + getResetDate() + "'" +
             "}";

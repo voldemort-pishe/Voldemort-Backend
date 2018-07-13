@@ -22,6 +22,8 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     private String activationKey;
 
+    private String invitationKey;
+
     private String resetKey;
 
     private ZonedDateTime resetDate;
@@ -90,6 +92,14 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
         this.activationKey = activationKey;
     }
 
+    public String getInvitationKey() {
+        return invitationKey;
+    }
+
+    public void setInvitationKey(String invitationKey) {
+        this.invitationKey = invitationKey;
+    }
+
     public String getResetKey() {
         return resetKey;
     }
@@ -148,6 +158,7 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
             ", email='" + email + '\'' +
             ", activated=" + activated +
             ", activationKey='" + activationKey + '\'' +
+            ", invitationKey='" + invitationKey + '\'' +
             ", resetKey='" + resetKey + '\'' +
             ", resetDate=" + resetDate +
             ", userAuthorities=" + userAuthorities +

@@ -43,6 +43,11 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<CompanyPipelineEntity> companyPipelines = new HashSet<>();
 
+    @OneToMany(mappedBy = "company")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<CompanyMemberEntity> companyMembers = new HashSet<>();
+
     @ManyToOne
     private UserEntity user;
 
@@ -143,6 +148,14 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
         this.companyPipelines = companyPipelineEntities;
     }
 
+    public Set<CompanyMemberEntity> getCompanyMembers() {
+        return companyMembers;
+    }
+
+    public void setCompanyMembers(Set<CompanyMemberEntity> companyMemberEntities) {
+        this.companyMembers = companyMemberEntities;
+    }
+
     public UserEntity getUser() {
         return user;
     }
@@ -180,8 +193,12 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     @Override
     public String toString() {
         return "CompanyEntity{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            "}";
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", jobs=" + jobs +
+            ", evaluationCriteria=" + evaluationCriteria +
+            ", companyPipelines=" + companyPipelines +
+            ", companyMembers=" + companyMembers +
+            '}';
     }
 }

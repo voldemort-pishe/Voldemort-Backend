@@ -95,6 +95,18 @@ public class MailService {
 		sendEmailFromTemplate(user, "activationEmail", "email.activation.title");
 	}
 
+    @Async
+    public void sendInviationEmail(UserEntity user) {
+        log.debug("Sending activation email to '{}'", user.getEmail());
+        sendEmailFromTemplate(user, "invitationEmail", "email.activation.title");
+    }
+
+    @Async
+    public void sendInviationMemberEmail(UserEntity user) {
+        log.debug("Sending activation email to '{}'", user.getEmail());
+        sendEmailFromTemplate(user, "invitationMemberEmail", "email.activation.title");
+    }
+
 	@Async
 	public void sendCreationEmail(UserEntity user) {
 		log.debug("Sending creation email to '{}'", user.getEmail());

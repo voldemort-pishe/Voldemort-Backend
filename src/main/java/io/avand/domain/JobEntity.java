@@ -1,6 +1,7 @@
 package io.avand.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.JobType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -28,6 +29,13 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private JobType type;
+
+    @Column(name = "location")
+    private String location;
 
     @OneToMany(mappedBy = "job")
     @JsonIgnore
@@ -58,6 +66,23 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public JobType getType() {
+        return type;
+    }
+
+    public void setType(JobType type) {
+        this.type = type;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Set<CandidateEntity> getCandidate() {
@@ -105,8 +130,10 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Override
     public String toString() {
         return "JobEntity{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            "}";
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", type=" + type +
+            ", location='" + location + '\'' +
+            '}';
     }
 }

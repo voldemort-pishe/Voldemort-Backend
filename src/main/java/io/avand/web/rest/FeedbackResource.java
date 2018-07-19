@@ -58,7 +58,7 @@ public class FeedbackResource {
             return ResponseEntity.created(new URI("/api/feedback/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
                 .body(result);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | IllegalStateException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -80,7 +80,7 @@ public class FeedbackResource {
             return createFeedback(feedbackDTO);
         }
         try {
-            FeedbackDTO result = feedbackService.save(feedbackDTO);
+            FeedbackDTO result = feedbackService.update(feedbackDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, feedbackDTO.getId().toString()))
                 .body(result);

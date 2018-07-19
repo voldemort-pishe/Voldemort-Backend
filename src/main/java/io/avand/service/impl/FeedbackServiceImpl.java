@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,13 +41,34 @@ public class FeedbackServiceImpl implements FeedbackService {
         log.debug("Request to save feedback : {}", feedbackDTO);
         CandidateEntity candidateEntity = candidateRepository.findOne(feedbackDTO.getCandidateId());
         if (candidateEntity != null) {
-            FeedbackEntity feedbackEntity = feedbackMapper.toEntity(feedbackDTO);
-            feedbackEntity.setUserId(securityUtils.getCurrentUserId());
-            feedbackEntity.setCandidate(candidateEntity);
+            Long userId = securityUtils.getCurrentUserId();
+            Optional<FeedbackEntity> previousFeedback =
+                feedbackRepository.findByUserIdAndCandidate_Id(userId, candidateEntity.getId());
+            if (!previousFeedback.isPresent()) {
+                FeedbackEntity feedbackEntity = feedbackMapper.toEntity(feedbackDTO);
+                feedbackEntity.setUserId(userId);
+                feedbackEntity.setCandidate(candidateEntity);
+                feedbackEntity = feedbackRepository.save(feedbackEntity);
+                return feedbackMapper.toDto(feedbackEntity);
+            } else {
+                throw new IllegalStateException("there is a feedback of you for this candidate");
+            }
+        } else {
+            throw new NotFoundException("Candidate Not Found");
+        }
+    }
+
+    @Override
+    public FeedbackDTO update(FeedbackDTO feedbackDTO) throws NotFoundException {
+        log.debug("Request to update feedback : {}", feedbackDTO);
+        FeedbackEntity feedbackEntity = feedbackRepository.findOne(feedbackDTO.getId());
+        if (feedbackEntity != null) {
+            feedbackEntity.setFeedbackText(feedbackDTO.getFeedbackText());
+            feedbackEntity.setRating(feedbackDTO.getRating());
             feedbackEntity = feedbackRepository.save(feedbackEntity);
             return feedbackMapper.toDto(feedbackEntity);
         } else {
-            throw new NotFoundException("Candidate Not Found");
+            throw new NotFoundException("FeedBack Not Available");
         }
     }
 

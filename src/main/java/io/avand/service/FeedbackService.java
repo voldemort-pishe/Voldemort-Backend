@@ -9,6 +9,8 @@ public interface FeedbackService {
 
     FeedbackDTO save(FeedbackDTO feedbackDTO) throws NotFoundException;
 
+    FeedbackDTO update(FeedbackDTO feedbackDTO) throws NotFoundException;
+
     FeedbackDTO findById(Long id) throws NotFoundException;
 
     List<FeedbackDTO> findAll();

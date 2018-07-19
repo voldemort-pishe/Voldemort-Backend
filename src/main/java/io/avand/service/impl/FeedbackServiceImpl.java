@@ -63,10 +63,14 @@ public class FeedbackServiceImpl implements FeedbackService {
         log.debug("Request to update feedback : {}", feedbackDTO);
         FeedbackEntity feedbackEntity = feedbackRepository.findOne(feedbackDTO.getId());
         if (feedbackEntity != null) {
-            feedbackEntity.setFeedbackText(feedbackDTO.getFeedbackText());
-            feedbackEntity.setRating(feedbackDTO.getRating());
-            feedbackEntity = feedbackRepository.save(feedbackEntity);
-            return feedbackMapper.toDto(feedbackEntity);
+            if (feedbackEntity.getUserId().equals(securityUtils.getCurrentUserId())) {
+                feedbackEntity.setFeedbackText(feedbackDTO.getFeedbackText());
+                feedbackEntity.setRating(feedbackDTO.getRating());
+                feedbackEntity = feedbackRepository.save(feedbackEntity);
+                return feedbackMapper.toDto(feedbackEntity);
+            } else {
+                throw new SecurityException("You Don't have access to update this feedback");
+            }
         } else {
             throw new NotFoundException("FeedBack Not Available");
         }

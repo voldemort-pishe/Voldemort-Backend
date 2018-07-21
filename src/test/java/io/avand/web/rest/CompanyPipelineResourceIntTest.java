@@ -4,6 +4,8 @@ import io.avand.VoldemortApp;
 
 import io.avand.domain.entity.jpa.CompanyPipelineEntity;
 import io.avand.repository.jpa.CompanyPipelineRepository;
+import io.avand.service.CompanyPipelineService;
+import io.avand.service.mapper.CompanyPipelineMapper;
 import io.avand.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -63,10 +65,16 @@ public class CompanyPipelineResourceIntTest {
 
     private CompanyPipelineEntity companyPipelineEntity;
 
+    @Autowired
+    private CompanyPipelineService companyPipelineService;
+
+    @Autowired
+    private CompanyPipelineMapper companyPipelineMapper;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final CompanyPipelineResource companyPipelineResource = new CompanyPipelineResource(companyPipelineRepository);
+        final CompanyPipelineResource companyPipelineResource = new CompanyPipelineResource(companyPipelineRepository,companyPipelineService,companyPipelineMapper);
         this.restCompanyPipelineEntityMockMvc = MockMvcBuilders.standaloneSetup(companyPipelineResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

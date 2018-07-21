@@ -66,6 +66,11 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<CandidateEvaluationCriteriaEntity> candidateEvaluationCriteria = new HashSet<>();
 
+    @OneToMany(mappedBy = "candidate")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<CandidateMessageEntity> candidateMessages = new HashSet<>();
+
     //TODO should un comment this
     @OneToOne(optional = false)
 //    @NotNull
@@ -260,6 +265,14 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
 
     public void setCandidateEvaluationCriteria(Set<CandidateEvaluationCriteriaEntity> candidateEvaluationCriteriaEntities) {
         this.candidateEvaluationCriteria = candidateEvaluationCriteriaEntities;
+    }
+
+    public Set<CandidateMessageEntity> getCandidateMessages() {
+        return candidateMessages;
+    }
+
+    public void setCandidateMessages(Set<CandidateMessageEntity> candidateMessages) {
+        this.candidateMessages = candidateMessages;
     }
 
     public FileEntity getFile() {

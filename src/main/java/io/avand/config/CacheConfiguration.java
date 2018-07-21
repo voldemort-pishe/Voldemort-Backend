@@ -47,6 +47,7 @@ public class CacheConfiguration {
             cm.createCache(CandidateEntity.class.getName() + ".comments", jcacheConfiguration);
             cm.createCache(CandidateEntity.class.getName() + ".candidateSchedules", jcacheConfiguration);
             cm.createCache(CandidateEntity.class.getName() + ".candidateEvaluationCriteria", jcacheConfiguration);
+            cm.createCache(CandidateEntity.class.getName() + ".candidateMessages", jcacheConfiguration);
             cm.createCache(JobEntity.class.getName(), jcacheConfiguration);
             cm.createCache(JobEntity.class.getName() + ".candidate", jcacheConfiguration);
             cm.createCache(CompanyEntity.class.getName(), jcacheConfiguration);
@@ -71,6 +72,8 @@ public class CacheConfiguration {
             cm.createCache(SubscriptionEntity.class.getName(), jcacheConfiguration);
             cm.createCache(SubscriptionHistoryEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CompanyMemberEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CandidateMessageEntity.class.getName(), jcacheConfiguration);
+            cm.createCache(CandidateMessageEntity.class.getName()+".child", jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

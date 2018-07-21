@@ -11,9 +11,11 @@ import io.avand.service.mapper.CompanyPipelineMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CompanyPipelineServiceImpl implements CompanyPipelineService {
 
     private final Logger logger = LoggerFactory.getLogger(CompanyPipelineServiceImpl.class);

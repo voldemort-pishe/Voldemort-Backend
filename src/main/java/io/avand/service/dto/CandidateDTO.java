@@ -30,6 +30,8 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
 
     private Set<CandidateScheduleDTO> candidateSchedule = new HashSet<>();
 
+    private Set<CandidateMessageDTO> candidateMessages = new HashSet<>();
+
     private Long fileId;
 
     @NotNull
@@ -113,6 +115,14 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setCandidateSchedule(Set<CandidateScheduleDTO> candidateSchedule) {
         this.candidateSchedule = candidateSchedule;
+    }
+
+    public Set<CandidateMessageDTO> getCandidateMessages() {
+        return candidateMessages;
+    }
+
+    public void setCandidateMessages(Set<CandidateMessageDTO> candidateMessages) {
+        this.candidateMessages = candidateMessages;
     }
 
     public Long getFileId() {

@@ -10,6 +10,8 @@ import io.avand.service.mapper.CandidateMessageMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,12 +70,10 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
     }
 
     @Override
-    public List<CandidateMessageDTO> findByCandidateId(Long candidateId) {
+    public Page<CandidateMessageDTO> findByCandidateId(Long candidateId, Pageable pageable) {
         log.debug("Request to find all candidate message by candidate id : {}", candidateId);
-        return candidateMessageRepository.findAllByCandidate_Id(candidateId)
-            .stream()
-            .map(candidateMessageMapper::toDto)
-            .collect(Collectors.toList());
+        return candidateMessageRepository.findAllByCandidate_Id(candidateId, pageable)
+            .map(candidateMessageMapper::toDto);
     }
 
     @Override

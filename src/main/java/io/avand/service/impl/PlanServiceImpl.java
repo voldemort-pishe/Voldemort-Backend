@@ -6,6 +6,8 @@ import io.avand.service.dto.PlanDTO;
 import io.avand.service.mapper.PlanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,11 +42,9 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public List<PlanDTO> getActivePlans() {
+    public Page<PlanDTO> getActivePlans(Pageable pageable) {
         logger.debug("Request for service to get active plans");
-        return planRepository.findAllByActiveIsTrue()
-            .stream()
-            .map(planMapper::toDto)
-            .collect(Collectors.toList());
+        return planRepository.findAllByActiveIsTrue(pageable)
+            .map(planMapper::toDto);
     }
 }

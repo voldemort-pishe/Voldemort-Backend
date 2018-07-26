@@ -5,9 +5,12 @@ import io.avand.service.dto.CompanyMemberDTO;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,10 +50,10 @@ public class CompanyMemberResource {
     }
 
     @GetMapping("/company/{companyId}")
-    public ResponseEntity getAll(@PathVariable("companyId") Long companyId) {
+    public ResponseEntity getAll(@PathVariable("companyId") Long companyId, @ApiParam Pageable pageable) {
         log.debug("Request to find all company member by company id : {}", companyId);
         try {
-            List<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAll(companyId);
+            Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAll(companyId, pageable);
             return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

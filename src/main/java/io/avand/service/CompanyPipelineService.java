@@ -2,6 +2,8 @@ package io.avand.service;
 
 import io.avand.service.dto.CompanyPipelineDTO;
 import javassist.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ public interface CompanyPipelineService {
 
     CompanyPipelineDTO update(CompanyPipelineDTO companyPipelineDTO) throws NotFoundException;
 
-    List<CompanyPipelineDTO> getAllByCompanyId(Long companyId) throws NotFoundException;
+    Page<CompanyPipelineDTO> getAllByCompanyId(Long companyId, Pageable pageable) throws NotFoundException;
 
     CompanyPipelineDTO findOne(Long id) throws NotFoundException;
 

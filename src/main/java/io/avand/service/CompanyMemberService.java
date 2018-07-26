@@ -2,6 +2,8 @@ package io.avand.service;
 
 import io.avand.service.dto.CompanyMemberDTO;
 import javassist.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ public interface CompanyMemberService {
 
     CompanyMemberDTO findById(Long id) throws NotFoundException;
 
-    List<CompanyMemberDTO> findAll(Long companyId) throws NotFoundException;
+    Page<CompanyMemberDTO> findAll(Long companyId, Pageable pageable) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;
 

@@ -12,6 +12,8 @@ import io.avand.service.mapper.CompanyMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -72,12 +74,10 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public List<CompanyDTO> findAll() throws NotFoundException {
+    public Page<CompanyDTO> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find all company");
-        return companyRepository.findAllByUser_Id(securityUtils.getCurrentUserId())
-            .stream()
-            .map(companyMapper::toDto)
-            .collect(Collectors.toList());
+        return companyRepository.findAllByUser_Id(securityUtils.getCurrentUserId(), pageable)
+            .map(companyMapper::toDto);
     }
 
     @Override

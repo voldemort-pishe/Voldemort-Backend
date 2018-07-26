@@ -1,6 +1,8 @@
 package io.avand.repository.jpa;
 
 import io.avand.domain.entity.jpa.PlanEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.*;
@@ -20,5 +22,5 @@ public interface PlanRepository extends JpaRepository<PlanEntity, Long> {
 
     Optional<PlanEntity> findByTitle(String planTitle);
 
-    List<PlanEntity> findAllByActiveIsTrue();
+    Page<PlanEntity> findAllByActiveIsTrue(Pageable pageable);
 }

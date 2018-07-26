@@ -9,8 +9,11 @@ import io.avand.service.dto.PlanDTO;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -94,7 +97,7 @@ public class PlanResource {
     public List<PlanEntity> getAllPlanEntities() {
         log.debug("REST request to get all PlanEntities");
         return planRepository.findAll();
-        }
+    }
 
     /**
      * GET  /plan-entities/:id : get the "id" planEntity.
@@ -112,9 +115,9 @@ public class PlanResource {
 
     @GetMapping("/active-plans")
     @Timed
-    public ResponseEntity<List<PlanDTO>> getActivePlans() {
+    public ResponseEntity getActivePlans(@ApiParam Pageable pageable) {
         log.debug("REST request to get active plans");
-        List<PlanDTO> planDTOS = planService.getActivePlans();
+        Page<PlanDTO> planDTOS = planService.getActivePlans(pageable);
         return new ResponseEntity<>(planDTOS, HttpStatus.OK);
     }
 

@@ -195,23 +195,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TokenDTO activate(String activationKey) throws NotFoundException {
+    public UserDTO activate(String activationKey) throws NotFoundException {
         log.debug("Request to activate user by activationKey : {}", activationKey);
         Optional<UserEntity> userOptional = userRepository.findByActivationKey(activationKey);
         if (userOptional.isPresent()) {
             UserEntity user = userOptional.get();
             if (!user.isActivated()) {
-                try {
                     user.setActivated(true);
                     user.setActivationKey(null);
                     user = userRepository.save(user);
-                    return authorize(user.getLogin(), user.getPasswordHash(), true);
-                } catch (NotFoundException e) {
-                    user.setActivated(false);
-                    user.setActivationKey(activationKey);
-                    userRepository.save(user);
-                    throw e;
-                }
+                    return userMapper.toDto(user);
             } else {
                 throw new IllegalStateException("User Is Active");
             }

@@ -27,7 +27,7 @@ public interface UserService {
 
     void completeResetPassword(String resetKey,String newPassword) throws NotFoundException;
 
-    TokenDTO activate(String activationKey) throws NotFoundException;
+    UserDTO activate(String activationKey) throws NotFoundException;
 
     TokenDTO authorize(String username,String password,Boolean isRemember) throws NotFoundException;
 

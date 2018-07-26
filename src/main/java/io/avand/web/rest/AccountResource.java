@@ -63,9 +63,10 @@ public class AccountResource {
                                    HttpServletRequest request) {
         log.debug("REST Request to activate user by activationKey : {}", activationKey);
         try {
-            TokenDTO tokenDTO = userService.activate(activationKey);
-            response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
-            return new ResponseEntity<>(tokenDTO, HttpStatus.OK);
+            UserDTO userDTO = userService.activate(activationKey);
+            ServerMessage serverMessage = new ServerMessage();
+            serverMessage.setMessage(String.format("%s عزیز حساب کاربری شما با موفقیت فعال شد لطفا وارد شوید",userDTO.getFirstName()+" "+userDTO.getLastName()));
+            return new ResponseEntity<>(serverMessage, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }

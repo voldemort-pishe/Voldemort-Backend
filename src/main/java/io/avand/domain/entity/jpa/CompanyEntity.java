@@ -25,8 +25,27 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "name_en")
+    private String nameEn;
+
+    @Column(name = "name_fa")
+    private String nameFa;
+
+    @Column(name = "description_en")
+    private String descriptionEn;
+
+    @Column(name = "description_fa")
+    private String descriptionFa;
+
+    @Column(name = "sub_domain")
+    private String subDomain;
+
+    @Column(name = "language")
+    private String language;
+
+    @OneToOne(optional = false)
+    @JoinColumn(unique = true)
+    private FileEntity file;
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore
@@ -60,17 +79,60 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNameEn() {
+        return nameEn;
     }
 
-    public CompanyEntity name(String name) {
-        this.name = name;
-        return this;
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getNameFa() {
+        return nameFa;
+    }
+
+    public void setNameFa(String nameFa) {
+        this.nameFa = nameFa;
+    }
+
+    public String getDescriptionEn() {
+        return descriptionEn;
+    }
+
+    public void setDescriptionEn(String descriptionEn) {
+        this.descriptionEn = descriptionEn;
+    }
+
+    public String getDescriptionFa() {
+        return descriptionFa;
+    }
+
+    public void setDescriptionFa(String descriptionFa) {
+        this.descriptionFa = descriptionFa;
+    }
+
+    public String getSubDomain() {
+        return subDomain;
+    }
+
+    public void setSubDomain(String subDomain) {
+        this.subDomain = subDomain;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public FileEntity getFile() {
+        return file;
+    }
+
+    public void setFile(FileEntity file) {
+        this.file = file;
     }
 
     public Set<JobEntity> getJobs() {
@@ -194,7 +256,13 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     public String toString() {
         return "CompanyEntity{" +
             "id=" + id +
-            ", name='" + name + '\'' +
+            ", nameEn='" + nameEn + '\'' +
+            ", nameFa='" + nameFa + '\'' +
+            ", descriptionEn='" + descriptionEn + '\'' +
+            ", descriptionFa='" + descriptionFa + '\'' +
+            ", subDomain='" + subDomain + '\'' +
+            ", language='" + language + '\'' +
+            ", file=" + file +
             ", jobs=" + jobs +
             ", evaluationCriteria=" + evaluationCriteria +
             ", companyPipelines=" + companyPipelines +

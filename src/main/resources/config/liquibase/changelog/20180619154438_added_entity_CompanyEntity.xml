@@ -22,7 +22,31 @@
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(255)">
+            <column name="name_en" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="name_fa" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="description_en" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="description_fa" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="language" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="sub_domain" type="varchar(255)">
+                <constraints nullable="true" />m
+            </column>
+
+            <column name="file_id" type="bigint">
                 <constraints nullable="true" />
             </column>
 

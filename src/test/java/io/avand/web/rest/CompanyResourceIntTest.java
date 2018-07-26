@@ -80,7 +80,7 @@ public class CompanyResourceIntTest {
      */
     public static CompanyDTO createEntity(EntityManager em) {
         CompanyDTO companyEntity = new CompanyDTO();
-        companyEntity.setName(DEFAULT_NAME);
+        companyEntity.setNameEn(DEFAULT_NAME);
         // Add required entity
         return companyEntity;
     }
@@ -105,7 +105,7 @@ public class CompanyResourceIntTest {
         List<CompanyDTO> companyEntityList = companyService.findAll();
         assertThat(companyEntityList).hasSize(databaseSizeBeforeCreate + 1);
         CompanyDTO testCompanyEntity = companyEntityList.get(companyEntityList.size() - 1);
-        assertThat(testCompanyEntity.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testCompanyEntity.getNameEn()).isEqualTo(DEFAULT_NAME);
     }
 
     @Test
@@ -171,7 +171,7 @@ public class CompanyResourceIntTest {
         // Disconnect from session so that the updates on updatedCompanyEntity are not directly saved in db
         em.detach(updatedCompanyEntity);
         updatedCompanyEntity
-            .setName(UPDATED_NAME);
+            .setNameEn(UPDATED_NAME);
 
         restCompanyEntityMockMvc.perform(put("/api/company")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -182,7 +182,7 @@ public class CompanyResourceIntTest {
         List<CompanyDTO> companyEntityList = companyService.findAll();
         assertThat(companyEntityList).hasSize(databaseSizeBeforeUpdate);
         CompanyDTO testCompanyEntity = companyEntityList.get(companyEntityList.size() - 1);
-        assertThat(testCompanyEntity.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testCompanyEntity.getNameEn()).isEqualTo(UPDATED_NAME);
     }
 
     @Test

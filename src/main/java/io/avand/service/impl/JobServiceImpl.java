@@ -11,6 +11,8 @@ import io.avand.service.mapper.JobMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,12 +71,10 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<JobDTO> findAll() throws NotFoundException {
+    public Page<JobDTO> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find all job");
-        return jobRepository.findAllByCompany_User_Id(securityUtils.getCurrentUserId())
-            .stream()
-            .map(jobMapper::toDto)
-            .collect(Collectors.toList());
+        return jobRepository.findAllByCompany_User_Id(securityUtils.getCurrentUserId(), pageable)
+            .map(jobMapper::toDto);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class JobServiceImpl implements JobService {
         if (jobEntity != null) {
             if (jobEntity.getCompany().getUser().getId().equals(securityUtils.getCurrentUserId())) {
                 jobRepository.delete(jobEntity);
-            }else {
+            } else {
                 throw new SecurityException("You Don't Have Access To Delete This Job");
             }
         } else {

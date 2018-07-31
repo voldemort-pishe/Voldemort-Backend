@@ -1,7 +1,9 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.CompanyEntity;
+import io.avand.domain.entity.jpa.FileEntity;
 import io.avand.repository.jpa.CompanyRepository;
+import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CompanyService;
@@ -10,6 +12,8 @@ import io.avand.service.mapper.CompanyMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,15 +28,18 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyMapper companyMapper;
     private final UserRepository userRepository;
     private final SecurityUtils securityUtils;
+    private final FileRepository fileRepository;
 
     public CompanyServiceImpl(CompanyRepository companyRepository,
                               CompanyMapper companyMapper,
                               UserRepository userRepository,
-                              SecurityUtils securityUtils) {
+                              SecurityUtils securityUtils,
+                              FileRepository fileRepository) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.userRepository = userRepository;
         this.securityUtils = securityUtils;
+        this.fileRepository = fileRepository;
     }
 
     @Override
@@ -41,8 +48,14 @@ public class CompanyServiceImpl implements CompanyService {
         Long userId = securityUtils.getCurrentUserId();
         CompanyEntity companyEntity = companyMapper.toEntity(companyDTO);
         companyEntity.setUser(userRepository.findOne(userId));
-        companyEntity = companyRepository.save(companyEntity);
-        return companyMapper.toDto(companyEntity);
+        FileEntity fileEntity = fileRepository.getOne(companyDTO.getFileId());
+        if (fileEntity != null) {
+            companyEntity.setFile(fileEntity);
+            companyEntity = companyRepository.save(companyEntity);
+            return companyMapper.toDto(companyEntity);
+        } else {
+            throw new NotFoundException("File Not Found By Id");
+        }
     }
 
     @Override
@@ -61,12 +74,10 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public List<CompanyDTO> findAll() throws NotFoundException {
+    public Page<CompanyDTO> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find all company");
-        return companyRepository.findAllByUser_Id(securityUtils.getCurrentUserId())
-            .stream()
-            .map(companyMapper::toDto)
-            .collect(Collectors.toList());
+        return companyRepository.findAllByUser_Id(securityUtils.getCurrentUserId(), pageable)
+            .map(companyMapper::toDto);
     }
 
     @Override

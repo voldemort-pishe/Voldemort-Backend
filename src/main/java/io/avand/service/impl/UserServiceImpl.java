@@ -19,6 +19,8 @@ import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -126,11 +128,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAll() {
-        return userRepository.findAll()
-            .stream()
-            .map(userMapper::toDto)
-            .collect(Collectors.toList());
+    public Page<UserDTO> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable)
+            .map(userMapper::toDto);
     }
 
     @Override
@@ -195,23 +195,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TokenDTO activate(String activationKey) throws NotFoundException {
+    public UserDTO activate(String activationKey) throws NotFoundException {
         log.debug("Request to activate user by activationKey : {}", activationKey);
         Optional<UserEntity> userOptional = userRepository.findByActivationKey(activationKey);
         if (userOptional.isPresent()) {
             UserEntity user = userOptional.get();
             if (!user.isActivated()) {
-                try {
-                    user.setActivated(true);
-                    user.setActivationKey(null);
-                    user = userRepository.save(user);
-                    return authorize(user.getLogin(), user.getPasswordHash(), true);
-                } catch (NotFoundException e) {
-                    user.setActivated(false);
-                    user.setActivationKey(activationKey);
-                    userRepository.save(user);
-                    throw e;
-                }
+                user.setActivated(true);
+                user.setActivationKey(null);
+                user = userRepository.save(user);
+                return userMapper.toDto(user);
             } else {
                 throw new IllegalStateException("User Is Active");
             }

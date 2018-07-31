@@ -2,6 +2,8 @@ package io.avand.service;
 
 import io.avand.service.dto.JobDTO;
 import javassist.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ public interface JobService {
 
     JobDTO findById(Long id) throws NotFoundException;
 
-    List<JobDTO> findAll() throws NotFoundException;
+    Page<JobDTO> findAll(Pageable pageable) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;
 }

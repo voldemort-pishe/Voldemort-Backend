@@ -11,6 +11,8 @@ import io.avand.service.mapper.CompanyPipelineMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -76,14 +78,14 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
     }
 
     @Override
-    public List<CompanyPipelineDTO> getAllByCompanyId(Long companyId) throws NotFoundException {
+    public Page<CompanyPipelineDTO> getAllByCompanyId(Long companyId, Pageable pageable) throws NotFoundException {
         logger.debug("Request to company pipeline service to get all by user id");
 
         CompanyEntity companyEntity = companyRepository.findOne(companyId);
-        List<CompanyPipelineEntity> companies = companyPipelineRepository.findAllByCompany(companyEntity);
-
         if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-            return companyPipelineMapper.toDto(companies);
+            return companyPipelineRepository
+                .findAllByCompany(companyEntity, pageable)
+                .map(companyPipelineMapper::toDto);
         } else {
             throw new SecurityException("Sorry you do not have the right permission to get this company pipelines!");
         }
@@ -104,7 +106,7 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
     }
 
     @Override
-    public void delete(Long  id) throws NotFoundException {
+    public void delete(Long id) throws NotFoundException {
         logger.debug("Request to company pipeline service to delete : {}", id);
 
         CompanyPipelineEntity companyPipelineEntity = companyPipelineRepository.findOne(id);

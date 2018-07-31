@@ -9,7 +9,19 @@ import java.util.Set;
 
 public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
-    private String name;
+    private String nameEn;
+
+    private String nameFa;
+
+    private String descriptionEn;
+
+    private String descriptionFa;
+
+    private String language;
+
+    private String subDomain;
+
+    private Long fileId;
 
     private Set<JobDTO> jobs = new HashSet<>();
 
@@ -17,12 +29,60 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
     private Set<CompanyPipelineDTO> companyPipelines = new HashSet<>();
 
-    public String getName() {
-        return name;
+    public String getNameEn() {
+        return nameEn;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
+    }
+
+    public String getNameFa() {
+        return nameFa;
+    }
+
+    public void setNameFa(String nameFa) {
+        this.nameFa = nameFa;
+    }
+
+    public String getDescriptionEn() {
+        return descriptionEn;
+    }
+
+    public void setDescriptionEn(String descriptionEn) {
+        this.descriptionEn = descriptionEn;
+    }
+
+    public String getDescriptionFa() {
+        return descriptionFa;
+    }
+
+    public void setDescriptionFa(String descriptionFa) {
+        this.descriptionFa = descriptionFa;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getSubDomain() {
+        return subDomain;
+    }
+
+    public void setSubDomain(String subDomain) {
+        this.subDomain = subDomain;
+    }
+
+    public Long getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Long fileId) {
+        this.fileId = fileId;
     }
 
     public Set<JobDTO> getJobs() {
@@ -52,7 +112,13 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
     @Override
     public String toString() {
         return "CompanyDTO{" +
-            "name='" + name + '\'' +
+            "nameEn='" + nameEn + '\'' +
+            ", nameFa='" + nameFa + '\'' +
+            ", descriptionEn='" + descriptionEn + '\'' +
+            ", descriptionFa='" + descriptionFa + '\'' +
+            ", language='" + language + '\'' +
+            ", subDomain='" + subDomain + '\'' +
+            ", fileId=" + fileId +
             ", jobs=" + jobs +
             ", evaluationCriteria=" + evaluationCriteria +
             ", companyPipelines=" + companyPipelines +

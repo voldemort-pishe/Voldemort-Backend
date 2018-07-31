@@ -12,6 +12,8 @@ import io.avand.service.mapper.CandidateMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,12 +70,10 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public List<CandidateDTO> findAll() {
+    public Page<CandidateDTO> findAll(Pageable pageable) {
         log.debug("Request to find all candidate");
-        return candidateRepository.findAll()
-            .stream()
-            .map(candidateMapper::toDto)
-            .collect(Collectors.toList());
+        return candidateRepository.findAll(pageable)
+            .map(candidateMapper::toDto);
     }
 
     @Override

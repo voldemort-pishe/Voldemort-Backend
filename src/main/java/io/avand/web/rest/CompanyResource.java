@@ -7,9 +7,12 @@ import io.avand.service.dto.CompanyDTO;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -96,10 +99,10 @@ public class CompanyResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity getAllCompany() {
+    public ResponseEntity getAllCompany(@ApiParam Pageable pageable) {
         log.debug("REST request to get all CompanyEntities");
         try {
-            List<CompanyDTO> companyDTOS = companyService.findAll();
+            Page<CompanyDTO> companyDTOS = companyService.findAll(pageable);
             return new ResponseEntity<>(companyDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

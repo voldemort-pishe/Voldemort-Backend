@@ -7,6 +7,8 @@ import io.avand.service.dto.FileDTO;
 import io.avand.service.mapper.FileMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,12 +43,10 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public List<FileDTO> findAll() {
+    public Page<FileDTO> findAll(Pageable pageable) {
         log.debug("Request to find all files");
-        return fileRepository.findAll()
-            .stream()
-            .map(fileMapper::toDto)
-            .collect(Collectors.toList());
+        return fileRepository.findAll(pageable)
+            .map(fileMapper::toDto);
     }
 
     @Override

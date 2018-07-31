@@ -8,9 +8,12 @@ import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -97,10 +100,10 @@ public class JobResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity getAllJob() {
+    public ResponseEntity getAllJob(@ApiParam Pageable pageable) {
         log.debug("REST request to get all Job");
         try {
-            List<JobDTO> jobDTOS = jobService.findAll();
+            Page<JobDTO> jobDTOS = jobService.findAll(pageable);
             return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -138,7 +141,7 @@ public class JobResource {
         try {
             jobService.delete(id);
             return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-        }catch (NotFoundException | SecurityException e){
+        } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }

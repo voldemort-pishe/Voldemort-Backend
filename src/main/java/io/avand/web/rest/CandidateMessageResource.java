@@ -7,9 +7,12 @@ import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,9 +72,9 @@ public class CandidateMessageResource {
 
     @GetMapping("/candidate/{candidateId}")
     @Timed
-    public ResponseEntity getAllCandidateByCandidateId(@PathVariable("candidateId") Long candidateId) {
+    public ResponseEntity getAllCandidateByCandidateId(@PathVariable("candidateId") Long candidateId, @ApiParam Pageable page) {
         log.debug("REST request to get all CandidateMessageDtos by candidate id : {}", candidateId);
-        List<CandidateMessageDTO> candidateDTOS = candidateMessageService.findByCandidateId(candidateId);
+        Page<CandidateMessageDTO> candidateDTOS = candidateMessageService.findByCandidateId(candidateId,page);
         return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
     }
 

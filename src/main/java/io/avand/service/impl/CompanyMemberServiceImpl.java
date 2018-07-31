@@ -15,6 +15,8 @@ import io.avand.service.util.RandomUtil;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -99,13 +101,11 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
-    public List<CompanyMemberDTO> findAll(Long companyId) throws NotFoundException {
+    public Page<CompanyMemberDTO> findAll(Long companyId, Pageable pageable) throws NotFoundException {
         log.debug("Request to find all company member by id : {}", companyId);
         return companyMemberRepository
-            .findAllByCompany_User_IdAndCompany_Id(securityUtils.getCurrentUserId(), companyId)
-            .stream()
-            .map(companyMemberMapper::toDto)
-            .collect(Collectors.toList());
+            .findAllByCompany_User_IdAndCompany_Id(securityUtils.getCurrentUserId(), companyId, pageable)
+            .map(companyMemberMapper::toDto);
     }
 
     @Override

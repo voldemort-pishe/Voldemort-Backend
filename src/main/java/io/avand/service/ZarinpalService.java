@@ -44,7 +44,7 @@ public class ZarinpalService {
 
         if(zarinpalRequestDTO.getCallbackURL() == null) {
             logger.debug(applicationProperties.getBase().getUrl());
-            zarinpalRequestDTO.setCallbackURL(applicationProperties.getBase().getUrl() + "api/payment-callback");
+            zarinpalRequestDTO.setCallbackURL(applicationProperties.getBase().getUrl() + "api/payment/callback");
         }
 
         String amountString = zarinpalRequestDTO.getAmount().toString();

@@ -47,7 +47,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         logger.debug("Request for service to save an invoice : {}", invoiceDTO);
         invoiceDTO.setStatus(InvoiceStatus.INITIALIZED);
 
-        InvoiceEntity invoiceEntity = invoiceRepository.save(invoiceMapper.toEntity(invoiceDTO));
+
+        InvoiceEntity invoiceEntity = invoiceMapper.toEntity(invoiceDTO);
+
+        Optional<UserEntity> userEntity = userRepository.findById(invoiceDTO.getUserId());
+
+        invoiceEntity.setUser(userEntity.get());
+        invoiceEntity = invoiceRepository.save(invoiceEntity);
 
         SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
         subscriptionDTO.setPlanTitle("");

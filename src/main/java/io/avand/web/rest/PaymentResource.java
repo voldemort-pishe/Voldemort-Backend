@@ -6,17 +6,16 @@ import io.avand.security.SecurityUtils;
 import io.avand.service.InvoiceService;
 import io.avand.service.PaymentService;
 import io.avand.service.PaymentTransactionService;
-import io.avand.service.dto.InvoiceDTO;
-import io.avand.service.dto.PaymentTransactionDTO;
-import io.avand.service.dto.ZarinpalRequestDTO;
-import io.avand.service.dto.ZarinpalVerifyRequestDTO;
+import io.avand.service.dto.*;
 import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 @RestController
@@ -64,9 +63,22 @@ public class PaymentResource {
             ZarinpalRequestDTO zarinpalRequestDTO = new ZarinpalRequestDTO();
 
             zarinpalRequestDTO.setAmount((long) foundInvoice.get().getAmount());
-            zarinpalRequestDTO.setDescription(foundInvoice.get().getUserId().toString());
+            zarinpalRequestDTO.setDescription("user : " + foundInvoice.get().getUserId().toString());
 
-            return paymentService.paymentRequest(zarinpalRequestDTO);
+            ResponseEntity responseEntity = paymentService.paymentRequest(zarinpalRequestDTO);
+            HashMap<String, String> response = new HashMap<>();
+
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                ZarinpalResponseDTO zarinpalResponseDTO = (ZarinpalResponseDTO) responseEntity.getBody();
+                if ("100".equals(zarinpalResponseDTO.getStatus())) {
+                    response.put("paymentUrl", "https://www.zarinpal.com/pg/pay/" + zarinpalResponseDTO.getAuthority());
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } else {
+                    throw new ServerErrorException("Cannot do payment right now!");
+                }
+            } else {
+                throw new ServerErrorException("Cannot do payment right now!");
+            }
         }
     }
 

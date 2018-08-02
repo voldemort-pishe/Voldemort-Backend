@@ -23,6 +23,8 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
 
     private InvoiceStatus status;
 
+    private String planTitle;
+
     private Set<PaymentTransactionDTO> paymentTransactions = new HashSet<>();
 
     @NotNull
@@ -66,6 +68,14 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setStatus(InvoiceStatus status) {
         this.status = status;
+    }
+
+    public String getPlanTitle() {
+        return planTitle;
+    }
+
+    public void setPlanTitle(String planTitle) {
+        this.planTitle = planTitle;
     }
 
     public Set<PaymentTransactionDTO> getPaymentTransactions() {

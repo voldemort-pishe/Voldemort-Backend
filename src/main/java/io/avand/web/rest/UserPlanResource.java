@@ -77,11 +77,13 @@ public class UserPlanResource {
 
             subscriptionService.save(subscriptionDTO);
 
+            InvoiceDTO invoiceDTO = new InvoiceDTO();
+
             if (planDTO.get().getAmount() != 0) {
 
-                InvoiceDTO invoiceDTO = new InvoiceDTO();
                 invoiceDTO.setAmount(planDTO.get().getAmount());
                 invoiceDTO.setUserId(userId);
+                invoiceDTO.setPlanTitle(planDTO.get().getTitle());
 
                 //TODO : should check if application did save the invoice or not.
                 invoiceDTO = invoiceService.save(invoiceDTO);
@@ -89,7 +91,7 @@ public class UserPlanResource {
 
             UserDTO response = userService.update(userDTOOptional.get());
 
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(invoiceDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }

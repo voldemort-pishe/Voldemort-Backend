@@ -61,6 +61,10 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
     @ManyToOne
     private UserEntity user;
 
+    @Column(name = "plan_title")
+    private String planTitle;
+
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -185,6 +189,15 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
     public void setUser(UserEntity userEntity) {
         this.user = userEntity;
     }
+
+    public String getPlanTitle() {
+        return planTitle;
+    }
+
+    public void setPlanTitle(String planTitle) {
+        this.planTitle = planTitle;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

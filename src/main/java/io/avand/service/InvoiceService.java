@@ -1,18 +1,21 @@
 package io.avand.service;
 
 import io.avand.service.dto.InvoiceDTO;
+import javassist.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface InvoiceService {
 
     InvoiceDTO save(InvoiceDTO invoiceDTO);
 
-    void delete(Long invoiceId);
+    void delete(Long id);
 
-    InvoiceDTO findOne(Long invoiceId);
+    Optional<InvoiceDTO> findOneById(Long id);
+
+    Optional<InvoiceDTO> findOneByUserId(Long userId) throws NotFoundException;
 
     Page<InvoiceDTO> getAll(Pageable pageable);
 }

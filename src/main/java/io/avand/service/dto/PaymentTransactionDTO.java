@@ -1,6 +1,6 @@
 package io.avand.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.PaymentTransactionStatus;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -12,12 +12,14 @@ public class PaymentTransactionDTO implements Serializable {
 
     private Long userId;
 
-    private Long refrenceId;
+    private Long referenceId;
 
     private Integer amount;
 
     @NotNull
     private Long invoiceId;
+
+    private PaymentTransactionStatus status;
 
     public Long getId() {
         return id;
@@ -35,12 +37,12 @@ public class PaymentTransactionDTO implements Serializable {
         this.userId = userId;
     }
 
-    public Long getRefrenceId() {
-        return refrenceId;
+    public Long getReferenceId() {
+        return referenceId;
     }
 
-    public void setRefrenceId(Long refrenceId) {
-        this.refrenceId = refrenceId;
+    public void setReferenceId(Long referenceId) {
+        this.referenceId = referenceId;
     }
 
     public Integer getAmount() {
@@ -59,13 +61,23 @@ public class PaymentTransactionDTO implements Serializable {
         this.invoiceId = invoiceId;
     }
 
+    public PaymentTransactionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentTransactionStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "PaymentTransactionDTO{" +
             "id=" + id +
             ", userId=" + userId +
-            ", refrenceId=" + refrenceId +
+            ", referenceId=" + referenceId +
             ", amount=" + amount +
+            ", invoiceId=" + invoiceId +
+            ", status=" + status +
             '}';
     }
 }

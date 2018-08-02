@@ -105,7 +105,7 @@ public class InvoiceResource {
     @Timed
     public ResponseEntity getInvoice(@PathVariable Long id) {
         log.debug("REST request to get InvoiceDTO : {}", id);
-        InvoiceDTO invoiceDTO = invoiceService.findOne(id);
+        Optional<InvoiceDTO> invoiceDTO = invoiceService.findOneById(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(invoiceDTO));
     }
 

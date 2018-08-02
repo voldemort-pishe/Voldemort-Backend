@@ -1,6 +1,7 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.avand.domain.entity.jpa.InvoiceEntity;
 import io.avand.domain.enumeration.SubscriptionStatus;
 import io.avand.security.SecurityUtils;
 import io.avand.service.InvoiceService;
@@ -52,7 +53,7 @@ public class UserPlanResource {
         this.subscriptionService = subscriptionService;
     }
 
-    @GetMapping("/user-plan/{planId}")
+    @GetMapping("/user-plan-invoice/{planId}")
     @Timed
     public ResponseEntity saveUserPlan(@PathVariable Long planId) {
         logger.debug("REST request to save a plan for a user : {}", planId);
@@ -83,7 +84,7 @@ public class UserPlanResource {
                 invoiceDTO.setUserId(userId);
 
                 //TODO : should check if application did save the invoice or not.
-                invoiceService.save(invoiceDTO);
+                invoiceDTO = invoiceService.save(invoiceDTO);
             }
 
             UserDTO response = userService.update(userDTOOptional.get());

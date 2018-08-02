@@ -1,10 +1,10 @@
 package io.avand.domain.entity.jpa;
 
+import io.avand.domain.enumeration.PaymentTransactionStatus;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -25,14 +25,17 @@ public class PaymentTransactionEntity implements Serializable {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "refrence_id")
-    private Long refrenceId;
+    @Column(name = "reference_id")
+    private Long referenceId;
 
     @Column(name = "amount")
     private Integer amount;
 
     @ManyToOne
     private InvoiceEntity invoice;
+
+    @Column(name = "status")
+    private PaymentTransactionStatus status;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -56,17 +59,17 @@ public class PaymentTransactionEntity implements Serializable {
         this.userId = userId;
     }
 
-    public Long getRefrenceId() {
-        return refrenceId;
+    public Long getReferenceId() {
+        return referenceId;
     }
 
     public PaymentTransactionEntity refrenceId(Long refrenceId) {
-        this.refrenceId = refrenceId;
+        this.referenceId = refrenceId;
         return this;
     }
 
-    public void setRefrenceId(Long refrenceId) {
-        this.refrenceId = refrenceId;
+    public void setReferenceId(Long referenceId) {
+        this.referenceId = referenceId;
     }
 
     public Integer getAmount() {
@@ -94,6 +97,15 @@ public class PaymentTransactionEntity implements Serializable {
     public void setInvoice(InvoiceEntity invoiceEntity) {
         this.invoice = invoiceEntity;
     }
+
+    public PaymentTransactionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentTransactionStatus status) {
+        this.status = status;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -119,10 +131,12 @@ public class PaymentTransactionEntity implements Serializable {
     @Override
     public String toString() {
         return "PaymentTransactionEntity{" +
-            "id=" + getId() +
-            ", userId=" + getUserId() +
-            ", refrenceId=" + getRefrenceId() +
-            ", amount=" + getAmount() +
-            "}";
+            "id=" + id +
+            ", userId=" + userId +
+            ", referenceId=" + referenceId +
+            ", amount=" + amount +
+            ", invoice=" + invoice +
+            ", status=" + status +
+            '}';
     }
 }

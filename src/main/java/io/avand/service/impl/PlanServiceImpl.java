@@ -74,6 +74,7 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public Page<PlanDTO> getActivePlans(Pageable pageable) {
         logger.debug("Request for service to get active plans");
+        Page<PlanEntity> planEntities = planRepository.findAllByActiveIsTrue(pageable);
         return planRepository.findAllByActiveIsTrue(pageable)
             .map(planMapper::toDto);
     }

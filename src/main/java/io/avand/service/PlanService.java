@@ -9,9 +9,17 @@ import java.util.Optional;
 
 public interface PlanService {
 
+    PlanDTO save(PlanDTO planDTO);
+
+    PlanDTO update(PlanDTO planDTO);
+
+    void delete(Long planId);
+
     Optional<PlanDTO> findOneById(Long planId);
 
     Optional<PlanDTO> findOneByTitle(String planTitle);
+
+    Page<PlanDTO> findAll(Pageable pageable);
 
     Page<PlanDTO> getActivePlans(Pageable pageable);
 }

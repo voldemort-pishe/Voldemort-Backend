@@ -35,75 +35,71 @@ public class PlanResource {
 
     private static final String ENTITY_NAME = "planEntity";
 
-    private final PlanRepository planRepository;
-
     private final PlanService planService;
 
-    public PlanResource(PlanRepository planRepository,
-                        PlanService planService) {
-        this.planRepository = planRepository;
+    public PlanResource(PlanService planService) {
         this.planService = planService;
     }
 
     /**
-     * POST  /plan-entities : Create a new planEntity.
+     * POST  /plan : Create a new planDTO.
      *
-     * @param planEntity the planEntity to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new planEntity, or with status 400 (Bad Request) if the planEntity has already an ID
+     * @param planDTO the planDTO to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new planDTO, or with status 400 (Bad Request) if the planDTO has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/plan")
     @Timed
-    public ResponseEntity<PlanEntity> createPlanEntity(@RequestBody PlanEntity planEntity) throws URISyntaxException {
-        log.debug("REST request to save PlanEntity : {}", planEntity);
-        if (planEntity.getId() != null) {
-            throw new BadRequestAlertException("A new planEntity cannot already have an ID", ENTITY_NAME, "idexists");
+    public ResponseEntity createPlanEntity(@RequestBody PlanDTO planDTO) throws URISyntaxException {
+        log.debug("REST request to save PlanEntity : {}", planDTO);
+        if (planDTO.getId() != null) {
+            throw new BadRequestAlertException("A new plan cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        PlanEntity result = planRepository.save(planEntity);
-        return ResponseEntity.created(new URI("/api/plan-entities/" + result.getId()))
+        PlanDTO result = planService.save(planDTO);
+        return ResponseEntity.created(new URI("/api/plan/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * PUT  /plan-entities : Updates an existing planEntity.
+     * PUT  /plan : Updates an existing planDTO.
      *
-     * @param planEntity the planEntity to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated planEntity,
-     * or with status 400 (Bad Request) if the planEntity is not valid,
+     * @param planDTO the planDTO to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated planDTO,
+     * or with status 400 (Bad Request) if the planDTO is not valid,
      * or with status 500 (Internal Server Error) if the planEntity couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/plan")
     @Timed
-    public ResponseEntity<PlanEntity> updatePlanEntity(@RequestBody PlanEntity planEntity) throws URISyntaxException {
-        log.debug("REST request to update PlanEntity : {}", planEntity);
-        if (planEntity.getId() == null) {
-            return createPlanEntity(planEntity);
+    public ResponseEntity updatePlanEntity(@RequestBody PlanDTO planDTO) throws URISyntaxException {
+        log.debug("REST request to update PlanEntity : {}", planDTO);
+        if (planDTO.getId() == null) {
+            return createPlanEntity(planDTO);
         }
-        PlanEntity result = planRepository.save(planEntity);
+        PlanDTO result = planService.update(planDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, planEntity.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, planDTO.getId().toString()))
             .body(result);
     }
 
     /**
-     * GET  /plan-entities : get all the planEntities.
+     * GET  /plan : get all the planDTOs.
      *
-     * @return the ResponseEntity with status 200 (OK) and the list of planEntities in body
+     * @return the ResponseEntity with status 200 (OK) and the list of planDTOs in body
      */
     @GetMapping("/plan")
     @Timed
-    public List<PlanEntity> getAllPlanEntities() {
+    public ResponseEntity getAllPlans(@ApiParam Pageable pageable) {
         log.debug("REST request to get all PlanEntities");
-        return planRepository.findAll();
+        return new ResponseEntity<>(planService.findAll(pageable), HttpStatus.OK);
     }
 
     /**
-     * GET  /plan-entities/:id : get the "id" planEntity.
+     * GET  /plan/:id : get the "id" planDTO.
      *
-     * @param id the id of the planEntity to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the planEntity, or with status 404 (Not Found)
+     * @param id the id of the planDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the planDTO, or with status 404 (Not Found)
      */
     @GetMapping("/plan/{id}")
     @Timed
@@ -122,16 +118,16 @@ public class PlanResource {
     }
 
     /**
-     * DELETE  /plan-entities/:id : delete the "id" planEntity.
+     * DELETE  /plan/:id : delete the "id" planDTO.
      *
-     * @param id the id of the planEntity to delete
+     * @param id the id of the planDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/plan/{id}")
     @Timed
-    public ResponseEntity<Void> deletePlanEntity(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePlan(@PathVariable Long id) {
         log.debug("REST request to delete PlanEntity : {}", id);
-        planRepository.delete(id);
+        planService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 }

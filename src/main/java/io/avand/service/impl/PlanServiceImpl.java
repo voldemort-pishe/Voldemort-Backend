@@ -1,5 +1,6 @@
 package io.avand.service.impl;
 
+import io.avand.domain.entity.jpa.PlanEntity;
 import io.avand.repository.jpa.PlanRepository;
 import io.avand.service.PlanService;
 import io.avand.service.dto.PlanDTO;
@@ -30,6 +31,29 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
+    public PlanDTO save(PlanDTO planDTO) {
+        logger.debug("Request for service to save a plan : {}", planDTO);
+        return planMapper.toDto(planRepository.save(planMapper.toEntity(planDTO)));
+    }
+
+    @Override
+    public PlanDTO update(PlanDTO planDTO) {
+        logger.debug("Request for service to save a plan : {}", planDTO);
+        PlanEntity planEntity = planRepository.findOne(planDTO.getId());
+        planEntity = planMapper.toEntity(planDTO);
+        return planMapper.toDto(planRepository.save(planEntity));
+    }
+
+    @Override
+    public void delete(Long planId) {
+        logger.debug("Request for service to delete a plan : {}", planId);
+        Optional<PlanDTO> planDTO = this.findOneById(planId);
+        if (planDTO.isPresent()) {
+            planRepository.delete(planId);
+        }
+    }
+
+    @Override
     public Optional<PlanDTO> findOneById(Long planId) {
         logger.debug("Request for service to get a plan by id : {}", planId);
         return planRepository.findById(planId).map(planMapper::toDto);
@@ -39,6 +63,12 @@ public class PlanServiceImpl implements PlanService {
     public Optional<PlanDTO> findOneByTitle(String planTitle) {
         logger.debug("Request for service to get a plan by title : {}", planTitle);
         return planRepository.findByTitle(planTitle).map(planMapper::toDto);
+    }
+
+    @Override
+    public Page<PlanDTO> findAll(Pageable pageable) {
+        logger.debug("Request for service to get all of plans");
+        return planRepository.findAll(pageable).map(planMapper::toDto);
     }
 
     @Override

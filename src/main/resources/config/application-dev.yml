@@ -144,5 +144,8 @@ jhipster:
 # ===================================================================
 
 application:
+  base:
+    url: http://localhost:8080
+    panel: http://192.168.43.149:4200
 storage:
   location: /Users/pouya/Project/Avand/static-files

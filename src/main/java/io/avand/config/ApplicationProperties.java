@@ -12,12 +12,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
     private final ApplicationProperties.Base base = new ApplicationProperties.Base();
+
     public ApplicationProperties.Base getBase() {
         return this.base;
     }
 
     public static class Base {
         private String url = "";
+        private String panel = "";
 
         public Base() {
 
@@ -29,6 +31,14 @@ public class ApplicationProperties {
 
         public void setUrl(String url) {
             this.url = url;
+        }
+
+        public String getPanel() {
+            return panel;
+        }
+
+        public void setPanel(String panel) {
+            this.panel = panel;
         }
     }
 

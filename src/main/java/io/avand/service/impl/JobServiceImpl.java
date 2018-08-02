@@ -71,6 +71,15 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    public List<JobDTO> findAllByCompanySubDomain(String subDomain) {
+        log.debug("Request to find job by company subDomain : {}", subDomain);
+        return jobRepository.findAllByCompany_SubDomain(subDomain)
+            .stream()
+            .map(jobMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public Page<JobDTO> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find all job");
         return jobRepository.findAllByCompany_User_Id(securityUtils.getCurrentUserId(), pageable)

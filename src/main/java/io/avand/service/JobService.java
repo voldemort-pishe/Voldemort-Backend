@@ -13,6 +13,8 @@ public interface JobService {
 
     JobDTO findById(Long id) throws NotFoundException;
 
+    List<JobDTO> findAllByCompanySubDomain(String subDomain);
+
     Page<JobDTO> findAll(Pageable pageable) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;

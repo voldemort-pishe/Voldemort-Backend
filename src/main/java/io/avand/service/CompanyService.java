@@ -13,6 +13,8 @@ public interface CompanyService {
 
     CompanyDTO findById(Long id) throws NotFoundException;
 
+    CompanyDTO findBySubDomain(String subDomain) throws NotFoundException;
+
     Page<CompanyDTO> findAll(Pageable pageable) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;

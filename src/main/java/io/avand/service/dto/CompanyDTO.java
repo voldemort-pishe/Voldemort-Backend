@@ -22,11 +22,13 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
     private String subDomain;
 
     private Long fileId;
-
+    @JsonIgnore
     private Set<JobDTO> jobs = new HashSet<>();
 
+    @JsonIgnore
     private Set<EvaluationCriteriaDTO> evaluationCriteria = new HashSet<>();
 
+    @JsonIgnore
     private Set<CompanyPipelineDTO> companyPipelines = new HashSet<>();
 
     public String getNameEn() {

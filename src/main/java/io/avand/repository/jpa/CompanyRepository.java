@@ -17,4 +17,6 @@ import java.util.List;
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     Page<CompanyEntity> findAllByUser_Id(Long userId, Pageable pageable);
+
+    CompanyEntity findBySubDomain(String subDomain);
 }

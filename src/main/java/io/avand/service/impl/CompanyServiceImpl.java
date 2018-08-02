@@ -73,6 +73,18 @@ public class CompanyServiceImpl implements CompanyService {
         }
     }
 
+
+    @Override
+    public CompanyDTO findBySubDomain(String subDomain) throws NotFoundException {
+        log.debug("Request to find company by subDomain : {}", subDomain);
+        CompanyEntity companyEntity = companyRepository.findBySubDomain(subDomain);
+        if (companyEntity != null) {
+            return companyMapper.toDto(companyEntity);
+        } else {
+            throw new NotFoundException("Company Not Available");
+        }
+    }
+
     @Override
     public Page<CompanyDTO> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find all company");

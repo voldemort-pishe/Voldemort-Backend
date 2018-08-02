@@ -1,5 +1,6 @@
 package io.avand.web.rest;
 
+import io.avand.config.ApplicationProperties;
 import io.avand.security.SecurityUtils;
 import io.avand.security.jwt.JWTConfigurer;
 import io.avand.service.UserService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -28,11 +30,14 @@ public class AccountResource {
     private final Logger log = LoggerFactory.getLogger(AccountResource.class);
     private final UserService userService;
     private final SecurityUtils securityUtils;
+    private final ApplicationProperties applicationProperties;
 
     public AccountResource(UserService userService,
-                           SecurityUtils securityUtils) {
+                           SecurityUtils securityUtils,
+                           ApplicationProperties applicationProperties) {
         this.userService = userService;
         this.securityUtils = securityUtils;
+        this.applicationProperties = applicationProperties;
     }
 
     @PostMapping("/register")
@@ -58,15 +63,13 @@ public class AccountResource {
     }
 
     @GetMapping("/activate/{activation-key}")
-    public ResponseEntity activate(@PathVariable("activation-key") String activationKey,
+    public void activate(@PathVariable("activation-key") String activationKey,
                                    HttpServletResponse response,
-                                   HttpServletRequest request) {
+                                   HttpServletRequest request) throws IOException {
         log.debug("REST Request to activate user by activationKey : {}", activationKey);
         try {
-            UserDTO userDTO = userService.activate(activationKey);
-            ServerMessage serverMessage = new ServerMessage();
-            serverMessage.setMessage(String.format("%s عزیز حساب کاربری شما با موفقیت فعال شد لطفا وارد شوید",userDTO.getFirstName()+" "+userDTO.getLastName()));
-            return new ResponseEntity<>(serverMessage, HttpStatus.OK);
+            userService.activate(activationKey);
+            response.sendRedirect(applicationProperties.getBase().getPanel()+"/#/auth/login?activate=success");
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }

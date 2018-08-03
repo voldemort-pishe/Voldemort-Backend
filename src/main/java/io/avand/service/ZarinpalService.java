@@ -48,8 +48,8 @@ public class ZarinpalService {
         }
 
         String amountString = zarinpalRequestDTO.getAmount().toString();
-        String removeLeadingZero = amountString.substring(0, amountString.length() -1);
-        zarinpalRequestDTO.setAmount(Long.parseLong(removeLeadingZero));
+        String amountToman = amountString.substring(0, amountString.length() -1);
+        zarinpalRequestDTO.setAmount(Long.parseLong(amountToman));
 
         HttpEntity<ZarinpalRequestDTO> request = new HttpEntity<>(zarinpalRequestDTO,headers);
 
@@ -76,9 +76,6 @@ public class ZarinpalService {
         zarinpalVerifyRequestDTO.setAmount(Long.parseLong(removeLeadingZero));
         zarinpalVerifyRequestDTO.setMerchantId(MERCHANT_ID);
         HttpEntity<ZarinpalVerifyRequestDTO> request = new HttpEntity<>(zarinpalVerifyRequestDTO,headers);
-//callback status option :
-//    OK
-//    NOK
 
         try {
             return restTemplate.exchange(API_URL+"PaymentVerification.json", HttpMethod.POST, request, ZarinpalVerifyResponseDTO.class);

@@ -1,0 +1,2 @@
+id;login;password_hash;first_name;last_name;email;activated;activation_key;invitation_key;reset_key;reset_date;created_by;created_date;last_modified_by;last_modified_date
+1;admin@avand.com;$2a$10$dUXWSMZFMH.LsIUR6lJRvORL/yCaNPBJzcdVsdotwt6Rv5YjMxHOC;System;System;admin@avand.com;1;;;;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00

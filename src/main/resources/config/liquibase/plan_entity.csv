@@ -1,0 +1,4 @@
+id;title;description;amount;active
+1;Free;Free Subscription;0;1
+2;Monthly;Monthly Subscription;1000;1
+3;Yearly;Yearly Subscription;2000;1

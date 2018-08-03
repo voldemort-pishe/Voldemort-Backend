@@ -11,9 +11,9 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154435_added_entity_AuthorityEntity.xml"
              relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20180619154436_added_entity_CandidateEntity.xml"
-             relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154437_added_entity_JobEntity.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154436_added_entity_CandidateEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154438_added_entity_CompanyEntity.xml"
              relativeToChangelogFile="false"/>

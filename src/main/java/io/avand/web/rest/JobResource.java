@@ -145,4 +145,23 @@ public class JobResource {
             throw new ServerErrorException(e.getMessage());
         }
     }
+
+
+    /**
+     * GET  /job/company-list/{id} : get all the jobEntities by company id.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of jobEntities in body
+     */
+    @GetMapping("/company-list/{id}")
+    @Timed
+    public ResponseEntity getAllJobByCompany(@ApiParam Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get all Job");
+        try {
+            Page<JobDTO> jobDTOS = jobService.findAllByCompanyId(pageable, id);
+            return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
 }

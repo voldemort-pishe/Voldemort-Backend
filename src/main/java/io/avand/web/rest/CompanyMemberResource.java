@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,10 +41,8 @@ public class CompanyMemberResource {
             throw new BadRequestAlertException("A new comment cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            CompanyMemberDTO result = companyMemberService.save(companyMemberDTO);
-            return ResponseEntity.created(new URI("/api/company-member/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-                .body(result);
+            List<CompanyMemberDTO> result = companyMemberService.save(companyMemberDTO);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
@@ -80,5 +79,16 @@ public class CompanyMemberResource {
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
+    }
+
+    @GetMapping("/emails")
+    public ResponseEntity getMemberEmails() {
+        List<String> emails = new ArrayList<>();
+        emails.add("farhang.darzi@gmail.com");
+        emails.add("majid.khoshnasib@gmail.com");
+        emails.add("mortezamrd75@gmail.com");
+        emails.add("ehdi.sh@gmail.com");
+        emails.add("pouyaashna@gmail.com");
+        return new ResponseEntity<>(emails, HttpStatus.OK);
     }
 }

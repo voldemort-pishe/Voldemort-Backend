@@ -1,12 +1,13 @@
 package io.avand.service.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class CompanyMemberDTO implements Serializable {
 
     private Long id;
 
-    private String userEmail;
+    private List<String> userEmails;
 
     private Long companyId;
 
@@ -18,12 +19,12 @@ public class CompanyMemberDTO implements Serializable {
         this.id = id;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public List<String> getUserEmails() {
+        return userEmails;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setUserEmails(List<String> userEmails) {
+        this.userEmails = userEmails;
     }
 
     public Long getCompanyId() {
@@ -38,7 +39,7 @@ public class CompanyMemberDTO implements Serializable {
     public String toString() {
         return "CompanyMemberDTO{" +
             "id=" + id +
-            ", userEmail='" + userEmail + '\'' +
+            ", userEmails=" + userEmails +
             ", companyId=" + companyId +
             '}';
     }

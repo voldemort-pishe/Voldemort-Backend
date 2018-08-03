@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,34 +50,37 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
-    public CompanyMemberDTO save(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
+    public List<CompanyMemberDTO> save(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
         log.debug("Request to save company member : {}", companyMemberDTO);
         CompanyEntity companyEntity = companyRepository.findOne(companyMemberDTO.getCompanyId());
         if (companyEntity != null) {
 
             if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
+                List<CompanyMemberEntity> companyMemberEntities = new ArrayList<>();
+                for (String userEmail : companyMemberDTO.getUserEmails()) {
+                    Optional<UserEntity> userEntityOp = userRepository.findByLogin(userEmail);
+                    UserEntity userEntity;
+                    if (!userEntityOp.isPresent()) {
+                        UserEntity user = new UserEntity();
+                        user.setLogin(userEmail);
+                        user.setEmail(userEmail);
+                        user.setInvitationKey(RandomUtil.generateInvitationKey());
+                        userEntity = userRepository.save(user);
 
-                Optional<UserEntity> userEntityOp = userRepository.findByLogin(companyMemberDTO.getUserEmail());
-                UserEntity userEntity;
-                if (!userEntityOp.isPresent()) {
-                    UserEntity user = new UserEntity();
-                    user.setLogin(companyMemberDTO.getUserEmail());
-                    user.setInvitationKey(RandomUtil.generateInvitationKey());
-                    userEntity = userRepository.save(user);
+                        mailService.sendInviationEmail(userEntity);
+                    } else {
+                        userEntity = userEntityOp.get();
+                        mailService.sendInviationMemberEmail(userEntity);
+                    }
 
-                    mailService.sendInviationEmail(userEntity);
-                } else {
-                    userEntity = userEntityOp.get();
-                    mailService.sendInviationMemberEmail(userEntity);
+                    CompanyMemberEntity companyMemberEntity = companyMemberMapper.toEntity(companyMemberDTO);
+                    companyMemberEntity.setUser(userEntity);
+                    companyMemberEntity.setCompany(companyEntity);
+
+                    companyMemberEntity = companyMemberRepository.save(companyMemberEntity);
+                    companyMemberEntities.add(companyMemberEntity);
                 }
-
-                CompanyMemberEntity companyMemberEntity = companyMemberMapper.toEntity(companyMemberDTO);
-                companyMemberEntity.setUser(userEntity);
-                companyMemberEntity.setCompany(companyEntity);
-
-                companyMemberEntity = companyMemberRepository.save(companyMemberEntity);
-
-                return companyMemberMapper.toDto(companyMemberEntity);
+                return companyMemberMapper.toDto(companyMemberEntities);
             } else {
                 throw new SecurityException("You Don't Have Access To Add Member to this Company");
             }

@@ -19,6 +19,8 @@ public interface JobRepository extends JpaRepository<JobEntity, Long> {
 
     Page<JobEntity> findAllByCompany_User_Id(Long id, Pageable pageable);
 
+    Page<JobEntity> findAllByCompany_Id(Pageable pageable, Long id);
+
     List<JobEntity> findAllByCompany_SubDomain(String subDomain);
 
 }

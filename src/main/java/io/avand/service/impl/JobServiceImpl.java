@@ -87,6 +87,13 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    public Page<JobDTO> findAllByCompanyId(Pageable pageable, Long id) throws NotFoundException {
+        log.debug("Request to find all job");
+        return jobRepository.findAllByCompany_Id(pageable, id)
+            .map(jobMapper::toDto);
+    }
+
+    @Override
     public void delete(Long id) throws NotFoundException {
         log.debug("Request to delete job by id : {}", id);
         JobEntity jobEntity = jobRepository.findOne(id);

@@ -17,5 +17,7 @@ public interface JobService {
 
     Page<JobDTO> findAll(Pageable pageable) throws NotFoundException;
 
+    Page<JobDTO> findAllByCompanyId(Pageable pageable, Long id) throws NotFoundException;
+
     void delete(Long id) throws NotFoundException;
 }

@@ -11,6 +11,8 @@ public interface CandidateService {
 
     CandidateDTO save(CandidateDTO candidateDTO) throws NotFoundException;
 
+    CandidateDTO save(CandidateDTO candidateDTO,String companySubDomain) throws NotFoundException;
+
     CandidateDTO findById(Long id) throws NotFoundException;
 
     Page<CandidateDTO> findAll(Pageable pageable);

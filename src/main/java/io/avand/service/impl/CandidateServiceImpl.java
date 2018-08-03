@@ -59,6 +59,30 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
+    public CandidateDTO save(CandidateDTO candidateDTO, String companySubDomain) throws NotFoundException {
+        log.debug("Request to save candidate by subDomain : {}, {}", candidateDTO, companySubDomain);
+        JobEntity jobEntity = jobRepository.findOne(candidateDTO.getJobId());
+        if (jobEntity != null) {
+            if (jobEntity.getCompany().getSubDomain().equals(companySubDomain)) {
+                FileEntity fileEntity = fileRepository.findOne(candidateDTO.getFileId());
+                if (fileEntity != null) {
+                    CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
+                    candidateEntity.setJob(jobEntity);
+                    candidateEntity.setFile(fileEntity);
+                    candidateEntity = candidateRepository.save(candidateEntity);
+                    return candidateMapper.toDto(candidateEntity);
+                } else {
+                    throw new NotFoundException("File Not Available");
+                }
+            } else {
+                throw new SecurityException("You Don't Have Access To Create Candidate For This Company");
+            }
+        } else {
+            throw new NotFoundException("Job Not Available");
+        }
+    }
+
+    @Override
     public CandidateDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find candidate by id : {}", id);
         CandidateEntity candidateEntity = candidateRepository.findOne(id);

@@ -13,6 +13,8 @@ public class CommentDTO implements Serializable {
 
     private Boolean status;
 
+    private Long userId;
+
     @NotNull
     private Long candidateId;
 
@@ -40,6 +42,14 @@ public class CommentDTO implements Serializable {
         this.status = status;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public Long getCandidateId() {
         return candidateId;
     }
@@ -54,6 +64,8 @@ public class CommentDTO implements Serializable {
             "id=" + id +
             ", commentText='" + commentText + '\'' +
             ", status=" + status +
+            ", userId=" + userId +
+            ", candidateId=" + candidateId +
             '}';
     }
 }

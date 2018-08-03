@@ -16,6 +16,7 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
     private String location;
 
+    @JsonIgnore
     private Set<CandidateDTO> candidate = new HashSet<>();
 
     @NotNull

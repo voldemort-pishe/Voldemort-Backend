@@ -1,5 +1,7 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -28,12 +30,16 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     private ZonedDateTime resetDate;
 
+    @JsonIgnore
     private Set<UserAuthorityDTO> userAuthorities = new HashSet<>();
 
+    @JsonIgnore
     private Set<CompanyDTO> companies = new HashSet<>();
 
+    @JsonIgnore
     private Set<TalentPoolDTO> talentPools = new HashSet<>();
 
+    @JsonIgnore
     private Set<InvoiceDTO> invoices = new HashSet<>();
 
     public String getLogin() {

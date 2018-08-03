@@ -25,6 +25,7 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
 
     private String planTitle;
 
+    @JsonIgnore
     private Set<PaymentTransactionDTO> paymentTransactions = new HashSet<>();
 
     @NotNull

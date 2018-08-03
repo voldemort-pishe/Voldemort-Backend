@@ -14,6 +14,7 @@ public class UserAuthorityDTO implements Serializable {
 
     private String authorityName;
 
+    @JsonIgnore
     private Set<UserPermissionDTO> userPermissions = new HashSet<>();
 
     @NotNull

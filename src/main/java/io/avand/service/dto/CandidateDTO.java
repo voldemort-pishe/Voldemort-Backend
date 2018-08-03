@@ -22,14 +22,19 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
 
     private Long candidatePipeline;
 
+    @JsonIgnore
     private Set<FeedbackDTO> feedback = new HashSet<>();
 
+    @JsonIgnore
     private Set<CommentDTO> comments = new HashSet<>();
 
+    @JsonIgnore
     private Set<CandidateEvaluationCriteriaDTO> candidateEvaluationCriteria = new HashSet<>();
 
+    @JsonIgnore
     private Set<CandidateScheduleDTO> candidateSchedule = new HashSet<>();
 
+    @JsonIgnore
     private Set<CandidateMessageDTO> candidateMessages = new HashSet<>();
 
     private Long fileId;

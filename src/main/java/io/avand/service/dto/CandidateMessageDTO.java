@@ -1,5 +1,6 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.MessageOwnerType;
 
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
     private MessageOwnerType owner;
     private Long parentId;
 
+    @JsonIgnore
     private Set<CandidateMessageDTO> child = new HashSet<>();
 
     @NotNull

@@ -139,7 +139,7 @@ public class FeedbackResource {
     }
 
     /**
-     * GET  /feedback : get all the feedbackEntities.
+     * GET  /feedback/candidate-feedback/{id} : get all the feedbackEntities by candidate id.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of feedbackEntities in body
      */

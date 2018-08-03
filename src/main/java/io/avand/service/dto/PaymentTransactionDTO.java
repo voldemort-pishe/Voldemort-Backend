@@ -12,7 +12,9 @@ public class PaymentTransactionDTO implements Serializable {
 
     private Long userId;
 
-    private Long referenceId;
+    private String referenceId;
+
+    private String trackingCode;
 
     private Integer amount;
 
@@ -37,12 +39,20 @@ public class PaymentTransactionDTO implements Serializable {
         this.userId = userId;
     }
 
-    public Long getReferenceId() {
+    public String getReferenceId() {
         return referenceId;
     }
 
-    public void setReferenceId(Long referenceId) {
+    public void setReferenceId(String referenceId) {
         this.referenceId = referenceId;
+    }
+
+    public String getTrackingCode() {
+        return trackingCode;
+    }
+
+    public void setTrackingCode(String trackingCode) {
+        this.trackingCode = trackingCode;
     }
 
     public Integer getAmount() {

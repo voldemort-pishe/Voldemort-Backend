@@ -26,7 +26,10 @@ public class PaymentTransactionEntity implements Serializable {
     private Long userId;
 
     @Column(name = "reference_id")
-    private Long referenceId;
+    private String referenceId;
+
+    @Column(name = "tracking_code")
+    private String trackingCode;
 
     @Column(name = "amount")
     private Integer amount;
@@ -59,17 +62,25 @@ public class PaymentTransactionEntity implements Serializable {
         this.userId = userId;
     }
 
-    public Long getReferenceId() {
+    public String getReferenceId() {
         return referenceId;
     }
 
-    public PaymentTransactionEntity refrenceId(Long refrenceId) {
+    public PaymentTransactionEntity refrenceId(String refrenceId) {
         this.referenceId = refrenceId;
         return this;
     }
 
-    public void setReferenceId(Long referenceId) {
+    public void setReferenceId(String referenceId) {
         this.referenceId = referenceId;
+    }
+
+    public String getTrackingCode() {
+        return trackingCode;
+    }
+
+    public void setTrackingCode(String trackingCode) {
+        this.trackingCode = trackingCode;
     }
 
     public Integer getAmount() {

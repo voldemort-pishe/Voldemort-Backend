@@ -11,11 +11,15 @@ public interface InvoiceService {
 
     InvoiceDTO save(InvoiceDTO invoiceDTO);
 
+    InvoiceDTO update(InvoiceDTO invoiceDTO);
+
     void delete(Long id);
 
     Optional<InvoiceDTO> findOneById(Long id);
 
     Optional<InvoiceDTO> findOneByUserId(Long userId) throws NotFoundException;
+
+    Optional<InvoiceDTO> findOneByTrackingCode(String trackingCode) throws NotFoundException;
 
     Page<InvoiceDTO> getAll(Pageable pageable);
 }

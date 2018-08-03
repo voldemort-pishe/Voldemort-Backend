@@ -2,6 +2,7 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.avand.domain.entity.jpa.InvoiceEntity;
+import io.avand.domain.enumeration.PaymentType;
 import io.avand.domain.enumeration.SubscriptionStatus;
 import io.avand.security.SecurityUtils;
 import io.avand.service.InvoiceService;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Optional;
 
 @RestController
@@ -59,7 +62,6 @@ public class UserPlanResource {
         logger.debug("REST request to save a plan for a user : {}", planId);
         try {
             Long userId = securityUtils.getCurrentUserId();
-            Optional<UserDTO> userDTOOptional = userService.findById(userId);
 
             Optional<PlanDTO> planDTO = planService.findOneById(planId);
 
@@ -70,8 +72,8 @@ public class UserPlanResource {
             SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
             subscriptionDTO.setPlanTitle(planDTO.get().getTitle());
             subscriptionDTO.setStartDate(ZonedDateTime.now());
-            //TODO: Should get plan period and set it in subscription object
-//            subscriptionDTO.setEndDate(ZonedDateTime.now().plus(planDTO.get().getDescription()));
+            //TODO: Should check when plan will end and change end date compare to that
+            subscriptionDTO.setEndDate(ZonedDateTime.now().plus(30, ChronoUnit.DAYS));
             subscriptionDTO.setStatus(SubscriptionStatus.INITIALIZED);
             subscriptionDTO.setUserId(userId);
 
@@ -84,12 +86,12 @@ public class UserPlanResource {
                 invoiceDTO.setAmount(planDTO.get().getAmount());
                 invoiceDTO.setUserId(userId);
                 invoiceDTO.setPlanTitle(planDTO.get().getTitle());
+                invoiceDTO.setPaymentType(PaymentType.ZARINPAL);
+                invoiceDTO.setPaymentDate(ZonedDateTime.now());
 
                 //TODO : should check if application did save the invoice or not.
                 invoiceDTO = invoiceService.save(invoiceDTO);
             }
-
-            UserDTO response = userService.update(userDTOOptional.get());
 
             return new ResponseEntity<>(invoiceDTO, HttpStatus.OK);
         } catch (NotFoundException e) {

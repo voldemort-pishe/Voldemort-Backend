@@ -15,4 +15,6 @@ import java.util.Optional;
 public interface PaymentTransactionRepository extends JpaRepository<PaymentTransactionEntity, Long> {
 
     Optional<PaymentTransactionEntity> findById(Long id);
+
+    Optional<PaymentTransactionEntity> findByTrackingCode(String trackingCode);
 }

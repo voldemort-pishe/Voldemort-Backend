@@ -1,15 +1,19 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.InvoiceEntity;
+import io.avand.domain.entity.jpa.PaymentTransactionEntity;
 import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.domain.enumeration.InvoiceStatus;
 import io.avand.repository.jpa.InvoiceRepository;
+import io.avand.repository.jpa.PaymentTransactionRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.service.InvoiceService;
 import io.avand.service.SubscriptionService;
 import io.avand.service.dto.InvoiceDTO;
+import io.avand.service.dto.PaymentTransactionDTO;
 import io.avand.service.dto.SubscriptionDTO;
 import io.avand.service.mapper.InvoiceMapper;
+import io.avand.service.mapper.PaymentTransactionMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +36,22 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final UserRepository userRepository;
 
+    private final PaymentTransactionRepository paymentTransactionRepository;
+
+    private final PaymentTransactionMapper paymentTransactionMapper;
+
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository,
                               InvoiceMapper invoiceMapper,
                               SubscriptionService subscriptionService,
-                              UserRepository userRepository) {
+                              UserRepository userRepository,
+                              PaymentTransactionRepository paymentTransactionRepository,
+                              PaymentTransactionMapper paymentTransactionMapper) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceMapper = invoiceMapper;
         this.subscriptionService = subscriptionService;
         this.userRepository = userRepository;
+        this.paymentTransactionRepository = paymentTransactionRepository;
+        this.paymentTransactionMapper = paymentTransactionMapper;
     }
 
     @Override
@@ -55,8 +67,18 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceEntity.setUser(userEntity.get());
         invoiceEntity = invoiceRepository.save(invoiceEntity);
 
-        SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
-        subscriptionDTO.setPlanTitle("");
+        return invoiceMapper.toDto(invoiceEntity);
+    }
+
+    @Override
+    public InvoiceDTO update(InvoiceDTO invoiceDTO) {
+        logger.debug("Request for service to update an invoice : {}", invoiceDTO);
+        InvoiceEntity invoiceEntity = invoiceMapper.toEntity(invoiceDTO);
+
+        Optional<UserEntity> userEntity = userRepository.findById(invoiceDTO.getUserId());
+
+        invoiceEntity.setUser(userEntity.get());
+        invoiceEntity = invoiceRepository.save(invoiceEntity);
 
         return invoiceMapper.toDto(invoiceEntity);
     }
@@ -84,6 +106,19 @@ public class InvoiceServiceImpl implements InvoiceService {
             return invoiceEntity.map(invoiceMapper::toDto);
         } else {
             throw new NotFoundException("Sorry, who are you?");
+        }
+    }
+
+    @Override
+    public Optional<InvoiceDTO> findOneByTrackingCode(String trackingCode) throws NotFoundException {
+        logger.debug("Request to invoice service to find a invoice by reference id : {}", trackingCode);
+
+        Optional<PaymentTransactionEntity> paymentTransactionEntity = paymentTransactionRepository.findByTrackingCode(trackingCode);
+        if (paymentTransactionEntity.isPresent()) {
+            Optional<InvoiceEntity> invoiceEntity = invoiceRepository.findByPaymentTransactions(paymentTransactionEntity.get());
+            return invoiceEntity.map(invoiceMapper::toDto);
+        } else {
+            throw new NotFoundException("Invoice is not available!");
         }
     }
 

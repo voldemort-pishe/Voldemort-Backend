@@ -137,4 +137,18 @@ public class CommentResource {
         commentService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+
+    /**
+     * GET  /candidate-comment/:id : get the "id" candidate.
+     *
+     * @param id the id of the canidate to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the commentEntity, or with status 404 (Not Found)
+     */
+    @GetMapping("/{id}")
+    @Timed
+    public ResponseEntity getCandidateComment(@PathVariable Long id, @ApiParam Pageable pageable) {
+        log.debug("REST request to get Comment : {}", id);
+        Page<CommentDTO> commentDTOS = commentService.findAllByCandidateId(pageable, id);
+        return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
+    }
 }

@@ -47,7 +47,7 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     @JoinColumn(unique = true)
     private FileEntity file;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company",fetch = FetchType.EAGER)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<JobEntity> jobs = new HashSet<>();

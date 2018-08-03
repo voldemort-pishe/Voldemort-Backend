@@ -38,7 +38,16 @@ public class CommentResource {
 
     private final CommentService commentService;
 
-    public CommentResource(CommentService commentService) {
+    private final UserService userService;
+
+    private final CandidateService candidateService;
+
+    private final ApplicationProperties applicationProperties;
+
+    public CommentResource(CommentService commentService,
+                           UserService userService,
+                           CandidateService candidateService,
+                           ApplicationProperties applicationProperties) {
         this.commentService = commentService;
     }
 
@@ -103,7 +112,14 @@ public class CommentResource {
     public ResponseEntity getAllCommentEntities(@ApiParam Pageable pageable) {
         log.debug("REST request to get all Comment");
         Page<CommentDTO> commentDTOS = commentService.findAll(pageable);
-        return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
+        List<CommentVM> commentVMS = new ArrayList<>();
+        for (CommentDTO commentDTO : commentDTOS) {
+            try {
+                commentVMS.add(createCommentFromDTO(commentDTO));
+            } catch (NotFoundException ignore) {
+            }
+        }
+        return new ResponseEntity<>(commentVMS, HttpStatus.OK);
     }
 
     /**
@@ -117,8 +133,7 @@ public class CommentResource {
     public ResponseEntity getComment(@PathVariable Long id) {
         log.debug("REST request to get Comment : {}", id);
         try {
-            CommentDTO commentDTO = commentService.findById(id);
-            return ResponseUtil.wrapOrNotFound(Optional.ofNullable(commentDTO));
+            return ResponseUtil.wrapOrNotFound(Optional.ofNullable(createCommentFromDTO(commentService.findById(id))));
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
@@ -138,6 +153,27 @@ public class CommentResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
+    private CommentVM createCommentFromDTO(CommentDTO commentDTO) throws NotFoundException {
+        CommentVM commentVM = new CommentVM();
+        commentVM.setId(commentDTO.getId());
+        commentVM.setCommentText(commentDTO.getCommentText());
+        commentVM.setStatus(commentDTO.getStatus());
+
+        Optional<UserDTO> userDTOOptional = userService.findById(commentDTO.getUserId());
+        if (userDTOOptional.isPresent()){
+            CommentUserVM commentUserVM = new CommentUserVM();
+            commentUserVM.setName(userDTOOptional.get().getFirstName() + " "+ userDTOOptional.get().getLastName());
+            commentVM.setUser(commentUserVM);
+        }
+        CandidateDTO candidateDTO = candidateService.findById(commentDTO.getCandidateId());
+        CommentCandidateVM commentCandidateVM = new CommentCandidateVM();
+        commentCandidateVM.setName(candidateDTO.getFirstName() + " "+ candidateDTO.getLastName());
+        commentCandidateVM.setFilePath(applicationProperties.getBase().getUrl() + "api/file/load/" + candidateDTO.getFileId());
+        commentVM.setCandidate(commentCandidateVM);
+        return commentVM;
+    }
+
+
     /**
      * GET  /candidate-comment/:id : get the "id" candidate.
      *
@@ -151,4 +187,5 @@ public class CommentResource {
         Page<CommentDTO> commentDTOS = commentService.findAllByCandidateId(pageable, id);
         return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
     }
+
 }

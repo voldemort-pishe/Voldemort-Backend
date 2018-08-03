@@ -52,7 +52,7 @@ public class CareerPageResource {
             companyVM.setNameEn(companyDTO.getNameEn());
             companyVM.setDescriptionFa(companyDTO.getDescriptionFa());
             companyVM.setDescriptionEn(companyDTO.getDescriptionEn());
-            companyVM.setFilePath(applicationProperties.getBase().getUrl() + "/api/file/load/" + companyDTO.getFileId());
+            companyVM.setFilePath(applicationProperties.getBase().getUrl() + "api/file/load/" + companyDTO.getFileId());
             return new ResponseEntity<>(companyVM, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

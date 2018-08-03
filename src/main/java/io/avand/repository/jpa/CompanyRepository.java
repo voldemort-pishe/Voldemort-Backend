@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -16,6 +17,9 @@ import java.util.List;
 @SuppressWarnings("unused")
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
+
+    Optional<CompanyEntity> findById(Long companyId);
+
     Page<CompanyEntity> findAllByUser_Id(Long userId, Pageable pageable);
 
     CompanyEntity findBySubDomain(String subDomain);

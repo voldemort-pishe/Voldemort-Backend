@@ -82,12 +82,10 @@ public class PaymentResource {
         }
     }
 
-    @PostMapping("/callback")
+    @GetMapping("/callback")
     @Timed
     public ResponseEntity paymentCallback(@RequestParam("Authority") String authority,
                                           @RequestParam("Status") String status) throws NotFoundException {
-
-        System.out.println(status);
 
         ZarinpalVerifyRequestDTO zarinpalVerifyRequestDTO = new ZarinpalVerifyRequestDTO();
         zarinpalVerifyRequestDTO.setAuthority(authority);

@@ -6,9 +6,18 @@ import java.io.Serializable;
 
 public class CareerPageJobVM implements Serializable {
 
+    private Long id;
     private String name;
     private JobType type;
     private String location;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -37,7 +46,8 @@ public class CareerPageJobVM implements Serializable {
     @Override
     public String toString() {
         return "CareerPageJobVM{" +
-            "name='" + name + '\'' +
+            "id=" + id +
+            ", name='" + name + '\'' +
             ", type=" + type +
             ", location='" + location + '\'' +
             '}';

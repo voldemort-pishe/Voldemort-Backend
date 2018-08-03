@@ -82,12 +82,16 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
         logger.debug("Request to company pipeline service to get all by user id");
 
         CompanyEntity companyEntity = companyRepository.findOne(companyId);
-        if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-            return companyPipelineRepository
-                .findAllByCompany(companyEntity, pageable)
-                .map(companyPipelineMapper::toDto);
-        } else {
-            throw new SecurityException("Sorry you do not have the right permission to get this company pipelines!");
+        if (companyEntity!=null) {
+            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
+                return companyPipelineRepository
+                    .findAllByCompany(companyEntity, pageable)
+                    .map(companyPipelineMapper::toDto);
+            } else {
+                throw new SecurityException("Sorry you do not have the right permission to get this company pipelines!");
+            }
+        }else {
+            throw new NotFoundException("Company Not Available");
         }
     }
 

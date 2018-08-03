@@ -137,4 +137,18 @@ public class FeedbackResource {
         feedbackService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+
+    /**
+     * GET  /feedback/candidate-feedback/{id} : get all the feedbackEntities by candidate id.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of feedbackEntities in body
+     */
+    @GetMapping("/candidate-feedback/{id}")
+    @Timed
+    public ResponseEntity getAllFeedbackByCandidate(@ApiParam Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get all Feedback");
+        Page<FeedbackDTO> feedbackDTOS = feedbackService.findAllByCandidateId(pageable, id);
+        return new ResponseEntity<>(feedbackDTOS, HttpStatus.OK);
+    }
+
 }

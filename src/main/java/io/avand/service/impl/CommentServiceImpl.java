@@ -71,6 +71,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Page<CommentDTO> findAllByCandidateId(Pageable pageable, Long id) {
+        log.debug("Request to find all comment by candidate id");
+        return commentRepository.findAllByCandidate_Id(pageable, id)
+            .map(commentMapper::toDto);
+    }
+
+    @Override
     public void delete(Long id) {
         log.debug("Request to delete comment by id : {}", id);
         commentRepository.delete(id);

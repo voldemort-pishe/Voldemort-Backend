@@ -97,6 +97,13 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
+    public Page<FeedbackDTO> findAllByCandidateId(Pageable pageable, Long id) {
+        log.debug("Request to find all feedback by candidate id");
+        return feedbackRepository.findAllByCandidate_Id(pageable, id)
+            .map(feedbackMapper::toDto);
+    }
+
+    @Override
     public void delete(Long id) {
         log.debug("Request to delete feedback by id : {}", id);
         feedbackRepository.delete(id);

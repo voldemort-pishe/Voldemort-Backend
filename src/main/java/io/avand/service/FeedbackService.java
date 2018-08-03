@@ -17,6 +17,8 @@ public interface FeedbackService {
 
     Page<FeedbackDTO> findAll(Pageable pageable);
 
+    Page<FeedbackDTO> findAllByCandidateId(Pageable pageable, Long id);
+
     void delete(Long id);
 
 }

@@ -15,6 +15,8 @@ public interface CommentService {
 
     Page<CommentDTO> findAll(Pageable pageable);
 
+    Page<CommentDTO> findAllByCandidateId(Pageable pageable, Long id);
+
     void delete(Long id);
 
 }

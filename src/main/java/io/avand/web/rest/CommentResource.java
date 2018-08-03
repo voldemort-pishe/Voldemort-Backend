@@ -52,10 +52,7 @@ public class CommentResource {
 
     private final ApplicationProperties applicationProperties;
 
-    public CommentResource(CommentService commentService,
-                           UserService userService,
-                           CandidateService candidateService,
-                           ApplicationProperties applicationProperties) {
+    public CommentResource(CommentService commentService, UserService userService, CandidateService candidateService, ApplicationProperties applicationProperties) {
         this.commentService = commentService;
         this.userService = userService;
         this.candidateService = candidateService;
@@ -164,11 +161,32 @@ public class CommentResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
+    /**
+     * GET  /candidate-comment/:id : get the "id" candidate.
+     *
+     * @param id the id of the canidate to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the commentEntity, or with status 404 (Not Found)
+     */
+    @GetMapping("/candidate-comment/{id}")
+    @Timed
+    public ResponseEntity getCandidateComment(@PathVariable Long id, @ApiParam Pageable pageable) {
+        log.debug("REST request to get all Comment");
+        Page<CommentDTO> commentDTOS = commentService.findAllByCandidateId(pageable, id);
+        List<CommentVM> commentVMS = new ArrayList<>();
+        for (CommentDTO commentDTO : commentDTOS) {
+            try {
+                commentVMS.add(createCommentFromDTO(commentDTO));
+            } catch (NotFoundException ignore) {
+            }
+        }
+        return new ResponseEntity<>(commentVMS, HttpStatus.OK);
+    }
+
     private CommentVM createCommentFromDTO(CommentDTO commentDTO) throws NotFoundException {
         CommentVM commentVM = new CommentVM();
         commentVM.setId(commentDTO.getId());
         commentVM.setCommentText(commentDTO.getCommentText());
-        commentVM.setStatus(commentDTO.getStatus());
+        commentVM.setStatus(true);
 
         Optional<UserDTO> userDTOOptional = userService.findById(commentDTO.getUserId());
         if (userDTOOptional.isPresent()){
@@ -183,4 +201,5 @@ public class CommentResource {
         commentVM.setCandidate(commentCandidateVM);
         return commentVM;
     }
+
 }

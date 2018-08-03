@@ -81,7 +81,7 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
     public Page<CompanyPipelineDTO> getAllByCompanyId(Long companyId, Pageable pageable) throws NotFoundException {
         logger.debug("Request to company pipeline service to get all by user id");
 
-        CompanyEntity companyEntity = companyRepository.findOne(companyId);
+        CompanyEntity companyEntity = companyRepository.findById(companyId).get();
         if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
             return companyPipelineRepository
                 .findAllByCompany(companyEntity, pageable)

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyPipelineServiceImpl implements CompanyPipelineService {
@@ -45,9 +46,10 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
 
         logger.debug("Request to company pipeline service to save a pipeline object : {}", companyPipelineDTO);
 
-        CompanyEntity companyEntity = companyRepository.findOne(companyPipelineDTO.getCompanyId());
+        Optional<CompanyEntity> companyEntityOp = companyRepository.findById(companyPipelineDTO.getCompanyId());
 
-        if (companyEntity != null) {
+        if (companyEntityOp.isPresent()) {
+            CompanyEntity companyEntity = companyEntityOp.get();
             if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
                 CompanyPipelineEntity companyPipelineEntity = companyPipelineMapper.toEntity(companyPipelineDTO);
                 companyPipelineEntity.setCompany(companyEntity);

@@ -1,6 +1,5 @@
 package io.avand.service.impl;
 
-import io.avand.security.AuthoritiesConstants;
 import io.avand.security.jwt.TokenProvider;
 import io.avand.service.TokenService;
 import io.avand.service.dto.TokenDTO;
@@ -9,14 +8,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -49,41 +43,8 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public TokenDTO createAccessTokenByUserName(String username, Boolean rememberMe) {
-
-//        HashMap<String, String> authorizationParameters = new HashMap<>();
-//        authorizationParameters.put("scope", "openid");
-//        authorizationParameters.put("username", "web_app");
-//        authorizationParameters.put("client_id", "internal");
-//        authorizationParameters.put("grant", "password");
-//
-//        Set<GrantedAuthority> authorities = new HashSet<>();
-//        authorities.add(new SimpleGrantedAuthority(AuthoritiesConstants.USER));
-//
-//        Set<String> responseType = new HashSet<>();
-//        responseType.add("password");
-//
-//        Set<String> scopes = new HashSet<>();
-//        scopes.add("openid");
-//
-//        OAuth2Request authorizationRequest = new OAuth2Request(
-//            authorizationParameters, "web_app",
-//            authorities, true, scopes, null, "",
-//            responseType, null);
-//
-//        org.springframework.security.core.userdetails.User userPrincipal =
-//            new org.springframework.security.core.userdetails.User(username, "", true, true, true, true, authorities);
-//
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-//            userPrincipal, null, authorities);
-//
-//
-//
-//        OAuth2Authentication authenticationRequest = new OAuth2Authentication(
-//            authorizationRequest, authenticationToken);
-//        authenticationRequest.setAuthenticated(true);
-//
-//        return tokenServices.createAccessToken(authenticationRequest);
         return null;
     }
+
 
 }

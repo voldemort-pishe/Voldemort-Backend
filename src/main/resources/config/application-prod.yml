@@ -142,6 +142,6 @@ jhipster:
 application:
   base:
     url: http://testbed.avand.io:8080/
-    panel: http://testbed.avand.io:4200
+    panel: http://testbed.avand.io:8081
 storage:
   location: /home/avand/static-files

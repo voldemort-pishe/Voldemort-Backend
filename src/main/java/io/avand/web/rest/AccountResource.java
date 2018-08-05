@@ -57,7 +57,7 @@ public class AccountResource {
                 );
 
             ServerMessage serverMessage = new ServerMessage();
-            serverMessage.setMessage("حساب کاربری شما با موفقیت ایجاد شد، جهت تایید حساب کاربری خود یک پیغام به آدرس پست الکترونیکی شما ارسال شد.");
+            serverMessage.setMessage("حساب کاربری شما با موفقیت ایجاد شد، جهت تایید حساب کاربری به پست الکترونیکی خودمراجعه کنید.");
             return new ResponseEntity<>(serverMessage, HttpStatus.OK);
         }
     }

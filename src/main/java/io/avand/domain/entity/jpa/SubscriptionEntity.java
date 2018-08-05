@@ -30,6 +30,7 @@ public class SubscriptionEntity implements Serializable {
     private ZonedDateTime endDate;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private SubscriptionStatus status;
 
     public Long getId() {

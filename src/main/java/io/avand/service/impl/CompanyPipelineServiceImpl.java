@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyPipelineServiceImpl implements CompanyPipelineService {
@@ -84,7 +85,7 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
         logger.debug("Request to company pipeline service to get all by user id");
 
         CompanyEntity companyEntity = companyRepository.findOne(companyId);
-        if (companyEntity!=null) {
+        if (companyEntity != null) {
             if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
                 return companyPipelineRepository
                     .findAllByCompany(companyEntity, pageable)
@@ -92,7 +93,27 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
             } else {
                 throw new SecurityException("Sorry you do not have the right permission to get this company pipelines!");
             }
-        }else {
+        } else {
+            throw new NotFoundException("Company Not Available");
+        }
+    }
+
+    @Override
+    public List<CompanyPipelineDTO> getAllByCompanyId(Long companyId) throws NotFoundException {
+        logger.debug("Request to company pipeline service to get all by user id");
+
+        CompanyEntity companyEntity = companyRepository.findOne(companyId);
+        if (companyEntity != null) {
+            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
+                return companyPipelineRepository
+                    .findAllByCompany(companyEntity)
+                    .stream()
+                    .map(companyPipelineMapper::toDto)
+                    .collect(Collectors.toList());
+            } else {
+                throw new SecurityException("Sorry you do not have the right permission to get this company pipelines!");
+            }
+        } else {
             throw new NotFoundException("Company Not Available");
         }
     }

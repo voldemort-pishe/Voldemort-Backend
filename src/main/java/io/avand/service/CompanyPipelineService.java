@@ -15,6 +15,8 @@ public interface CompanyPipelineService {
 
     Page<CompanyPipelineDTO> getAllByCompanyId(Long companyId, Pageable pageable) throws NotFoundException;
 
+    List<CompanyPipelineDTO> getAllByCompanyId(Long companyId) throws NotFoundException;
+
     CompanyPipelineDTO findOne(Long id) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;

@@ -1,5 +1,11 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
+import io.avand.service.dto.serializer.DateDeSerializer;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -32,6 +38,7 @@ public class AbstractAuditingDTO implements Serializable {
         this.createdBy = createdBy;
     }
 
+    @JsonSerialize(using = DateDeSerializer.class)
     public ZonedDateTime getCreatedDate() {
         return createdDate;
     }
@@ -48,6 +55,7 @@ public class AbstractAuditingDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    @JsonSerialize(using = DateDeSerializer.class)
     public ZonedDateTime getLastModifiedDate() {
         return lastModifiedDate;
     }

@@ -93,6 +93,15 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public List<CompanyDTO> findAll() throws NotFoundException {
+        log.debug("Request to find all company");
+        return companyRepository.findAllByUser_Id(securityUtils.getCurrentUserId())
+            .stream()
+            .map(companyMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public void delete(Long id) throws NotFoundException {
         Long userId = securityUtils.getCurrentUserId();
         CompanyEntity companyEntity = companyRepository.findOne(id);

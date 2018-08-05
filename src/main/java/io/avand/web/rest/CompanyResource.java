@@ -109,6 +109,18 @@ public class CompanyResource {
         }
     }
 
+    @GetMapping("/list")
+    @Timed
+    public ResponseEntity getAllCompany(){
+        log.debug("REST Request to get all company");
+        try{
+            List<CompanyDTO> companyDTOS = companyService.findAll();
+            return new ResponseEntity<>(companyDTOS,HttpStatus.OK);
+        }catch (NotFoundException e){
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
     /**
      * GET  /company/:id : get the "id" companyEntity.
      *

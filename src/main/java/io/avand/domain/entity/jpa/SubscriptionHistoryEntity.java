@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "subscription_history_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class SubscriptionHistoryEntity {
 
     @Id

@@ -18,7 +18,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "job_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class JobEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -39,7 +39,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
 
     @OneToMany(mappedBy = "job")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateEntity> candidate = new HashSet<>();
 
     @ManyToOne(optional = false)

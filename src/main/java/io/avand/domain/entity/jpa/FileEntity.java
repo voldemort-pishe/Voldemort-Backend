@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "file_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class FileEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

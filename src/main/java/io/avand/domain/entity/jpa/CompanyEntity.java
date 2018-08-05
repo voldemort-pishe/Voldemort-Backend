@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "company_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,22 +49,22 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
 
     @OneToMany(mappedBy = "company",fetch = FetchType.EAGER)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<JobEntity> jobs = new HashSet<>();
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<EvaluationCriteriaEntity> evaluationCriteria = new HashSet<>();
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyPipelineEntity> companyPipelines = new HashSet<>();
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyMemberEntity> companyMembers = new HashSet<>();
 
     @ManyToOne

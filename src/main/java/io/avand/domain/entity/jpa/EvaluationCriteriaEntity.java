@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "evaluation_criteria_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class EvaluationCriteriaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

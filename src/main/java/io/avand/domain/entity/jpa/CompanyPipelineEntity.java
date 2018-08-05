@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "company_pipeline_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyPipelineEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

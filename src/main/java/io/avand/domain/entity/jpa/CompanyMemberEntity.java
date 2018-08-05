@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "company_member_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyMemberEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

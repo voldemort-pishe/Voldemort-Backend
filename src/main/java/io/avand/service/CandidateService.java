@@ -17,6 +17,8 @@ public interface CandidateService {
 
     Page<CandidateDTO> findAll(Pageable pageable);
 
+    Page<CandidateDTO> findByJobId(Long jobId,Pageable pageable) throws NotFoundException;
+
     void delete(Long id);
 
 }

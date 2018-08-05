@@ -124,6 +124,19 @@ public class CandidateResource {
         }
     }
 
+    @GetMapping("/job/{id}")
+    @Timed
+    public ResponseEntity getCandidateByJobId(@PathVariable("id") Long jobId,
+                                              @ApiParam Pageable pageable){
+        log.debug("REST Request to get Candidates by job id : {}");
+        try{
+            Page<CandidateDTO> candidateDTOS = candidateService.findByJobId(jobId,pageable);
+            return new ResponseEntity<>(candidateDTOS,HttpStatus.OK);
+        }catch (NotFoundException e){
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
     /**
      * DELETE  /candidate/:id : delete the "id" candidateEntity.
      *

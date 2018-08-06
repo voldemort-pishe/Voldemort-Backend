@@ -47,22 +47,22 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     @JoinColumn(unique = true)
     private FileEntity file;
 
-    @OneToMany(mappedBy = "company",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<JobEntity> jobs = new HashSet<>();
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<EvaluationCriteriaEntity> evaluationCriteria = new HashSet<>();
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyPipelineEntity> companyPipelines = new HashSet<>();
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyMemberEntity> companyMembers = new HashSet<>();

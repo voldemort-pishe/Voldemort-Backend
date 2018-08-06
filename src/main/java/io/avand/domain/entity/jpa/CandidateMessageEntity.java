@@ -40,7 +40,7 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
     @ManyToOne
     private CandidateMessageEntity parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateMessageEntity> child = new HashSet<>();

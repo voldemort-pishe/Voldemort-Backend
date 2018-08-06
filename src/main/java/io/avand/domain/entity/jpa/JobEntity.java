@@ -30,6 +30,10 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Lob
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private JobType type;
@@ -37,7 +41,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "location")
     private String location;
 
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateEntity> candidate = new HashSet<>();
@@ -68,6 +72,13 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public JobType getType() {
         return type;
@@ -132,6 +143,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
         return "JobEntity{" +
             "id=" + id +
             ", name='" + name + '\'' +
+            ", description='" + description + '\'' +
             ", type=" + type +
             ", location='" + location + '\'' +
             '}';

@@ -53,7 +53,7 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
     @Column(name = "status")
     private InvoiceStatus status;
 
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(mappedBy = "invoice",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<PaymentTransactionEntity> paymentTransactions = new HashSet<>();

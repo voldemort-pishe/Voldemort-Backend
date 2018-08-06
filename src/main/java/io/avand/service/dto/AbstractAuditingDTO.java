@@ -38,7 +38,6 @@ public class AbstractAuditingDTO implements Serializable {
         this.createdBy = createdBy;
     }
 
-    @JsonSerialize(using = DateDeSerializer.class)
     public ZonedDateTime getCreatedDate() {
         return createdDate;
     }
@@ -55,7 +54,6 @@ public class AbstractAuditingDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    @JsonSerialize(using = DateDeSerializer.class)
     public ZonedDateTime getLastModifiedDate() {
         return lastModifiedDate;
     }

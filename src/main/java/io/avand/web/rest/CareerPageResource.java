@@ -83,6 +83,24 @@ public class CareerPageResource {
         return new ResponseEntity<>(jobVMS, HttpStatus.OK);
     }
 
+    @GetMapping("/job/details/{jobId}/{subDomain}")
+    public ResponseEntity getJobDetails(@PathVariable("jobId") Long jobId,
+                                        @PathVariable("subDomain") String subDomain) {
+        log.debug("REST Request to get job details : {}, {}", jobId, subDomain);
+        try {
+            JobDTO jobDTO = jobService.findByJobIdAndCompanySubDomain(jobId, subDomain);
+            CareerPageJobVM jobVM = new CareerPageJobVM();
+            jobVM.setId(jobDTO.getId());
+            jobVM.setName(jobDTO.getName());
+            jobVM.setDescription(jobDTO.getDescription());
+            jobVM.setType(jobDTO.getType());
+            jobVM.setLocation(jobDTO.getLocation());
+            return new ResponseEntity<>(jobVM, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
     @PostMapping("/candidate/{subDomain}")
     public ResponseEntity createCandidate(@RequestBody CandidateDTO candidateDTO,
                                           @PathVariable("subDomain") String subDomain) {
@@ -94,6 +112,7 @@ public class CareerPageResource {
             throw new ServerErrorException(e.getMessage());
         }
     }
+
     //TODO fix this
     @PostMapping("/file/{subDomain}")
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file,

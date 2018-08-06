@@ -15,6 +15,8 @@ public interface JobService {
 
     List<JobDTO> findAllByCompanySubDomain(String subDomain);
 
+    JobDTO findByJobIdAndCompanySubDomain(Long jobId,String subDomain) throws NotFoundException;
+
     Page<JobDTO> findAll(Pageable pageable) throws NotFoundException;
 
     Page<JobDTO> findAllByCompanyId(Pageable pageable, Long id) throws NotFoundException;

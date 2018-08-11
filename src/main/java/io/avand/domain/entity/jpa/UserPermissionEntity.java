@@ -15,7 +15,7 @@ import io.avand.domain.enumeration.PermissionAction;
  */
 @Entity
 @Table(name = "user_permission_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class UserPermissionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

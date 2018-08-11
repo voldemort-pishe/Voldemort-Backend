@@ -53,7 +53,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedbackEntity = feedbackRepository.save(feedbackEntity);
                 return feedbackMapper.toDto(feedbackEntity);
             } else {
-                throw new IllegalStateException("there is a feedback of you for this candidate");
+                throw new IllegalStateException("شما قبلا برای این کارجو نظر داده‌اید");
             }
         } else {
             throw new NotFoundException("Candidate Not Found");

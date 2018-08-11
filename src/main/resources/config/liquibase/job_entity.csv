@@ -1,2 +1,8 @@
 name;type;location;company_id;created_by;created_date;last_modified_by;last_modified_date
 Android;FULL_TIME;Tehran;1;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00
+Back-end;FULL_TIME;Tehran;1;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Front-end;PART_TIME;Tehran;1;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Front-end;PART_TIME;Tehran;3;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Back-end;FULL_TIME;Tehran;3;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Python developer;FULL_TIME;London;2;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Dev-Ops;FULL_TIME;London;2;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00

@@ -1,2 +1,6 @@
 first_name;last_name;state;cellphone;email;candidate_pipeline;file_id;job_id;created_by;created_date;last_modified_by;last_modified_date
 Mehdi;Shariatmadari;ACCEPTED;09373472601;ehdi.sh@gmail.com;15;1;1;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00
+Mehdi;Shariatmadari;ACCEPTED;09373472601;ehdi.sh@gmail.com;15;2;2;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00
+Mehdi;Shariatmadari;ACCEPTED;09373472601;ehdi.sh@gmail.com;15;3;3;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00
+Pooya;Ashena;ACCEPTED;09102580102;p.ashena@avand.io;14;4;3;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00
+Pooya;Ashena;ACCEPTED;09102580102;p.ashena@avand.io;14;5;2;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00

@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "candidate_message_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CandidateMessageEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,9 +40,9 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
     @ManyToOne
     private CandidateMessageEntity parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateMessageEntity> child = new HashSet<>();
 
     @ManyToOne

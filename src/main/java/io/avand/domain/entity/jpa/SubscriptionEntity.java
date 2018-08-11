@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "subscription_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class SubscriptionEntity implements Serializable {
 
     @Id
@@ -30,6 +30,7 @@ public class SubscriptionEntity implements Serializable {
     private ZonedDateTime endDate;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private SubscriptionStatus status;
 
     public Long getId() {

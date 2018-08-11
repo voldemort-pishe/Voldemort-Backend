@@ -6,6 +6,7 @@ import io.avand.domain.entity.jpa.JobEntity;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.JobRepository;
+import io.avand.security.SecurityUtils;
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
 import io.avand.service.mapper.CandidateMapper;
@@ -16,9 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class CandidateServiceImpl implements CandidateService {
 
@@ -27,15 +25,18 @@ public class CandidateServiceImpl implements CandidateService {
     private final JobRepository jobRepository;
     private final FileRepository fileRepository;
     private final CandidateMapper candidateMapper;
+    private final SecurityUtils securityUtils;
 
     public CandidateServiceImpl(CandidateRepository candidateRepository,
                                 JobRepository jobRepository,
                                 FileRepository fileRepository,
-                                CandidateMapper candidateMapper) {
+                                CandidateMapper candidateMapper,
+                                SecurityUtils securityUtils) {
         this.candidateRepository = candidateRepository;
         this.jobRepository = jobRepository;
         this.fileRepository = fileRepository;
         this.candidateMapper = candidateMapper;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -98,6 +99,13 @@ public class CandidateServiceImpl implements CandidateService {
         log.debug("Request to find all candidate");
         return candidateRepository.findAll(pageable)
             .map(candidateMapper::toDto);
+    }
+
+    @Override
+    public Page<CandidateDTO> findByJobId(Long jobId, Pageable pageable) throws NotFoundException {
+            return candidateRepository
+                .findAllByJob_IdAndJob_Company_User_Id(jobId,securityUtils.getCurrentUserId(),pageable)
+                .map(candidateMapper::toDto);
     }
 
     @Override

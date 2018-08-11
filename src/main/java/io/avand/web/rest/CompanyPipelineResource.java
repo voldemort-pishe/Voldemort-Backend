@@ -8,6 +8,7 @@ import io.avand.service.CompanyPipelineService;
 import io.avand.service.dto.CompanyPipelineDTO;
 import io.avand.service.mapper.CompanyPipelineMapper;
 import io.avand.web.rest.errors.BadRequestAlertException;
+import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -117,6 +118,18 @@ public class CompanyPipelineResource {
         log.debug("REST request to get all CompanyPipelineEntities");
         Page<CompanyPipelineDTO> companyPipelineDTOS = pipelineService.getAllByCompanyId(companyId, pageable);
         return new ResponseEntity<>(companyPipelineDTOS, HttpStatus.OK);
+    }
+
+    @GetMapping("/company-pipeline/company/list/{id}")
+    @Timed
+    public ResponseEntity getAllCompanyPipeLineByCompany(@PathVariable("id") Long companyId){
+        log.debug("REST Request to get all companyPipeLine");
+        try{
+            List<CompanyPipelineDTO> companyPipelineDTOS = pipelineService.getAllByCompanyId(companyId);
+            return new ResponseEntity<>(companyPipelineDTOS,HttpStatus.OK);
+        }catch (NotFoundException | SecurityException e){
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     /**

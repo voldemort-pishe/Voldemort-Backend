@@ -1,2 +1,4 @@
 user_id;feedback_text;rating;candidate_id
 1;Good;NEGATIVE;1
+1;Good;NEGATIVE;2
+1;Good;NEGATIVE;3

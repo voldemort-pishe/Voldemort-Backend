@@ -8,10 +8,8 @@ import java.io.Serializable;
 public class UserRegisterVM implements Serializable {
 
     @NotNull
-    @Pattern(regexp = Constants.NAME_REGEX)
     private String firstName;
     @NotNull
-    @Pattern(regexp = Constants.LAST_NAME_REGEX)
     private String lastName;
     @NotNull
     @Size(min = 4)

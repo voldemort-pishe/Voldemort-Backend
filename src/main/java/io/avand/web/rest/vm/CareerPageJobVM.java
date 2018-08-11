@@ -8,6 +8,7 @@ public class CareerPageJobVM implements Serializable {
 
     private Long id;
     private String name;
+    private String description;
     private JobType type;
     private String location;
 
@@ -25,6 +26,14 @@ public class CareerPageJobVM implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public JobType getType() {
@@ -48,6 +57,7 @@ public class CareerPageJobVM implements Serializable {
         return "CareerPageJobVM{" +
             "id=" + id +
             ", name='" + name + '\'' +
+            ", description='" + description + '\'' +
             ", type=" + type +
             ", location='" + location + '\'' +
             '}';

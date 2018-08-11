@@ -23,7 +23,7 @@ import io.avand.domain.enumeration.InvoiceStatus;
  */
 @Entity
 @Table(name = "invoice_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class InvoiceEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -53,9 +53,9 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
     @Column(name = "status")
     private InvoiceStatus status;
 
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(mappedBy = "invoice",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<PaymentTransactionEntity> paymentTransactions = new HashSet<>();
 
     @ManyToOne

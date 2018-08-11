@@ -2,6 +2,7 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.avand.domain.enumeration.CandidateState;
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
 import io.avand.web.rest.errors.BadRequestAlertException;
@@ -58,6 +59,7 @@ public class CandidateResource {
             throw new BadRequestAlertException("A new candidateEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
+            candidateDTO.setState(CandidateState.PENDING);
             CandidateDTO result = candidateService.save(candidateDTO);
             return ResponseEntity.created(new URI("/api/candidate/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -120,6 +122,19 @@ public class CandidateResource {
             CandidateDTO candidateDTO = candidateService.findById(id);
             return ResponseUtil.wrapOrNotFound(Optional.ofNullable(candidateDTO));
         } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    @GetMapping("/job/{id}")
+    @Timed
+    public ResponseEntity getCandidateByJobId(@PathVariable("id") Long jobId,
+                                              @ApiParam Pageable pageable){
+        log.debug("REST Request to get Candidates by job id : {}");
+        try{
+            Page<CandidateDTO> candidateDTOS = candidateService.findByJobId(jobId,pageable);
+            return new ResponseEntity<>(candidateDTOS,HttpStatus.OK);
+        }catch (NotFoundException e){
             throw new ServerErrorException(e.getMessage());
         }
     }

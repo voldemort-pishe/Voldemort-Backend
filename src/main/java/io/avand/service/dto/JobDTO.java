@@ -12,6 +12,8 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
     private String name;
 
+    private String description;
+
     private JobType type;
 
     private String location;
@@ -28,6 +30,14 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public JobType getType() {
@@ -66,9 +76,9 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
     public String toString() {
         return "JobDTO{" +
             "name='" + name + '\'' +
+            ", description='" + description + '\'' +
             ", type=" + type +
             ", location='" + location + '\'' +
-            ", candidate=" + candidate +
             '}';
     }
 }

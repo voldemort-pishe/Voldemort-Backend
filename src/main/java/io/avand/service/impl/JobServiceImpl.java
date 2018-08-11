@@ -70,6 +70,18 @@ public class JobServiceImpl implements JobService {
         }
     }
 
+    //TODO fix this
+    @Override
+    public JobDTO findByJobIdAndCompanySubDomain(Long jobId, String subDomain) throws NotFoundException {
+        log.debug("Request to find job by id and company subDomain");
+        JobEntity jobEntity = jobRepository.findByIdAndCompany_SubDomain(jobId, subDomain);
+        if (jobEntity != null) {
+            return jobMapper.toDto(jobEntity);
+        }else {
+            throw new NotFoundException("Job Not Available");
+        }
+    }
+
     @Override
     public List<JobDTO> findAllByCompanySubDomain(String subDomain) {
         log.debug("Request to find job by company subDomain : {}", subDomain);

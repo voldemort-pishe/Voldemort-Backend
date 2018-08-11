@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "user_authority_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class UserAuthorityEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,7 +30,7 @@ public class UserAuthorityEntity implements Serializable {
 
     @OneToMany(mappedBy = "userAuthority",cascade = CascadeType.ALL)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<UserPermissionEntity> userPermissions = new HashSet<>();
 
     @ManyToOne

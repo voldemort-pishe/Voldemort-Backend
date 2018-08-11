@@ -18,7 +18,7 @@ import io.avand.domain.enumeration.CandidateState;
  */
 @Entity
 @Table(name = "candidate_entity")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CandidateEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,29 +46,29 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     @Column(name = "candidate_pipeline")
     private Long candidatePipeline;
 
-    @OneToMany(mappedBy = "candidate")
+    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<FeedbackEntity> feedbacks = new HashSet<>();
 
-    @OneToMany(mappedBy = "candidate")
+    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CommentEntity> comments = new HashSet<>();
 
-    @OneToMany(mappedBy = "candidate")
+    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateScheduleEntity> candidateSchedules = new HashSet<>();
 
-    @OneToMany(mappedBy = "candidate")
+    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateEvaluationCriteriaEntity> candidateEvaluationCriteria = new HashSet<>();
 
-    @OneToMany(mappedBy = "candidate")
+    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateMessageEntity> candidateMessages = new HashSet<>();
 
     //TODO should un comment this

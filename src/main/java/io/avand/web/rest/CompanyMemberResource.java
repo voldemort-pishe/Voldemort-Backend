@@ -34,13 +34,15 @@ public class CompanyMemberResource {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody @Valid CompanyMemberDTO companyMemberDTO) throws URISyntaxException {
+    public ResponseEntity save(@RequestBody @Valid CompanyMemberDTO companyMemberDTO,
+                               @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
         log.debug("REST Request to save company member : {}", companyMemberDTO);
 
         if (companyMemberDTO.getId() != null) {
             throw new BadRequestAlertException("A new comment cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
+            companyMemberDTO.setCompanyId(companyId);
             List<CompanyMemberDTO> result = companyMemberService.save(companyMemberDTO);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {
@@ -48,8 +50,8 @@ public class CompanyMemberResource {
         }
     }
 
-    @GetMapping("/company/{companyId}")
-    public ResponseEntity getAll(@PathVariable("companyId") Long companyId, @ApiParam Pageable pageable) {
+    @GetMapping("/company")
+    public ResponseEntity getAll(@RequestAttribute("companyId") Long companyId, @ApiParam Pageable pageable) {
         log.debug("Request to find all company member by company id : {}", companyId);
         try {
             Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAll(companyId, pageable);

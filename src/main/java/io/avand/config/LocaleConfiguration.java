@@ -1,5 +1,6 @@
 package io.avand.config;
 
+import io.avand.interceptor.CompanyInterceptor;
 import io.github.jhipster.config.locale.AngularCookieLocaleResolver;
 
 import org.springframework.context.EnvironmentAware;
@@ -19,6 +20,11 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         // unused
     }
 
+    @Bean
+    public CompanyInterceptor companyInterceptor(){
+        return new CompanyInterceptor();
+    }
+
     @Bean(name = "localeResolver")
     public LocaleResolver localeResolver() {
         AngularCookieLocaleResolver cookieLocaleResolver = new AngularCookieLocaleResolver();
@@ -31,5 +37,12 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
         localeChangeInterceptor.setParamName("language");
         registry.addInterceptor(localeChangeInterceptor);
+
+        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/job");
+        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/job/**");
+        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-pipeline");
+        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-pipeline/**");
+        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-member");
+        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-member/**");
     }
 }

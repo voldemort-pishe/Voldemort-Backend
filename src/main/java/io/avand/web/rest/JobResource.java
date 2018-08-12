@@ -52,12 +52,14 @@ public class JobResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity createJob(@Valid @RequestBody JobDTO jobDTO) throws URISyntaxException {
+    public ResponseEntity createJob(@Valid @RequestBody JobDTO jobDTO,
+                                    @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
         log.debug("REST request to save Job : {}", jobDTO);
         if (jobDTO.getId() != null) {
             throw new BadRequestAlertException("A new jobEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
+            jobDTO.setCompanyId(companyId);
             JobDTO result = jobService.save(jobDTO);
             return ResponseEntity.created(new URI("/api/job/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -78,12 +80,14 @@ public class JobResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity updateJob(@Valid @RequestBody JobDTO jobDTO) throws URISyntaxException {
+    public ResponseEntity updateJob(@Valid @RequestBody JobDTO jobDTO,
+                                    @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
         log.debug("REST request to update Job : {}", jobDTO);
         if (jobDTO.getId() == null) {
-            return createJob(jobDTO);
+            return createJob(jobDTO, companyId);
         }
         try {
+            jobDTO.setCompanyId(companyId);
             JobDTO result = jobService.save(jobDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, jobDTO.getId().toString()))
@@ -152,12 +156,12 @@ public class JobResource {
      *
      * @return the ResponseEntity with status 200 (OK) and the list of jobEntities in body
      */
-    @GetMapping("/company-list/{id}")
+    @GetMapping("/company-list")
     @Timed
-    public ResponseEntity getAllJobByCompany(@ApiParam Pageable pageable, @PathVariable Long id) {
+    public ResponseEntity getAllJobByCompany(@ApiParam Pageable pageable, @RequestAttribute("companyId") Long companyId) {
         log.debug("REST request to get all Job");
         try {
-            Page<JobDTO> jobDTOS = jobService.findAllByCompanyId(pageable, id);
+            Page<JobDTO> jobDTOS = jobService.findAllByCompanyId(pageable, companyId);
             return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

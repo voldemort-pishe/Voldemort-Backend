@@ -14,7 +14,6 @@ public class CompanyPipelineDTO implements Serializable {
 
     private Integer weight;
 
-    @NotNull
     private Long companyId;
 
     public Long getId() {

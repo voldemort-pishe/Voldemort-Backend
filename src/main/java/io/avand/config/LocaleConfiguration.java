@@ -44,5 +44,6 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-pipeline/**");
         registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-member");
         registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-member/**");
+        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/candidate/company");
     }
 }

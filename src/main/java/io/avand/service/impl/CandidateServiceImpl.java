@@ -103,9 +103,16 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     public Page<CandidateDTO> findByJobId(Long jobId, Pageable pageable) throws NotFoundException {
-            return candidateRepository
-                .findAllByJob_IdAndJob_Company_User_Id(jobId,securityUtils.getCurrentUserId(),pageable)
-                .map(candidateMapper::toDto);
+        return candidateRepository
+            .findAllByJob_IdAndJob_Company_User_Id(jobId, securityUtils.getCurrentUserId(), pageable)
+            .map(candidateMapper::toDto);
+    }
+
+    @Override
+    public Page<CandidateDTO> findByCompanyId(Long companyId, Pageable pageable) throws NotFoundException {
+        return candidateRepository
+            .findAllByJob_Company_IdAndJob_Company_User_Id(companyId, securityUtils.getCurrentUserId(), pageable)
+            .map(candidateMapper::toDto);
     }
 
     @Override

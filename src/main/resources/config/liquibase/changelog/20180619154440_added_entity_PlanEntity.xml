@@ -34,6 +34,10 @@
                 <constraints nullable="true"/>
             </column>
 
+            <column name="length" type="integer">
+                <constraints nullable="true"/>
+            </column>
+
             <column name="active" type="tinyint">
                 <constraints nullable="false"/>
             </column>

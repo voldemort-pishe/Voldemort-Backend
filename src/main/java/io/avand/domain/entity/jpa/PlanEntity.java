@@ -31,6 +31,9 @@ public class PlanEntity implements Serializable {
     @Column(name = "amount")
     private Integer amount;
 
+    @Column(name = "length")
+    private Integer length;
+
     @Column(name = "active")
     private Boolean active;
 
@@ -87,6 +90,14 @@ public class PlanEntity implements Serializable {
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
 
+    public Integer getLength() {
+        return length;
+    }
+
+    public void setLength(Integer length) {
+        this.length = length;
+    }
+
     public Boolean isActive() {
         return active;
     }
@@ -111,16 +122,13 @@ public class PlanEntity implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
     public String toString() {
         return "PlanEntity{" +
             "id=" + id +
             ", title='" + title + '\'' +
+            ", description='" + description + '\'' +
             ", amount=" + amount +
+            ", length=" + length +
             ", active=" + active +
             '}';
     }

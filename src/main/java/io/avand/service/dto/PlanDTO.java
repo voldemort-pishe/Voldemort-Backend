@@ -14,6 +14,8 @@ public class PlanDTO implements Serializable {
 
     private Integer amount;
 
+    private Integer length;
+
     private Boolean active;
 
     public Long getId() {
@@ -32,12 +34,28 @@ public class PlanDTO implements Serializable {
         this.title = title;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Integer getAmount() {
         return amount;
     }
 
     public void setAmount(Integer amount) {
         this.amount = amount;
+    }
+
+    public Integer getLength() {
+        return length;
+    }
+
+    public void setLength(Integer length) {
+        this.length = length;
     }
 
     public Boolean isActive() {
@@ -48,14 +66,6 @@ public class PlanDTO implements Serializable {
         this.active = activation;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public String toString() {
         return "PlanDTO{" +
@@ -63,6 +73,7 @@ public class PlanDTO implements Serializable {
             ", title='" + title + '\'' +
             ", description='" + description + '\'' +
             ", amount=" + amount +
+            ", length=" + length +
             ", active=" + active +
             '}';
     }

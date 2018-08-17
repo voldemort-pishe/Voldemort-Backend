@@ -118,7 +118,7 @@ public class CandidateScheduleResource {
 
     @GetMapping("/owner")
     @Timed
-    public ResponseEntity getByOwner() {
+    public ResponseEntity<List<CandidateScheduleVm>> getByOwner() {
         log.debug("REST Request to get CandidateSchedule by owner");
         try {
             List<CandidateScheduleDTO> candidateScheduleDTOS = candidateScheduleService.findByOwnerId();
@@ -131,7 +131,7 @@ public class CandidateScheduleResource {
 
     @PostMapping("/owner")
     @Timed
-    public ResponseEntity getByOwnerTimed(@RequestBody CandidateScheduleOwnerDateVM ownerDateVM) {
+    public ResponseEntity<List<CandidateScheduleVm>> getByOwnerTimed(@RequestBody CandidateScheduleOwnerDateVM ownerDateVM) {
         log.debug("REST Request to get CandidateSchedule by date : {}", ownerDateVM);
         try {
             List<CandidateScheduleDTO> candidateScheduleDTOS = candidateScheduleService.findByOwnerIdAndDateBetween(ownerDateVM.getStartDate(), ownerDateVM.getEndDate());
@@ -144,7 +144,7 @@ public class CandidateScheduleResource {
 
     @GetMapping("/candidate/{id}")
     @Timed
-    public ResponseEntity getByCandidateId(@PathVariable("id") Long candidateId) {
+    public ResponseEntity<List<CandidateScheduleVm>> getByCandidateId(@PathVariable("id") Long candidateId) {
         log.debug("REST Request to get by candidateId : {}", candidateId);
         List<CandidateScheduleDTO> candidateScheduleDTOS = candidateScheduleService.findByCandidateId(candidateId);
         List<CandidateScheduleVm> candidateScheduleVms = candidateScheduleComponent.convertToCandidateVM(candidateScheduleDTOS);

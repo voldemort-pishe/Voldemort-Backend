@@ -15,6 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -143,5 +146,14 @@ public class AccountResource {
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
+    }
+
+    @GetMapping("/logout")
+    public void logout(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null){
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        response.sendRedirect(applicationProperties.getBase().getPanel()+"/#/auth/login");
     }
 }

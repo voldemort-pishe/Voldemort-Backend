@@ -2,20 +2,20 @@ package io.avand.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.JobType;
+import io.avand.domain.enumeration.LanguageType;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
-    private String name;
-
-    private String description;
-
+    private String nameFa;
+    private String descriptionFa;
+    private String nameEn;
+    private String descriptionEn;
+    private LanguageType language;
     private JobType type;
-
     private String location;
 
     @JsonIgnore
@@ -23,20 +23,44 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
     private Long companyId;
 
-    public String getName() {
-        return name;
+    public String getNameFa() {
+        return nameFa;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameFa(String nameFa) {
+        this.nameFa = nameFa;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescriptionFa() {
+        return descriptionFa;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescriptionFa(String descriptionFa) {
+        this.descriptionFa = descriptionFa;
+    }
+
+    public String getNameEn() {
+        return nameEn;
+    }
+
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
+    }
+
+    public String getDescriptionEn() {
+        return descriptionEn;
+    }
+
+    public void setDescriptionEn(String descriptionEn) {
+        this.descriptionEn = descriptionEn;
+    }
+
+    public LanguageType getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(LanguageType language) {
+        this.language = language;
     }
 
     public JobType getType() {
@@ -74,8 +98,11 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
     @Override
     public String toString() {
         return "JobDTO{" +
-            "name='" + name + '\'' +
-            ", description='" + description + '\'' +
+            "nameFa='" + nameFa + '\'' +
+            ", descriptionFa='" + descriptionFa + '\'' +
+            ", nameEn='" + nameEn + '\'' +
+            ", descriptionEn='" + descriptionEn + '\'' +
+            ", language=" + language +
             ", type=" + type +
             ", location='" + location + '\'' +
             '}';

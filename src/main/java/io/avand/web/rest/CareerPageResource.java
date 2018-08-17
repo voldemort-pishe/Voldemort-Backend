@@ -74,7 +74,7 @@ public class CareerPageResource {
         for (JobDTO jobDTO : jobDTOS) {
             CareerPageJobVM jobVM = new CareerPageJobVM();
             jobVM.setId(jobDTO.getId());
-            jobVM.setName(jobDTO.getName());
+            jobVM.setName(jobDTO.getNameFa());
             jobVM.setType(jobDTO.getType());
             jobVM.setLocation(jobDTO.getLocation());
             jobVMS.add(jobVM);
@@ -91,8 +91,8 @@ public class CareerPageResource {
             JobDTO jobDTO = jobService.findByJobIdAndCompanySubDomain(jobId, subDomain);
             CareerPageJobVM jobVM = new CareerPageJobVM();
             jobVM.setId(jobDTO.getId());
-            jobVM.setName(jobDTO.getName());
-            jobVM.setDescription(jobDTO.getDescription());
+            jobVM.setName(jobDTO.getNameFa());
+            jobVM.setDescription(jobDTO.getDescriptionFa());
             jobVM.setType(jobDTO.getType());
             jobVM.setLocation(jobDTO.getLocation());
             return new ResponseEntity<>(jobVM, HttpStatus.OK);

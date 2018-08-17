@@ -2,6 +2,7 @@ package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.JobType;
+import io.avand.domain.enumeration.LanguageType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -27,12 +28,23 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "name_fa")
+    private String nameFa;
 
     @Lob
-    @Column(name = "description")
-    private String description;
+    @Column(name = "description_fa")
+    private String descriptionFa;
+
+    @Column(name = "name_en")
+    private String nameEn;
+
+    @Lob
+    @Column(name = "description_en")
+    private String descriptionEn;
+
+    @Column(name = "language")
+    @Enumerated(EnumType.STRING)
+    private LanguageType language;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
@@ -41,7 +53,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "location")
     private String location;
 
-    @OneToMany(mappedBy = "job",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateEntity> candidate = new HashSet<>();
@@ -59,25 +71,44 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNameFa() {
+        return nameFa;
     }
 
-    public JobEntity name(String name) {
-        this.name = name;
-        return this;
+    public void setNameFa(String nameFa) {
+        this.nameFa = nameFa;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getDescriptionFa() {
+        return descriptionFa;
     }
 
-    public String getDescription() {
-        return description;
+    public void setDescriptionFa(String descriptionFa) {
+        this.descriptionFa = descriptionFa;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getNameEn() {
+        return nameEn;
+    }
+
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
+    }
+
+    public String getDescriptionEn() {
+        return descriptionEn;
+    }
+
+    public void setDescriptionEn(String descriptionEn) {
+        this.descriptionEn = descriptionEn;
+    }
+
+    public LanguageType getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(LanguageType language) {
+        this.language = language;
     }
 
     public JobType getType() {
@@ -142,8 +173,11 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     public String toString() {
         return "JobEntity{" +
             "id=" + id +
-            ", name='" + name + '\'' +
-            ", description='" + description + '\'' +
+            ", nameFa='" + nameFa + '\'' +
+            ", descriptionFa='" + descriptionFa + '\'' +
+            ", nameEn='" + nameEn + '\'' +
+            ", descriptionEn='" + descriptionEn + '\'' +
+            ", language=" + language +
             ", type=" + type +
             ", location='" + location + '\'' +
             '}';

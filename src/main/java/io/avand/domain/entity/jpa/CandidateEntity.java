@@ -1,6 +1,7 @@
 package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.CandidateType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -43,30 +44,34 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     @Column(name = "email")
     private String email;
 
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private CandidateType type;
+
     @Column(name = "candidate_pipeline")
     private Long candidatePipeline;
 
-    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<FeedbackEntity> feedbacks = new HashSet<>();
 
-    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CommentEntity> comments = new HashSet<>();
 
-    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateScheduleEntity> candidateSchedules = new HashSet<>();
 
-    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateEvaluationCriteriaEntity> candidateEvaluationCriteria = new HashSet<>();
 
-    @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateMessageEntity> candidateMessages = new HashSet<>();
@@ -152,6 +157,14 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public CandidateType getType() {
+        return type;
+    }
+
+    public void setType(CandidateType type) {
+        this.type = type;
     }
 
     public Long getCandidatePipeline() {
@@ -325,13 +338,14 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     @Override
     public String toString() {
         return "CandidateEntity{" +
-            "id=" + getId() +
-            ", firstName='" + getFirstName() + "'" +
-            ", lastName='" + getLastName() + "'" +
-            ", state='" + getState() + "'" +
-            ", cellphone='" + getCellphone() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", candidatePipeline=" + getCandidatePipeline() +
-            "}";
+            "id=" + id +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", state=" + state +
+            ", cellphone='" + cellphone + '\'' +
+            ", email='" + email + '\'' +
+            ", type=" + type +
+            ", candidatePipeline=" + candidatePipeline +
+            '}';
     }
 }

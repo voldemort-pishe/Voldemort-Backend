@@ -2,6 +2,7 @@ package io.avand.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.CandidateState;
+import io.avand.domain.enumeration.CandidateType;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -19,6 +20,8 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
     private String cellphone;
 
     private String email;
+
+    private CandidateType type;
 
     private Long candidatePipeline;
 
@@ -80,6 +83,14 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public CandidateType getType() {
+        return type;
+    }
+
+    public void setType(CandidateType type) {
+        this.type = type;
     }
 
     public Long getCandidatePipeline() {
@@ -154,12 +165,10 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
             ", state=" + state +
             ", cellphone='" + cellphone + '\'' +
             ", email='" + email + '\'' +
+            ", type=" + type +
             ", candidatePipeline=" + candidatePipeline +
-            ", feedback=" + feedback +
-            ", comments=" + comments +
-            ", candidateEvaluationCriteria=" + candidateEvaluationCriteria +
-            ", candidateSchedule=" + candidateSchedule +
             ", fileId=" + fileId +
+            ", jobId=" + jobId +
             '}';
     }
 }

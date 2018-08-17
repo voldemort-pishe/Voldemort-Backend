@@ -72,8 +72,7 @@ public class UserPlanResource {
             SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
             subscriptionDTO.setPlanTitle(planDTO.get().getTitle());
             subscriptionDTO.setStartDate(ZonedDateTime.now());
-            //TODO: Should check when plan will end and change end date compare to that
-            subscriptionDTO.setEndDate(ZonedDateTime.now().plus(30, ChronoUnit.DAYS));
+            subscriptionDTO.setEndDate(ZonedDateTime.now().plus(planDTO.get().getLength(), ChronoUnit.DAYS));
             subscriptionDTO.setStatus(SubscriptionStatus.INITIALIZED);
             subscriptionDTO.setUserId(userId);
 

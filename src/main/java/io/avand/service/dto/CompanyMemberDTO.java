@@ -7,7 +7,7 @@ public class CompanyMemberDTO implements Serializable {
 
     private Long id;
 
-    private List<String> userEmails;
+    private Long userId;
 
     private Long companyId;
 
@@ -19,12 +19,12 @@ public class CompanyMemberDTO implements Serializable {
         this.id = id;
     }
 
-    public List<String> getUserEmails() {
-        return userEmails;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUserEmails(List<String> userEmails) {
-        this.userEmails = userEmails;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getCompanyId() {
@@ -39,7 +39,7 @@ public class CompanyMemberDTO implements Serializable {
     public String toString() {
         return "CompanyMemberDTO{" +
             "id=" + id +
-            ", userEmails=" + userEmails +
+            ", userId=" + userId +
             ", companyId=" + companyId +
             '}';
     }

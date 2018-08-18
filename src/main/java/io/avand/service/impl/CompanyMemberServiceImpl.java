@@ -50,14 +50,14 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
-    public List<CompanyMemberDTO> save(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
-        log.debug("Request to save company member : {}", companyMemberDTO);
-        CompanyEntity companyEntity = companyRepository.findOne(companyMemberDTO.getCompanyId());
+    public List<CompanyMemberDTO> save(List<String> emails, Long companyId) throws NotFoundException {
+        log.debug("Request to save company member : {}", companyId);
+        CompanyEntity companyEntity = companyRepository.findOne(companyId);
         if (companyEntity != null) {
 
             if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
                 List<CompanyMemberEntity> companyMemberEntities = new ArrayList<>();
-                for (String userEmail : companyMemberDTO.getUserEmails()) {
+                for (String userEmail : emails) {
                     Optional<UserEntity> userEntityOp = userRepository.findByLogin(userEmail);
                     UserEntity userEntity;
                     if (!userEntityOp.isPresent()) {
@@ -73,7 +73,7 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
                         mailService.sendInviationMemberEmail(userEntity);
                     }
 
-                    CompanyMemberEntity companyMemberEntity = companyMemberMapper.toEntity(companyMemberDTO);
+                    CompanyMemberEntity companyMemberEntity = new CompanyMemberEntity();
                     companyMemberEntity.setUser(userEntity);
                     companyMemberEntity.setCompany(companyEntity);
 

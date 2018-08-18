@@ -5,6 +5,7 @@ import io.avand.service.dto.CompanyMemberDTO;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.CompanyMemberVM;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -34,16 +35,12 @@ public class CompanyMemberResource {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody @Valid CompanyMemberDTO companyMemberDTO,
+    public ResponseEntity save(@RequestBody @Valid CompanyMemberVM companyMemberVM,
                                @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
-        log.debug("REST Request to save company member : {}", companyMemberDTO);
+        log.debug("REST Request to save company member : {}", companyMemberVM);
 
-        if (companyMemberDTO.getId() != null) {
-            throw new BadRequestAlertException("A new comment cannot already have an ID", ENTITY_NAME, "idexists");
-        }
         try {
-            companyMemberDTO.setCompanyId(companyId);
-            List<CompanyMemberDTO> result = companyMemberService.save(companyMemberDTO);
+            List<CompanyMemberDTO> result = companyMemberService.save(companyMemberVM.getEmails(), companyId);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());

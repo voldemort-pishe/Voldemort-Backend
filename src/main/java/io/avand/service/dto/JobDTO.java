@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.JobType;
 import io.avand.domain.enumeration.LanguageType;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,10 +18,16 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
     private LanguageType language;
     private JobType type;
     private String location;
+    private String department;
+    @NotNull
+    private Long hiredManagerId;
+    @NotNull
+    private Long hiredExpertId;
 
     @JsonIgnore
     private Set<CandidateDTO> candidate = new HashSet<>();
 
+    @NotNull
     private Long companyId;
 
     public String getNameFa() {
@@ -79,6 +86,30 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
         this.location = location;
     }
 
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public Long getHiredManagerId() {
+        return hiredManagerId;
+    }
+
+    public void setHiredManagerId(Long hiredManagerId) {
+        this.hiredManagerId = hiredManagerId;
+    }
+
+    public Long getHiredExpertId() {
+        return hiredExpertId;
+    }
+
+    public void setHiredExpertId(Long hiredExpertId) {
+        this.hiredExpertId = hiredExpertId;
+    }
+
     public Set<CandidateDTO> getCandidate() {
         return candidate;
     }
@@ -105,6 +136,10 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
             ", language=" + language +
             ", type=" + type +
             ", location='" + location + '\'' +
+            ", department='" + department + '\'' +
+            ", hiredManagerId=" + hiredManagerId +
+            ", hiredExpertId=" + hiredExpertId +
+            ", companyId=" + companyId +
             '}';
     }
 }

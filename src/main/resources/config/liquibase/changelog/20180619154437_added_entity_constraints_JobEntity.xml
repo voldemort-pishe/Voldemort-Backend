@@ -14,5 +14,19 @@
                                  referencedColumnNames="id"
                                  referencedTableName="company_entity"/>
 
+        <addForeignKeyConstraint baseColumnNames="hired_manager_id"
+                                 baseTableName="job_entity"
+                                 constraintName="fk_job_entity_hired_manager_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_entity"/>
+
+
+        <addForeignKeyConstraint baseColumnNames="hired_expert_id"
+                                 baseTableName="job_entity"
+                                 constraintName="fk_job_entity_hired_expert_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_entity"/>
+
+
     </changeSet>
 </databaseChangeLog>

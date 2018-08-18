@@ -10,5 +10,7 @@ public interface JobMapper extends EntityMapper<JobDTO, JobEntity> {
 
     @Override
     @Mapping(source = "company.id",target = "companyId")
+    @Mapping(source = "hiredManager.id",target = "hiredManagerId")
+    @Mapping(source = "hiredExpert.id",target = "hiredExpertId")
     JobDTO toDto(JobEntity entity);
 }

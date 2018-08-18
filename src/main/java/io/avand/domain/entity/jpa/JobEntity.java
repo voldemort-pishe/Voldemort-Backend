@@ -53,6 +53,17 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "location")
     private String location;
 
+    @Column(name = "department")
+    private String department;
+
+    @OneToOne
+    @JoinColumn
+    private UserEntity hiredManager;
+
+    @OneToOne
+    @JoinColumn
+    private UserEntity hiredExpert;
+
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
@@ -119,6 +130,30 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
         this.type = type;
     }
 
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public UserEntity getHiredManager() {
+        return hiredManager;
+    }
+
+    public void setHiredManager(UserEntity hiredManager) {
+        this.hiredManager = hiredManager;
+    }
+
+    public UserEntity getHiredExpert() {
+        return hiredExpert;
+    }
+
+    public void setHiredExpert(UserEntity hiredExpert) {
+        this.hiredExpert = hiredExpert;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -180,6 +215,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
             ", language=" + language +
             ", type=" + type +
             ", location='" + location + '\'' +
+            ", department='" + department + '\'' +
             '}';
     }
 }

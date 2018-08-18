@@ -43,6 +43,18 @@
             <column name="location" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
+            <column name="department" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="hired_manager_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="hired_expert_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
             <column name="company_id" type="bigint">
                 <constraints nullable="false"/>
             </column>

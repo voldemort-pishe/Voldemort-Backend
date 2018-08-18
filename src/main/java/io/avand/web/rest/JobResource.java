@@ -52,7 +52,7 @@ public class JobResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity createJob(@Valid @RequestBody JobDTO jobDTO,
+    public ResponseEntity<JobDTO> createJob(@Valid @RequestBody JobDTO jobDTO,
                                     @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
         log.debug("REST request to save Job : {}", jobDTO);
         if (jobDTO.getId() != null) {
@@ -80,7 +80,7 @@ public class JobResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity updateJob(@Valid @RequestBody JobDTO jobDTO,
+    public ResponseEntity<JobDTO> updateJob(@Valid @RequestBody JobDTO jobDTO,
                                     @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
         log.debug("REST request to update Job : {}", jobDTO);
         if (jobDTO.getId() == null) {
@@ -104,7 +104,7 @@ public class JobResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity getAllJob(@ApiParam Pageable pageable) {
+    public ResponseEntity<Page<JobDTO>> getAllJob(@ApiParam Pageable pageable) {
         log.debug("REST request to get all Job");
         try {
             Page<JobDTO> jobDTOS = jobService.findAll(pageable);
@@ -122,7 +122,7 @@ public class JobResource {
      */
     @GetMapping("/{id}")
     @Timed
-    public ResponseEntity getJob(@PathVariable Long id) {
+    public ResponseEntity<JobDTO> getJob(@PathVariable Long id) {
         log.debug("REST request to get Job : {}", id);
         try {
             JobDTO jobDTO = jobService.findById(id);
@@ -158,7 +158,7 @@ public class JobResource {
      */
     @GetMapping("/company-list")
     @Timed
-    public ResponseEntity getAllJobByCompany(@ApiParam Pageable pageable, @RequestAttribute("companyId") Long companyId) {
+    public ResponseEntity<Page<JobDTO>> getAllJobByCompany(@ApiParam Pageable pageable, @RequestAttribute("companyId") Long companyId) {
         log.debug("REST request to get all Job");
         try {
             Page<JobDTO> jobDTOS = jobService.findAllByCompanyId(pageable, companyId);

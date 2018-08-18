@@ -1,8 +1,8 @@
-name_en;description_en;name_fa;description_fa;language;type;location;company_id;created_by;created_date;last_modified_by;last_modified_date
-Android;AndroidAndroid;AndroidFa;AndroidAndroidFa;BOTH;FULL_TIME;Tehran;1;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00
-Back-end;Back-endBack-end;Back-endFa;Back-endBack-endFa;BOTH;FULL_TIME;Tehran;1;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-Front-end;Front-endFront-end;Front-endFa;Front-endFront-endFa;EN;PART_TIME;Tehran;1;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-Front-end;Front-endFront-end;Front-endFa;Front-endFront-endFa;EN;PART_TIME;Tehran;3;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-Back-end;Back-endBack-end;Back-endFa;Back-endBack-endFa;FA;FULL_TIME;Tehran;3;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-Python developer;Python developerPython developer;Python developerFa;Python developerPython developerFa;FA;FULL_TIME;London;2;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-Dev-Ops;Dev-OpsDev-Ops;Dev-OpsFa;Dev-OpsDev-OpsFa;BOTH;FULL_TIME;London;2;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+name_en;description_en;name_fa;description_fa;language;type;location;department;hired_manager_id;hired_expert_id;company_id;created_by;created_date;last_modified_by;last_modified_date
+Android;AndroidAndroid;AndroidFa;AndroidAndroidFa;BOTH;FULL_TIME;Tehran;Technical;1;1;1;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00
+Back-end;Back-endBack-end;Back-endFa;Back-endBack-endFa;BOTH;FULL_TIME;Tehran;Technical;1;1;1;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Front-end;Front-endFront-end;Front-endFa;Front-endFront-endFa;EN;PART_TIME;Tehran;Technical;1;1;1;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Front-end;Front-endFront-end;Front-endFa;Front-endFront-endFa;EN;PART_TIME;Tehran;Technical;1;1;3;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Back-end;Back-endBack-end;Back-endFa;Back-endBack-endFa;FA;FULL_TIME;Tehran;Technical;1;1;3;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Python developer;Python developerPython developer;Python developerFa;Python developerPython developerFa;FA;FULL_TIME;London;Technical;1;1;2;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
+Dev-Ops;Dev-OpsDev-Ops;Dev-OpsFa;Dev-OpsDev-OpsFa;BOTH;FULL_TIME;London;Technical;1;1;2;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00

@@ -3,6 +3,7 @@ package io.avand.domain.entity.jpa;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.JobType;
 import io.avand.domain.enumeration.LanguageType;
+import org.checkerframework.checker.units.qual.C;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -27,6 +28,9 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "unique_id")
+    private String uniqueId;
 
     @Column(name = "name_fa")
     private String nameFa;
@@ -80,6 +84,14 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public String getNameFa() {
@@ -208,6 +220,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     public String toString() {
         return "JobEntity{" +
             "id=" + id +
+            ", uniqueId=" + uniqueId +
             ", nameFa='" + nameFa + '\'' +
             ", descriptionFa='" + descriptionFa + '\'' +
             ", nameEn='" + nameEn + '\'' +

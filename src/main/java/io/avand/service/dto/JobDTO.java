@@ -11,6 +11,7 @@ import java.util.Set;
 
 public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
+    private String uniqueId;
     private String nameFa;
     private String descriptionFa;
     private String nameEn;
@@ -29,6 +30,14 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
     @NotNull
     private Long companyId;
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
 
     public String getNameFa() {
         return nameFa;
@@ -129,7 +138,8 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
     @Override
     public String toString() {
         return "JobDTO{" +
-            "nameFa='" + nameFa + '\'' +
+            "uniqueId='" + uniqueId + '\'' +
+            ", nameFa='" + nameFa + '\'' +
             ", descriptionFa='" + descriptionFa + '\'' +
             ", nameEn='" + nameEn + '\'' +
             ", descriptionEn='" + descriptionEn + '\'' +

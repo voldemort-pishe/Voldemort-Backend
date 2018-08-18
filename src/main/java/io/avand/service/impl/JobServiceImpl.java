@@ -10,6 +10,7 @@ import io.avand.security.SecurityUtils;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
 import io.avand.service.mapper.JobMapper;
+import io.avand.service.util.RandomUtil;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,9 +91,9 @@ public class JobServiceImpl implements JobService {
 
     //TODO fix this
     @Override
-    public JobDTO findByJobIdAndCompanySubDomain(Long jobId, String subDomain) throws NotFoundException {
+    public JobDTO findByJobUniqueIdAndCompanySubDomain(String uniqueId, String subDomain) throws NotFoundException {
         log.debug("Request to find job by id and company subDomain");
-        JobEntity jobEntity = jobRepository.findByIdAndCompany_SubDomain(jobId, subDomain);
+        JobEntity jobEntity = jobRepository.findByUniqueIdAndCompany_SubDomain(uniqueId, subDomain);
         if (jobEntity != null) {
             return jobMapper.toDto(jobEntity);
         } else {

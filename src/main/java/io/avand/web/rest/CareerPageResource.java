@@ -74,6 +74,7 @@ public class CareerPageResource {
         for (JobDTO jobDTO : jobDTOS) {
             CareerPageJobVM jobVM = new CareerPageJobVM();
             jobVM.setId(jobDTO.getId());
+            jobVM.setUniqueId(jobDTO.getUniqueId());
             jobVM.setName(jobDTO.getNameFa());
             jobVM.setType(jobDTO.getType());
             jobVM.setLocation(jobDTO.getLocation());
@@ -84,13 +85,14 @@ public class CareerPageResource {
     }
 
     @GetMapping("/job/details/{jobId}/{subDomain}")
-    public ResponseEntity getJobDetails(@PathVariable("jobId") Long jobId,
+    public ResponseEntity getJobDetails(@PathVariable("jobId") String jobId,
                                         @PathVariable("subDomain") String subDomain) {
         log.debug("REST Request to get job details : {}, {}", jobId, subDomain);
         try {
-            JobDTO jobDTO = jobService.findByJobIdAndCompanySubDomain(jobId, subDomain);
+            JobDTO jobDTO = jobService.findByJobUniqueIdAndCompanySubDomain(jobId, subDomain);
             CareerPageJobVM jobVM = new CareerPageJobVM();
             jobVM.setId(jobDTO.getId());
+            jobVM.setUniqueId(jobDTO.getUniqueId());
             jobVM.setName(jobDTO.getNameFa());
             jobVM.setDescription(jobDTO.getDescriptionFa());
             jobVM.setType(jobDTO.getType());

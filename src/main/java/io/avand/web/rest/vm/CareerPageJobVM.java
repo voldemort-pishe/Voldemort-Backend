@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class CareerPageJobVM implements Serializable {
 
     private Long id;
+    private String uniqueId;
     private String name;
     private String description;
     private JobType type;
@@ -18,6 +19,14 @@ public class CareerPageJobVM implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public String getName() {

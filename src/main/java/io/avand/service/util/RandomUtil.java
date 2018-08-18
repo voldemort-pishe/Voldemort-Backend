@@ -43,10 +43,10 @@ public final class RandomUtil {
     }
 
     /**
-    * Generate a reset key.
-    *
-    * @return the generated reset key
-    */
+     * Generate a reset key.
+     *
+     * @return the generated reset key
+     */
     public static String generateResetKey() {
         return RandomStringUtils.randomNumeric(DEF_COUNT);
     }
@@ -60,6 +60,14 @@ public final class RandomUtil {
         return RandomStringUtils.randomNumeric(DEF_COUNT);
     }
 
+    /**
+     * Generate an unique key.
+     *
+     * @return the generated invitation key
+     */
+    public static String getUniqueId() {
+        return RandomStringUtils.randomAlphanumeric(15);
+    }
 
 
     public static String shortUUID() {
@@ -68,10 +76,10 @@ public final class RandomUtil {
         return Long.toString(l, 10);
     }
 
-	public static String customShortUUID(int length) {
-		UUID uuid = UUID.randomUUID();
-		long l = ByteBuffer.wrap(uuid.toString().getBytes()).getLong();
-		return Long.toString(l, length);
-	}
+    public static String customShortUUID(int length) {
+        UUID uuid = UUID.randomUUID();
+        long l = ByteBuffer.wrap(uuid.toString().getBytes()).getLong();
+        return Long.toString(l, length);
+    }
 
 }

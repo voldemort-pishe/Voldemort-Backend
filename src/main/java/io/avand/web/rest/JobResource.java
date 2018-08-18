@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
+import io.avand.service.util.RandomUtil;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
@@ -53,13 +54,14 @@ public class JobResource {
     @PostMapping
     @Timed
     public ResponseEntity<JobDTO> createJob(@Valid @RequestBody JobDTO jobDTO,
-                                    @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
+                                            @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
         log.debug("REST request to save Job : {}", jobDTO);
         if (jobDTO.getId() != null) {
             throw new BadRequestAlertException("A new jobEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
             jobDTO.setCompanyId(companyId);
+            jobDTO.setUniqueId(RandomUtil.getUniqueId());
             JobDTO result = jobService.save(jobDTO);
             return ResponseEntity.created(new URI("/api/job/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -81,7 +83,7 @@ public class JobResource {
     @PutMapping
     @Timed
     public ResponseEntity<JobDTO> updateJob(@Valid @RequestBody JobDTO jobDTO,
-                                    @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
+                                            @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
         log.debug("REST request to update Job : {}", jobDTO);
         if (jobDTO.getId() == null) {
             return createJob(jobDTO, companyId);

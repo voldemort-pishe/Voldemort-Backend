@@ -3,9 +3,13 @@ package io.avand.service.impl;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.FileEntity;
 import io.avand.domain.entity.jpa.JobEntity;
+import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.domain.enumeration.CandidateState;
+import io.avand.domain.enumeration.CandidateType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.JobRepository;
+import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
@@ -17,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CandidateServiceImpl implements CandidateService {
 
@@ -26,17 +32,21 @@ public class CandidateServiceImpl implements CandidateService {
     private final FileRepository fileRepository;
     private final CandidateMapper candidateMapper;
     private final SecurityUtils securityUtils;
+    private final UserRepository userRepository;
 
     public CandidateServiceImpl(CandidateRepository candidateRepository,
                                 JobRepository jobRepository,
                                 FileRepository fileRepository,
                                 CandidateMapper candidateMapper,
-                                SecurityUtils securityUtils) {
+                                SecurityUtils securityUtils,
+                                UserRepository userRepository) {
         this.candidateRepository = candidateRepository;
         this.jobRepository = jobRepository;
         this.fileRepository = fileRepository;
         this.candidateMapper = candidateMapper;
         this.securityUtils = securityUtils;
+
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -46,11 +56,17 @@ public class CandidateServiceImpl implements CandidateService {
         if (jobEntity != null) {
             FileEntity fileEntity = fileRepository.findOne(candidateDTO.getFileId());
             if (fileEntity != null) {
-                CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
-                candidateEntity.setJob(jobEntity);
-                candidateEntity.setFile(fileEntity);
-                candidateEntity = candidateRepository.save(candidateEntity);
-                return candidateMapper.toDto(candidateEntity);
+                Optional<UserEntity> employer = userRepository.findById(candidateDTO.getEmployerId());
+                if (employer.isPresent()) {
+                    CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
+                    candidateEntity.setJob(jobEntity);
+                    candidateEntity.setFile(fileEntity);
+                    candidateEntity.setEmployer(employer.get());
+                    candidateEntity = candidateRepository.save(candidateEntity);
+                    return candidateMapper.toDto(candidateEntity);
+                } else {
+                    throw new NotFoundException("Employer Not Found");
+                }
             } else {
                 throw new NotFoundException("File Not Available");
             }
@@ -68,6 +84,8 @@ public class CandidateServiceImpl implements CandidateService {
                 FileEntity fileEntity = fileRepository.findOne(candidateDTO.getFileId());
                 if (fileEntity != null) {
                     CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
+                    candidateEntity.setType(CandidateType.APPLICANT);
+                    candidateEntity.setState(CandidateState.PENDING);
                     candidateEntity.setJob(jobEntity);
                     candidateEntity.setFile(fileEntity);
                     candidateEntity = candidateRepository.save(candidateEntity);

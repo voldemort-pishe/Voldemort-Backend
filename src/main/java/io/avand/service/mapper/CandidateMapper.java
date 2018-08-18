@@ -14,7 +14,8 @@ import org.mapstruct.Mapping;
 public interface CandidateMapper extends EntityMapper<CandidateDTO, CandidateEntity> {
 
     @Override
-    @Mapping(source = "file.id",target = "fileId")
-    @Mapping(source = "job.id",target = "jobId")
+    @Mapping(source = "file.id", target = "fileId")
+    @Mapping(source = "job.id", target = "jobId")
+    @Mapping(source = "employer.id", target = "employerId")
     CandidateDTO toDto(CandidateEntity entity);
 }

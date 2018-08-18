@@ -20,5 +20,11 @@
                                  referencedColumnNames="id"
                                  referencedTableName="file_entity"/>
 
+        <addForeignKeyConstraint baseColumnNames="employer_id"
+                                 baseTableName="candidate_entity"
+                                 constraintName="fk_candidate_entity_employer_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_entity"/>
+
     </changeSet>
 </databaseChangeLog>

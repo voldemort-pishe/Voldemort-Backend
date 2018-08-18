@@ -76,11 +76,13 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateMessageEntity> candidateMessages = new HashSet<>();
 
-    //TODO should un comment this
     @OneToOne(optional = false)
-//    @NotNull
     @JoinColumn(unique = true)
     private FileEntity file;
+
+    @OneToOne
+    @JoinColumn
+    private UserEntity employer;
 
     @ManyToOne
     private JobEntity job;
@@ -299,6 +301,14 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
 
     public void setFile(FileEntity fileEntity) {
         this.file = fileEntity;
+    }
+
+    public UserEntity getEmployer() {
+        return employer;
+    }
+
+    public void setEmployer(UserEntity employer) {
+        this.employer = employer;
     }
 
     public JobEntity getJob() {

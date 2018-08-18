@@ -49,6 +49,9 @@
             <column name="candidate_pipeline" type="bigint">
                 <constraints nullable="true" />
             </column>
+            <column name="employer_id" type="bigint">
+                <constraints unique="false" nullable="true" />
+            </column>
             <column name="file_id" type="bigint">
                 <constraints unique="true" nullable="false" />
             </column>

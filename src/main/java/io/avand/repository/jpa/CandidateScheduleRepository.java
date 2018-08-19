@@ -1,6 +1,8 @@
 package io.avand.repository.jpa;
 
 import io.avand.domain.entity.jpa.CandidateScheduleEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.*;
@@ -16,11 +18,11 @@ import java.util.List;
 @Repository
 public interface CandidateScheduleRepository extends JpaRepository<CandidateScheduleEntity, Long> {
 
-    List<CandidateScheduleEntity> findAllByCandidate_Id(Long candidateId);
+    Page<CandidateScheduleEntity> findAllByCandidate_Id(Long candidateId,Pageable pageable);
 
-    List<CandidateScheduleEntity> findAllByOwner(Long ownerId);
+    Page<CandidateScheduleEntity> findAllByOwner(Long ownerId, Pageable pageable);
 
-    List<CandidateScheduleEntity>
-    findAllByOwnerAndScheduleDateAfterAndScheduleDateBefore(Long ownerId, ZonedDateTime startDate, ZonedDateTime endDate);
+    Page<CandidateScheduleEntity>
+    findAllByOwnerAndScheduleDateAfterAndScheduleDateBefore(Long ownerId, ZonedDateTime startDate, ZonedDateTime endDate,Pageable pageable);
 
 }

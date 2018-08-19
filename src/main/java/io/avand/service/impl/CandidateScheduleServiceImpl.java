@@ -13,6 +13,8 @@ import io.avand.service.mapper.CandidateScheduleMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -76,33 +78,27 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
     }
 
     @Override
-    public List<CandidateScheduleDTO> findByOwnerId() throws NotFoundException {
+    public Page<CandidateScheduleDTO> findByOwnerId(Pageable pageable) throws NotFoundException {
         log.debug("Request to find schedules of candidates by owner");
         return candidateScheduleRepository
-            .findAllByOwner(securityUtils.getCurrentUserId())
-            .stream()
-            .map(candidateScheduleMapper::toDto)
-            .collect(Collectors.toList());
+            .findAllByOwner(securityUtils.getCurrentUserId(), pageable)
+            .map(candidateScheduleMapper::toDto);
     }
 
     @Override
-    public List<CandidateScheduleDTO> findByOwnerIdAndDateBetween(ZonedDateTime startDate, ZonedDateTime endDate) throws NotFoundException {
+    public Page<CandidateScheduleDTO> findByOwnerIdAndDateBetween(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable) throws NotFoundException {
         log.debug("Request to find schedule of candidate by ownerId and dates : {}, {}", startDate, endDate);
         return candidateScheduleRepository
-            .findAllByOwnerAndScheduleDateAfterAndScheduleDateBefore(securityUtils.getCurrentUserId(), startDate, endDate)
-            .stream()
-            .map(candidateScheduleMapper::toDto)
-            .collect(Collectors.toList());
+            .findAllByOwnerAndScheduleDateAfterAndScheduleDateBefore(securityUtils.getCurrentUserId(), startDate, endDate, pageable)
+            .map(candidateScheduleMapper::toDto);
     }
 
     @Override
-    public List<CandidateScheduleDTO> findByCandidateId(Long candidateId) {
+    public Page<CandidateScheduleDTO> findByCandidateId(Long candidateId, Pageable pageable) {
         log.debug("Request to find schedules of candidate : {}", candidateId);
         return candidateScheduleRepository
-            .findAllByCandidate_Id(candidateId)
-            .stream()
-            .map(candidateScheduleMapper::toDto)
-            .collect(Collectors.toList());
+            .findAllByCandidate_Id(candidateId, pageable)
+            .map(candidateScheduleMapper::toDto);
     }
 
     @Override

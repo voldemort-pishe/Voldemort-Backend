@@ -3,61 +3,31 @@ package io.avand.web.rest.component;
 import io.avand.service.CandidateService;
 import io.avand.service.UserService;
 import io.avand.service.dto.CandidateDTO;
+import io.avand.service.dto.CandidateMessageDTO;
 import io.avand.service.dto.CandidateScheduleDTO;
 import io.avand.service.dto.UserDTO;
 import io.avand.web.rest.vm.CandidateScheduleVm;
+import io.avand.web.rest.vm.response.ResponseVM;
 import javassist.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Component
-public class CandidateScheduleComponent {
+public interface CandidateScheduleComponent {
 
-    private final UserService userService;
-    private final CandidateService candidateService;
+    ResponseVM<CandidateScheduleDTO> save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException;
 
-    public CandidateScheduleComponent(UserService userService, CandidateService candidateService) {
-        this.userService = userService;
-        this.candidateService = candidateService;
-    }
+    ResponseVM<CandidateScheduleDTO> findById(Long id) throws NotFoundException;
 
-    public List<CandidateScheduleVm> convertToOwnerVM(List<CandidateScheduleDTO> candidateScheduleDTOS) {
-        List<CandidateScheduleVm> candidateScheduleVms = new ArrayList<>();
-        for (CandidateScheduleDTO candidateScheduleDTO : candidateScheduleDTOS) {
-            try {
-                CandidateScheduleVm candidateScheduleVm = new CandidateScheduleVm();
-                candidateScheduleVm.setId(candidateScheduleDTO.getId());
-                CandidateDTO candidateDTO = candidateService.findById(candidateScheduleDTO.getCandidateId());
-                candidateScheduleVm.setExtraId(candidateScheduleDTO.getCandidateId());
-                candidateScheduleVm.setFullName(candidateDTO.getFirstName() + " " + candidateDTO.getLastName());
-                candidateScheduleVm.setCellphone(candidateDTO.getCellphone());
-                candidateScheduleVm.setEmail(candidateDTO.getEmail());
-                candidateScheduleVm.setScheduleTime(candidateScheduleDTO.getScheduleDate());
-                candidateScheduleVms.add(candidateScheduleVm);
-            } catch (NotFoundException ignore) {
-            }
-        }
-        return candidateScheduleVms;
-    }
+    Page<ResponseVM<CandidateScheduleDTO>> findByOwner(Pageable pageable) throws NotFoundException;
 
-    public List<CandidateScheduleVm> convertToCandidateVM(List<CandidateScheduleDTO> candidateScheduleDTOS){
-        List<CandidateScheduleVm> candidateScheduleVms = new ArrayList<>();
-        for (CandidateScheduleDTO candidateScheduleDTO : candidateScheduleDTOS) {
-            CandidateScheduleVm candidateScheduleVm = new CandidateScheduleVm();
-            candidateScheduleVm.setId(candidateScheduleDTO.getId());
-            Optional<UserDTO> userDTOOptional = userService.findById(candidateScheduleDTO.getOwner());
-            if (userDTOOptional.isPresent()) {
-                UserDTO userDTO = userDTOOptional.get();
-                candidateScheduleVm.setExtraId(candidateScheduleDTO.getOwner());
-                candidateScheduleVm.setFullName(userDTO.getFirstName() + " " + userDTO.getLastName());
-                candidateScheduleVm.setEmail(userDTO.getEmail());
-                candidateScheduleVm.setScheduleTime(candidateScheduleDTO.getScheduleDate());
-                candidateScheduleVms.add(candidateScheduleVm);
-            }
-        }
-        return candidateScheduleVms;
-    }
+    Page<ResponseVM<CandidateScheduleDTO>> findByOwnerAndDate(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable) throws NotFoundException;
+
+    Page<ResponseVM<CandidateScheduleDTO>> findByCandidate(Long candidateId, Pageable pageable) throws NotFoundException;
 }

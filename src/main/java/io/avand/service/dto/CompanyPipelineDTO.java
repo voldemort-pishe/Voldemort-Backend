@@ -7,13 +7,13 @@ import java.io.Serializable;
 
 public class CompanyPipelineDTO implements Serializable {
 
-    @NotNull
     private Long id;
 
     private String title;
 
     private Integer weight;
 
+    @NotNull
     private Long companyId;
 
     public Long getId() {

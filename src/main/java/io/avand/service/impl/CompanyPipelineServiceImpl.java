@@ -65,22 +65,6 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
     }
 
     @Override
-    public CompanyPipelineDTO update(CompanyPipelineDTO companyPipelineDTO) throws NotFoundException {
-
-        logger.debug("Request to company pipeline service to update a pipeline object : {}", companyPipelineDTO);
-
-        CompanyPipelineEntity companyPipelineEntity = companyPipelineRepository.findOne(companyPipelineDTO.getId());
-        if (companyPipelineEntity.getCompany().getUser().getId().equals(securityUtils.getCurrentUserId())) {
-            companyPipelineEntity.setTitle(companyPipelineDTO.getTitle());
-            companyPipelineEntity.setWeight(companyPipelineDTO.getWeight());
-            companyPipelineEntity = companyPipelineRepository.save(companyPipelineEntity);
-            return companyPipelineMapper.toDto(companyPipelineEntity);
-        } else {
-            throw new SecurityException("Sorry you do not have the right permission to update this!");
-        }
-    }
-
-    @Override
     public Page<CompanyPipelineDTO> getAllByCompanyId(Long companyId, Pageable pageable) throws NotFoundException {
         logger.debug("Request to company pipeline service to get all by user id");
 
@@ -90,26 +74,6 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
                 return companyPipelineRepository
                     .findAllByCompany(companyEntity, pageable)
                     .map(companyPipelineMapper::toDto);
-            } else {
-                throw new SecurityException("Sorry you do not have the right permission to get this company pipelines!");
-            }
-        } else {
-            throw new NotFoundException("Company Not Available");
-        }
-    }
-
-    @Override
-    public List<CompanyPipelineDTO> getAllByCompanyId(Long companyId) throws NotFoundException {
-        logger.debug("Request to company pipeline service to get all by user id");
-
-        CompanyEntity companyEntity = companyRepository.findOne(companyId);
-        if (companyEntity != null) {
-            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                return companyPipelineRepository
-                    .findAllByCompany(companyEntity)
-                    .stream()
-                    .map(companyPipelineMapper::toDto)
-                    .collect(Collectors.toList());
             } else {
                 throw new SecurityException("Sorry you do not have the right permission to get this company pipelines!");
             }

@@ -1,15 +1,13 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.entity.jpa.CompanyPipelineEntity;
 
-import io.avand.repository.jpa.CompanyPipelineRepository;
 import io.avand.service.CompanyPipelineService;
 import io.avand.service.dto.CompanyPipelineDTO;
-import io.avand.service.mapper.CompanyPipelineMapper;
+import io.avand.web.rest.component.CompanyPipelineComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
-import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,18 +35,14 @@ public class CompanyPipelineResource {
 
     private static final String ENTITY_NAME = "companyPipelineEntity";
 
-    private final CompanyPipelineRepository companyPipelineRepository;
-
     private final CompanyPipelineService pipelineService;
 
-    private final CompanyPipelineMapper pipelineMapper;
+    private final CompanyPipelineComponent pipelineComponent;
 
-    public CompanyPipelineResource(CompanyPipelineRepository companyPipelineRepository,
-                                   CompanyPipelineService pipelineService,
-                                   CompanyPipelineMapper pipelineMapper) {
-        this.companyPipelineRepository = companyPipelineRepository;
+    public CompanyPipelineResource(CompanyPipelineService pipelineService,
+                                   CompanyPipelineComponent pipelineComponent) {
         this.pipelineService = pipelineService;
-        this.pipelineMapper = pipelineMapper;
+        this.pipelineComponent = pipelineComponent;
     }
 
     /**
@@ -61,16 +54,17 @@ public class CompanyPipelineResource {
      */
     @PostMapping("/company-pipeline")
     @Timed
-    public ResponseEntity createCompanyPipeline(@RequestBody CompanyPipelineDTO companyPipelineDTO,
-                                                @RequestAttribute("companyId") Long companyId) throws URISyntaxException, NotFoundException {
+    public ResponseEntity<ResponseVM<CompanyPipelineDTO>> createCompanyPipeline(@RequestBody CompanyPipelineDTO companyPipelineDTO,
+                                                                                @RequestAttribute("companyId") Long companyId)
+        throws URISyntaxException, NotFoundException {
         log.debug("REST request to save CompanyPipelineEntity : {}", companyPipelineDTO);
         if (companyPipelineDTO.getId() != null) {
             throw new BadRequestAlertException("A new companyPipelineEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         companyPipelineDTO.setCompanyId(companyId);
-        CompanyPipelineDTO result = pipelineService.save(companyPipelineDTO);
-        return ResponseEntity.created(new URI("/api/company-pipeline/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+        ResponseVM<CompanyPipelineDTO> result = pipelineComponent.save(companyPipelineDTO);
+        return ResponseEntity.created(new URI("/api/company-pipeline/" + result.getData().getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
             .body(result);
     }
 
@@ -85,14 +79,15 @@ public class CompanyPipelineResource {
      */
     @PutMapping("/company-pipeline")
     @Timed
-    public ResponseEntity updateCompanyPipeline(@RequestBody CompanyPipelineDTO companyPipelineDTO,
-                                                @RequestAttribute("companyId") Long companyId) throws URISyntaxException, NotFoundException {
+    public ResponseEntity<ResponseVM<CompanyPipelineDTO>> updateCompanyPipeline(@RequestBody CompanyPipelineDTO companyPipelineDTO,
+                                                                                @RequestAttribute("companyId") Long companyId)
+        throws URISyntaxException, NotFoundException {
         log.debug("REST request to update CompanyPipelineEntity : {}", companyPipelineDTO);
         if (companyPipelineDTO.getId() == null) {
             return this.createCompanyPipeline(companyPipelineDTO, companyId);
         }
         companyPipelineDTO.setCompanyId(companyId);
-        CompanyPipelineDTO result = pipelineService.update(companyPipelineDTO);
+        ResponseVM<CompanyPipelineDTO> result = pipelineComponent.save(companyPipelineDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, companyPipelineDTO.getId().toString()))
             .body(result);
@@ -103,36 +98,14 @@ public class CompanyPipelineResource {
      *
      * @return the ResponseEntity with status 200 (OK) and the list of companyPipelineEntities in body
      */
-    @GetMapping("/company-pipeline")
-    @Timed
-    public List getAllCompanyPipeline() {
-        log.debug("REST request to get all CompanyPipelineEntities");
-        return pipelineMapper.toDto(companyPipelineRepository.findAll());
-    }
-
-    /**
-     * GET  /company-pipeline : get all the companyPipelineEntities.
-     *
-     * @return the ResponseEntity with status 200 (OK) and the list of companyPipelineEntities in body
-     */
     @GetMapping("/company-pipeline/company")
     @Timed
-    public ResponseEntity getAllCompanyPipelineByCompany(@RequestAttribute("companyId") Long companyId, @ApiParam Pageable pageable) throws NotFoundException {
+    public ResponseEntity<Page<ResponseVM<CompanyPipelineDTO>>> getAllCompanyPipelineByCompany(@RequestAttribute("companyId") Long companyId,
+                                                                                               @ApiParam Pageable pageable)
+        throws NotFoundException {
         log.debug("REST request to get all CompanyPipelineEntities");
-        Page<CompanyPipelineDTO> companyPipelineDTOS = pipelineService.getAllByCompanyId(companyId, pageable);
+        Page<ResponseVM<CompanyPipelineDTO>> companyPipelineDTOS = pipelineComponent.findAllByCompany(companyId, pageable);
         return new ResponseEntity<>(companyPipelineDTOS, HttpStatus.OK);
-    }
-
-    @GetMapping("/company-pipeline/company/list")
-    @Timed
-    public ResponseEntity getAllCompanyPipeLineByCompany(@RequestAttribute("companyId") Long companyId) {
-        log.debug("REST Request to get all companyPipeLine");
-        try {
-            List<CompanyPipelineDTO> companyPipelineDTOS = pipelineService.getAllByCompanyId(companyId);
-            return new ResponseEntity<>(companyPipelineDTOS, HttpStatus.OK);
-        } catch (NotFoundException | SecurityException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
     }
 
     /**
@@ -143,9 +116,11 @@ public class CompanyPipelineResource {
      */
     @GetMapping("/company-pipeline/{id}")
     @Timed
-    public ResponseEntity getCompanyPipeline(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<ResponseVM<CompanyPipelineDTO>> getCompanyPipeline(@PathVariable Long id)
+        throws NotFoundException {
         log.debug("REST request to get CompanyPipelineEntity : {}", id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(pipelineService.findOne(id)));
+        ResponseVM<CompanyPipelineDTO> companyPipelineDTO = pipelineComponent.findById(id);
+        return new ResponseEntity<>(companyPipelineDTO, HttpStatus.OK);
     }
 
     /**

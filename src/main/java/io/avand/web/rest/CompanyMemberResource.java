@@ -2,10 +2,10 @@ package io.avand.web.rest;
 
 import io.avand.service.CompanyMemberService;
 import io.avand.service.dto.CompanyMemberDTO;
-import io.avand.web.rest.errors.BadRequestAlertException;
+import io.avand.web.rest.component.CompanyMemberComponent;
 import io.avand.web.rest.errors.ServerErrorException;
-import io.avand.web.rest.util.HeaderUtil;
 import io.avand.web.rest.vm.CompanyMemberVM;
+import io.avand.web.rest.vm.response.ResponseVM;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,18 +28,22 @@ public class CompanyMemberResource {
     private final static String ENTITY_NAME = "CompanyMemberEntity";
     private final Logger log = LoggerFactory.getLogger(CompanyMemberResource.class);
     private final CompanyMemberService companyMemberService;
+    private final CompanyMemberComponent companyMemberComponent;
 
-    public CompanyMemberResource(CompanyMemberService companyMemberService) {
+    public CompanyMemberResource(CompanyMemberService companyMemberService,
+                                 CompanyMemberComponent companyMemberComponent) {
         this.companyMemberService = companyMemberService;
+        this.companyMemberComponent = companyMemberComponent;
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody @Valid CompanyMemberVM companyMemberVM,
-                               @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
+    public ResponseEntity<List<ResponseVM<CompanyMemberDTO>>> save(@RequestBody @Valid CompanyMemberVM companyMemberVM,
+                                                                   @RequestAttribute("companyId") Long companyId)
+        throws URISyntaxException {
         log.debug("REST Request to save company member : {}", companyMemberVM);
 
         try {
-            List<CompanyMemberDTO> result = companyMemberService.save(companyMemberVM.getEmails(), companyId);
+            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.save(companyMemberVM.getEmails(), companyId);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
@@ -48,10 +51,11 @@ public class CompanyMemberResource {
     }
 
     @GetMapping("/company")
-    public ResponseEntity getAll(@RequestAttribute("companyId") Long companyId, @ApiParam Pageable pageable) {
+    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAll(@RequestAttribute("companyId") Long companyId,
+                                                                     @ApiParam Pageable pageable) {
         log.debug("Request to find all company member by company id : {}", companyId);
         try {
-            Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAll(companyId, pageable);
+            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAll(companyId, pageable);
             return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -59,10 +63,10 @@ public class CompanyMemberResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ResponseVM<CompanyMemberDTO>> getById(@PathVariable("id") Long id) {
         log.debug("REST Request to find company member by id : {}", id);
         try {
-            CompanyMemberDTO companyMemberDTO = companyMemberService.findById(id);
+            ResponseVM<CompanyMemberDTO> companyMemberDTO = companyMemberComponent.findById(id);
             return new ResponseEntity<>(companyMemberDTO, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());

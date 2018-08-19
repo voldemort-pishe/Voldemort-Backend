@@ -11,5 +11,6 @@ public interface CompanyMapper extends EntityMapper<CompanyDTO, CompanyEntity>, 
 
     @Override
     @Mapping(source = "file.id", target = "fileId")
+    @Mapping(source = "user.id", target = "userId")
     CompanyDTO toDto(CompanyEntity entity);
 }

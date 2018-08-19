@@ -5,9 +5,11 @@ import com.codahale.metrics.annotation.Timed;
 import io.avand.domain.enumeration.CandidateState;
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
+import io.avand.web.rest.component.CandidateComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -23,7 +25,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,9 +39,12 @@ public class CandidateResource {
     private static final String ENTITY_NAME = "candidateEntity";
 
     private final CandidateService candidateService;
+    private final CandidateComponent candidateComponent;
 
-    public CandidateResource(CandidateService candidateService) {
+    public CandidateResource(CandidateService candidateService,
+                             CandidateComponent candidateComponent) {
         this.candidateService = candidateService;
+        this.candidateComponent = candidateComponent;
     }
 
 
@@ -53,16 +57,16 @@ public class CandidateResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity createCandidate(@Valid @RequestBody CandidateDTO candidateDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<CandidateDTO>> createCandidate(@Valid @RequestBody CandidateDTO candidateDTO) throws URISyntaxException {
         log.debug("REST request to save candidateDTO : {}", candidateDTO);
         if (candidateDTO.getId() != null) {
             throw new BadRequestAlertException("A new candidateEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
             candidateDTO.setState(CandidateState.PENDING);
-            CandidateDTO result = candidateService.save(candidateDTO);
-            return ResponseEntity.created(new URI("/api/candidate/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            ResponseVM<CandidateDTO> result = candidateComponent.save(candidateDTO);
+            return ResponseEntity.created(new URI("/api/candidate/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
                 .body(result);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -80,13 +84,13 @@ public class CandidateResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity updateCandidate(@Valid @RequestBody CandidateDTO candidateDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<CandidateDTO>> updateCandidate(@Valid @RequestBody CandidateDTO candidateDTO) throws URISyntaxException {
         log.debug("REST request to update candidateDTO : {}", candidateDTO);
         if (candidateDTO.getId() == null) {
             return createCandidate(candidateDTO);
         }
         try {
-            CandidateDTO result = candidateService.save(candidateDTO);
+            ResponseVM<CandidateDTO> result = candidateComponent.save(candidateDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, candidateDTO.getId().toString()))
                 .body(result);
@@ -102,10 +106,14 @@ public class CandidateResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity getAllCandidate(@ApiParam Pageable pageable) {
+    public ResponseEntity<Page<ResponseVM<CandidateDTO>>> getAllCandidate(@ApiParam Pageable pageable) {
         log.debug("REST request to get all CandidateDtos");
-        Page<CandidateDTO> candidateDTOS = candidateService.findAll(pageable);
-        return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
+        try {
+            Page<ResponseVM<CandidateDTO>> candidateDTOS = candidateComponent.findAll(pageable);
+            return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     /**
@@ -116,10 +124,10 @@ public class CandidateResource {
      */
     @GetMapping("/{id}")
     @Timed
-    public ResponseEntity getCandidate(@PathVariable Long id) {
+    public ResponseEntity<ResponseVM<CandidateDTO>> getCandidate(@PathVariable Long id) {
         log.debug("REST request to get CandidateDto : {}", id);
         try {
-            CandidateDTO candidateDTO = candidateService.findById(id);
+            ResponseVM<CandidateDTO> candidateDTO = candidateComponent.findById(id);
             return ResponseUtil.wrapOrNotFound(Optional.ofNullable(candidateDTO));
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -128,26 +136,26 @@ public class CandidateResource {
 
     @GetMapping("/job/{id}")
     @Timed
-    public ResponseEntity getCandidateByJobId(@PathVariable("id") Long jobId,
-                                              @ApiParam Pageable pageable){
+    public ResponseEntity<Page<ResponseVM<CandidateDTO>>> getCandidateByJobId(@PathVariable("id") Long jobId,
+                                                                              @ApiParam Pageable pageable) {
         log.debug("REST Request to get Candidates by job id : {}");
-        try{
-            Page<CandidateDTO> candidateDTOS = candidateService.findByJobId(jobId,pageable);
-            return new ResponseEntity<>(candidateDTOS,HttpStatus.OK);
-        }catch (NotFoundException e){
+        try {
+            Page<ResponseVM<CandidateDTO>> candidateDTOS = candidateComponent.findByJobId(jobId, pageable);
+            return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
 
     @GetMapping("/company")
     @Timed
-    public ResponseEntity getCandidateByCompany(@RequestAttribute("companyId") Long companyId,
-                                              @ApiParam Pageable pageable){
+    public ResponseEntity<Page<ResponseVM<CandidateDTO>>> getCandidateByCompany(@RequestAttribute("companyId") Long companyId,
+                                                                                @ApiParam Pageable pageable) {
         log.debug("REST Request to get Candidates by job id : {}");
-        try{
-            Page<CandidateDTO> candidateDTOS = candidateService.findByCompanyId(companyId,pageable);
-            return new ResponseEntity<>(candidateDTOS,HttpStatus.OK);
-        }catch (NotFoundException e){
+        try {
+            Page<ResponseVM<CandidateDTO>> candidateDTOS = candidateComponent.findByCompanyId(companyId, pageable);
+            return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }

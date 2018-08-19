@@ -2,19 +2,18 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
-import io.avand.config.ApplicationProperties;
-import io.avand.service.CandidateService;
 import io.avand.service.CommentService;
-import io.avand.service.UserService;
 import io.avand.service.dto.CandidateDTO;
 import io.avand.service.dto.CommentDTO;
 import io.avand.service.dto.UserDTO;
+import io.avand.web.rest.component.CommentComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.avand.web.rest.vm.CommentCandidateVM;
 import io.avand.web.rest.vm.CommentUserVM;
 import io.avand.web.rest.vm.CommentVM;
+import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -46,17 +45,12 @@ public class CommentResource {
 
     private final CommentService commentService;
 
-    private final UserService userService;
+    private final CommentComponent commentComponent;
 
-    private final CandidateService candidateService;
-
-    private final ApplicationProperties applicationProperties;
-
-    public CommentResource(CommentService commentService, UserService userService, CandidateService candidateService, ApplicationProperties applicationProperties) {
+    public CommentResource(CommentService commentService,
+                           CommentComponent commentComponent) {
         this.commentService = commentService;
-        this.userService = userService;
-        this.candidateService = candidateService;
-        this.applicationProperties = applicationProperties;
+        this.commentComponent = commentComponent;
     }
 
 
@@ -69,15 +63,15 @@ public class CommentResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity createComment(@RequestBody CommentDTO commentDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<CommentDTO>> createComment(@RequestBody CommentDTO commentDTO) throws URISyntaxException {
         log.debug("REST request to save Comment : {}", commentDTO);
         if (commentDTO.getId() != null) {
             throw new BadRequestAlertException("A new comment cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            CommentDTO result = commentService.save(commentDTO);
-            return ResponseEntity.created(new URI("/api/comment-entities/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            ResponseVM<CommentDTO> result = commentComponent.save(commentDTO);
+            return ResponseEntity.created(new URI("/api/comment-entities/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
                 .body(result);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -95,13 +89,13 @@ public class CommentResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity updateComment(@RequestBody CommentDTO commentDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<CommentDTO>> updateComment(@RequestBody CommentDTO commentDTO) throws URISyntaxException {
         log.debug("REST request to update Comment : {}", commentDTO);
         if (commentDTO.getId() == null) {
             return createComment(commentDTO);
         }
         try {
-            CommentDTO result = commentService.save(commentDTO);
+            ResponseVM<CommentDTO> result = commentComponent.save(commentDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, commentDTO.getId().toString()))
                 .body(result);
@@ -117,17 +111,14 @@ public class CommentResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity getAllCommentEntities(@ApiParam Pageable pageable) {
+    public ResponseEntity<Page<ResponseVM<CommentDTO>>> getAllCommentEntities(@ApiParam Pageable pageable) {
         log.debug("REST request to get all Comment");
-        Page<CommentDTO> commentDTOS = commentService.findAll(pageable);
-        List<CommentVM> commentVMS = new ArrayList<>();
-        for (CommentDTO commentDTO : commentDTOS) {
-            try {
-                commentVMS.add(createCommentFromDTO(commentDTO));
-            } catch (NotFoundException ignore) {
-            }
+        try {
+            Page<ResponseVM<CommentDTO>> commentDTOS = commentComponent.findAll(pageable);
+            return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
         }
-        return new ResponseEntity<>(commentVMS, HttpStatus.OK);
     }
 
     /**
@@ -138,10 +129,11 @@ public class CommentResource {
      */
     @GetMapping("/{id}")
     @Timed
-    public ResponseEntity getComment(@PathVariable Long id) {
+    public ResponseEntity<ResponseVM<CommentDTO>> getComment(@PathVariable Long id) {
         log.debug("REST request to get Comment : {}", id);
         try {
-            return ResponseUtil.wrapOrNotFound(Optional.ofNullable(createCommentFromDTO(commentService.findById(id))));
+            ResponseVM<CommentDTO> commentDTO = commentComponent.findById(id);
+            return new ResponseEntity<>(commentDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
@@ -169,37 +161,13 @@ public class CommentResource {
      */
     @GetMapping("/candidate-comment/{id}")
     @Timed
-    public ResponseEntity getCandidateComment(@PathVariable Long id, @ApiParam Pageable pageable) {
+    public ResponseEntity<Page<ResponseVM<CommentDTO>>> getCandidateComment(@PathVariable Long id, @ApiParam Pageable pageable) {
         log.debug("REST request to get all Comment");
-        Page<CommentDTO> commentDTOS = commentService.findAllByCandidateId(pageable, id);
-        List<CommentVM> commentVMS = new ArrayList<>();
-        for (CommentDTO commentDTO : commentDTOS) {
-            try {
-                commentVMS.add(createCommentFromDTO(commentDTO));
-            } catch (NotFoundException ignore) {
-            }
+        try {
+            Page<ResponseVM<CommentDTO>> commentDTOS = commentComponent.findByCandidateId(id, pageable);
+            return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
         }
-        return new ResponseEntity<>(commentVMS, HttpStatus.OK);
     }
-
-    private CommentVM createCommentFromDTO(CommentDTO commentDTO) throws NotFoundException {
-        CommentVM commentVM = new CommentVM();
-        commentVM.setId(commentDTO.getId());
-        commentVM.setCommentText(commentDTO.getCommentText());
-        commentVM.setStatus(true);
-
-        Optional<UserDTO> userDTOOptional = userService.findById(commentDTO.getUserId());
-        if (userDTOOptional.isPresent()){
-            CommentUserVM commentUserVM = new CommentUserVM();
-            commentUserVM.setName(userDTOOptional.get().getFirstName() + " "+ userDTOOptional.get().getLastName());
-            commentVM.setUser(commentUserVM);
-        }
-        CandidateDTO candidateDTO = candidateService.findById(commentDTO.getCandidateId());
-        CommentCandidateVM commentCandidateVM = new CommentCandidateVM();
-        commentCandidateVM.setName(candidateDTO.getFirstName() + " "+ candidateDTO.getLastName());
-        commentCandidateVM.setFilePath(applicationProperties.getBase().getUrl() + "api/file/load/" + candidateDTO.getFileId());
-        commentVM.setCandidate(commentCandidateVM);
-        return commentVM;
-    }
-
 }

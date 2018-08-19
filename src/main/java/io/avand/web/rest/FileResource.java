@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * REST controller for managing FileEntity.
@@ -43,10 +44,10 @@ public class FileResource {
     @GetMapping("/load/{fileId}")
     public ResponseEntity<Resource> serveFile(@PathVariable("fileId") Long fileId,
                                               HttpServletRequest request) {
-        FileDTO fileDTO = filesService.findById(fileId);
-        if (fileDTO != null) {
+        Optional<FileDTO> fileDTO = filesService.findById(fileId);
+        if (fileDTO.isPresent()) {
             try {
-                Resource file = storageService.loadAsResource(fileDTO.getFilename());
+                Resource file = storageService.loadAsResource(fileDTO.get().getFilename());
                 return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
             } catch (StorageException e) {
                 throw new ServerErrorException(e.getMessage());
@@ -60,10 +61,10 @@ public class FileResource {
     @GetMapping("/download/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("fileId") Long fileId,
                                                  HttpServletRequest request) {
-        FileDTO fileDTO = filesService.findById(fileId);
-        if (fileDTO != null) {
+        Optional<FileDTO> fileDTO = filesService.findById(fileId);
+        if (fileDTO.isPresent()) {
             try {
-                Resource file = storageService.loadAsResource(fileDTO.getFilename());
+                Resource file = storageService.loadAsResource(fileDTO.get().getFilename());
                 return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                     "attachment; filename=\"" + file.getFilename() + "\"").body(file);
             } catch (StorageException e) {

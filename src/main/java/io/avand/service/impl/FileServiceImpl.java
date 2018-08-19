@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,10 +37,11 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileDTO findById(Long id) {
+    public Optional<FileDTO> findById(Long id) {
         log.debug("Request to find file by id : {}", id);
-        FileEntity fileEntity = fileRepository.findOne(id);
-        return fileMapper.toDto(fileEntity);
+        return fileRepository
+            .findById(id)
+            .map(fileMapper::toDto);
     }
 
     @Override

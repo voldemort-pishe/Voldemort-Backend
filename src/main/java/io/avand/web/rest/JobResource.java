@@ -5,9 +5,11 @@ import com.codahale.metrics.annotation.Timed;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
 import io.avand.service.util.RandomUtil;
+import io.avand.web.rest.component.JobComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -23,7 +25,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,8 +40,12 @@ public class JobResource {
 
     private final JobService jobService;
 
-    public JobResource(JobService jobService) {
+    private final JobComponent jobComponent;
+
+    public JobResource(JobService jobService,
+                       JobComponent jobComponent) {
         this.jobService = jobService;
+        this.jobComponent = jobComponent;
     }
 
 
@@ -53,8 +58,9 @@ public class JobResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity<JobDTO> createJob(@Valid @RequestBody JobDTO jobDTO,
-                                            @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<JobDTO>> createJob(@Valid @RequestBody JobDTO jobDTO,
+                                                        @RequestAttribute("companyId") Long companyId)
+        throws URISyntaxException {
         log.debug("REST request to save Job : {}", jobDTO);
         if (jobDTO.getId() != null) {
             throw new BadRequestAlertException("A new jobEntity cannot already have an ID", ENTITY_NAME, "idexists");
@@ -62,9 +68,9 @@ public class JobResource {
         try {
             jobDTO.setCompanyId(companyId);
             jobDTO.setUniqueId(RandomUtil.getUniqueId());
-            JobDTO result = jobService.save(jobDTO);
-            return ResponseEntity.created(new URI("/api/job/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
+            return ResponseEntity.created(new URI("/api/job/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
                 .body(result);
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
@@ -82,15 +88,16 @@ public class JobResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity<JobDTO> updateJob(@Valid @RequestBody JobDTO jobDTO,
-                                            @RequestAttribute("companyId") Long companyId) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<JobDTO>> updateJob(@Valid @RequestBody JobDTO jobDTO,
+                                                        @RequestAttribute("companyId") Long companyId)
+        throws URISyntaxException {
         log.debug("REST request to update Job : {}", jobDTO);
         if (jobDTO.getId() == null) {
             return createJob(jobDTO, companyId);
         }
         try {
             jobDTO.setCompanyId(companyId);
-            JobDTO result = jobService.save(jobDTO);
+            ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, jobDTO.getId().toString()))
                 .body(result);
@@ -106,10 +113,10 @@ public class JobResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity<Page<JobDTO>> getAllJob(@ApiParam Pageable pageable) {
+    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJob(@ApiParam Pageable pageable) {
         log.debug("REST request to get all Job");
         try {
-            Page<JobDTO> jobDTOS = jobService.findAll(pageable);
+            Page<ResponseVM<JobDTO>> jobDTOS = jobComponent.findAll(pageable);
             return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -124,10 +131,10 @@ public class JobResource {
      */
     @GetMapping("/{id}")
     @Timed
-    public ResponseEntity<JobDTO> getJob(@PathVariable Long id) {
+    public ResponseEntity<ResponseVM<JobDTO>> getJob(@PathVariable Long id) {
         log.debug("REST request to get Job : {}", id);
         try {
-            JobDTO jobDTO = jobService.findById(id);
+            ResponseVM<JobDTO> jobDTO = jobComponent.findById(id);
             return ResponseUtil.wrapOrNotFound(Optional.ofNullable(jobDTO));
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
@@ -160,10 +167,10 @@ public class JobResource {
      */
     @GetMapping("/company-list")
     @Timed
-    public ResponseEntity<Page<JobDTO>> getAllJobByCompany(@ApiParam Pageable pageable, @RequestAttribute("companyId") Long companyId) {
+    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJobByCompany(@ApiParam Pageable pageable, @RequestAttribute("companyId") Long companyId) {
         log.debug("REST request to get all Job");
         try {
-            Page<JobDTO> jobDTOS = jobService.findAllByCompanyId(pageable, companyId);
+            Page<ResponseVM<JobDTO>> jobDTOS = jobComponent.findAllByCompany(companyId, pageable);
             return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

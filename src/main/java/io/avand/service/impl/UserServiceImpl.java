@@ -1,11 +1,9 @@
 package io.avand.service.impl;
 
-import io.avand.domain.entity.jpa.AuthorityEntity;
-import io.avand.domain.entity.jpa.UserAuthorityEntity;
-import io.avand.domain.entity.jpa.UserEntity;
-import io.avand.domain.entity.jpa.UserPermissionEntity;
+import io.avand.domain.entity.jpa.*;
 import io.avand.domain.enumeration.PermissionAction;
 import io.avand.repository.jpa.AuthorityRepository;
+import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.security.AuthoritiesConstants;
 import io.avand.service.MailService;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,18 +41,22 @@ public class UserServiceImpl implements UserService {
 
     private final TokenService tokenService;
 
+    private final FileRepository fileRepository;
+
     public UserServiceImpl(UserRepository userRepository,
                            AuthorityRepository authorityRepository,
                            UserMapper userMapper,
                            PasswordEncoder passwordEncoder,
                            MailService mailService,
-                           TokenService tokenService) {
+                           TokenService tokenService,
+                           FileRepository fileRepository) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.tokenService = tokenService;
+        this.fileRepository = fileRepository;
     }
 
     @Override
@@ -105,12 +106,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO update(UserDTO userDTO) {
+    public UserDTO update(UserDTO userDTO) throws NotFoundException {
         log.debug("Request to update user : {}", userDTO);
-        UserEntity userEntity = userMapper.toEntity(userDTO);
-        userEntity = userRepository.save(userEntity);
+        UserEntity userEntity = userRepository.findOne(userDTO.getId());
+        if (userEntity != null) {
+            if (userDTO.getFileId() != null) {
+                Optional<FileEntity> fileEntityOptional = fileRepository.findById(userDTO.getFileId());
+                if (fileEntityOptional.isPresent())
+                    userEntity.setFile(fileEntityOptional.get());
+            }
+            userEntity.setFirstName(userDTO.getFirstName());
+            userEntity.setLastName(userDTO.getLastName());
+            userEntity.setEmail(userDTO.getEmail());
+            userEntity = userRepository.save(userEntity);
 
-        return userMapper.toDto(userEntity);
+            return userMapper.toDto(userEntity);
+        } else {
+            throw new NotFoundException("User Not Available");
+        }
+
     }
 
     @Override

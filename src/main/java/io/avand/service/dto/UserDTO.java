@@ -42,6 +42,8 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
     @JsonIgnore
     private Set<InvoiceDTO> invoices = new HashSet<>();
 
+    private Long fileId;
+
     public String getLogin() {
         return login;
     }
@@ -154,6 +156,14 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
         this.invoices = invoices;
     }
 
+    public Long getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Long fileId) {
+        this.fileId = fileId;
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
@@ -167,10 +177,7 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
             ", invitationKey='" + invitationKey + '\'' +
             ", resetKey='" + resetKey + '\'' +
             ", resetDate=" + resetDate +
-            ", userAuthorities=" + userAuthorities +
-            ", companies=" + companies +
-            ", talentPools=" + talentPools +
-            ", invoices=" + invoices +
+            ", fileId=" + fileId +
             '}';
     }
 }

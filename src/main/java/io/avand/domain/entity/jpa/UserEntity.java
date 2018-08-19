@@ -56,25 +56,29 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "reset_date")
     private ZonedDateTime resetDate;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<UserAuthorityEntity> authorities = new HashSet<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyEntity> companies = new HashSet<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<TalentPoolEntity> talentPools = new HashSet<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<InvoiceEntity> invoices = new HashSet<>();
+
+    @OneToOne
+    @JoinColumn
+    private FileEntity file;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -309,6 +313,15 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     public void setInvoices(Set<InvoiceEntity> invoiceEntities) {
         this.invoices = invoiceEntities;
     }
+
+    public FileEntity getFile() {
+        return file;
+    }
+
+    public void setFile(FileEntity file) {
+        this.file = file;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -334,17 +347,18 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Override
     public String toString() {
         return "UserEntity{" +
-            "id=" + getId() +
-            ", login='" + getLogin() + "'" +
-            ", passwordHash='" + getPasswordHash() + "'" +
-            ", firstName='" + getFirstName() + "'" +
-            ", lastName='" + getLastName() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", activated='" + isActivated() + "'" +
-            ", activationKey='" + getActivationKey() + "'" +
-            ", invitationKey='" + getInvitationKey() + "'" +
-            ", resetKey='" + getResetKey() + "'" +
-            ", resetDate='" + getResetDate() + "'" +
-            "}";
+            "id=" + id +
+            ", login='" + login + '\'' +
+            ", passwordHash='" + passwordHash + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", email='" + email + '\'' +
+            ", activated=" + activated +
+            ", activationKey='" + activationKey + '\'' +
+            ", invitationKey='" + invitationKey + '\'' +
+            ", resetKey='" + resetKey + '\'' +
+            ", resetDate=" + resetDate +
+            ", file=" + file +
+            '}';
     }
 }

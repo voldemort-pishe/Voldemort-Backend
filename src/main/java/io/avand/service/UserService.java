@@ -13,7 +13,7 @@ public interface UserService {
 
     UserDTO save(String login,String firstName,String lastName,String email,String password);
 
-    UserDTO update(UserDTO userDTO);
+    UserDTO update(UserDTO userDTO) throws NotFoundException;
 
     Optional<UserDTO> findById(Long id);
 

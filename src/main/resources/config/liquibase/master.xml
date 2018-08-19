@@ -50,6 +50,8 @@
     <include file="config/liquibase/changelog/20180719151436_added_entity_CandidateMessageEntity.xml"
              relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20180619154433_added_entity_constraints_UserEntity.xml"
+             relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154434_added_entity_constraints_UserAuthorityEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154436_added_entity_constraints_CandidateEntity.xml"

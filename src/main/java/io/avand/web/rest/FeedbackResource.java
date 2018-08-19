@@ -4,9 +4,11 @@ import com.codahale.metrics.annotation.Timed;
 
 import io.avand.service.FeedbackService;
 import io.avand.service.dto.FeedbackDTO;
+import io.avand.web.rest.component.FeedbackComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -21,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -37,8 +38,12 @@ public class FeedbackResource {
 
     private final FeedbackService feedbackService;
 
-    public FeedbackResource(FeedbackService feedbackService) {
+    private final FeedbackComponent feedbackComponent;
+
+    public FeedbackResource(FeedbackService feedbackService,
+                            FeedbackComponent feedbackComponent) {
         this.feedbackService = feedbackService;
+        this.feedbackComponent = feedbackComponent;
     }
 
 
@@ -51,15 +56,15 @@ public class FeedbackResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity createFeedback(@RequestBody FeedbackDTO feedbackDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<FeedbackDTO>> createFeedback(@RequestBody FeedbackDTO feedbackDTO) throws URISyntaxException {
         log.debug("REST request to save Feedback : {}", feedbackDTO);
         if (feedbackDTO.getId() != null) {
             throw new BadRequestAlertException("A new feedback cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            FeedbackDTO result = feedbackService.save(feedbackDTO);
-            return ResponseEntity.created(new URI("/api/feedback/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            ResponseVM<FeedbackDTO> result = feedbackComponent.save(feedbackDTO);
+            return ResponseEntity.created(new URI("/api/feedback/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
                 .body(result);
         } catch (NotFoundException | IllegalStateException e) {
             throw new ServerErrorException(e.getMessage());
@@ -77,13 +82,13 @@ public class FeedbackResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity updateFeedback(@RequestBody FeedbackDTO feedbackDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<FeedbackDTO>> updateFeedback(@RequestBody FeedbackDTO feedbackDTO) throws URISyntaxException {
         log.debug("REST request to update Feedback : {}", feedbackDTO);
         if (feedbackDTO.getId() == null) {
             return createFeedback(feedbackDTO);
         }
         try {
-            FeedbackDTO result = feedbackService.update(feedbackDTO);
+            ResponseVM<FeedbackDTO> result = feedbackComponent.update(feedbackDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, feedbackDTO.getId().toString()))
                 .body(result);
@@ -99,10 +104,14 @@ public class FeedbackResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity getAllFeedback(@ApiParam Pageable pageable) {
+    public ResponseEntity<Page<ResponseVM<FeedbackDTO>>> getAllFeedback(@ApiParam Pageable pageable) {
         log.debug("REST request to get all Feedback");
-        Page<FeedbackDTO> feedbackDTOS = feedbackService.findAll(pageable);
-        return new ResponseEntity<>(feedbackDTOS, HttpStatus.OK);
+        try {
+            Page<ResponseVM<FeedbackDTO>> feedbackDTOS = feedbackComponent.findAll(pageable);
+            return new ResponseEntity<>(feedbackDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     /**
@@ -113,11 +122,11 @@ public class FeedbackResource {
      */
     @GetMapping("/{id}")
     @Timed
-    public ResponseEntity getFeedback(@PathVariable Long id) {
+    public ResponseEntity<ResponseVM<FeedbackDTO>> getFeedback(@PathVariable Long id) {
         log.debug("REST request to get Feedback : {}", id);
         try {
-            FeedbackDTO feedbackDTO = feedbackService.findById(id);
-            return ResponseUtil.wrapOrNotFound(Optional.ofNullable(feedbackDTO));
+            ResponseVM<FeedbackDTO> feedbackDTO = feedbackComponent.findById(id);
+            return new ResponseEntity<>(feedbackDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
@@ -145,10 +154,14 @@ public class FeedbackResource {
      */
     @GetMapping("/candidate-feedback/{id}")
     @Timed
-    public ResponseEntity getAllFeedbackByCandidate(@ApiParam Pageable pageable, @PathVariable Long id) {
+    public ResponseEntity<Page<ResponseVM<FeedbackDTO>>> getAllFeedbackByCandidate(@ApiParam Pageable pageable, @PathVariable Long id) {
         log.debug("REST request to get all Feedback");
-        Page<FeedbackDTO> feedbackDTOS = feedbackService.findAllByCandidateId(pageable, id);
-        return new ResponseEntity<>(feedbackDTOS, HttpStatus.OK);
+        try {
+            Page<ResponseVM<FeedbackDTO>> feedbackDTOS = feedbackComponent.findAllByCandidate(id, pageable);
+            return new ResponseEntity<>(feedbackDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package io.avand.service.mapper;
 
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.service.dto.CandidateDTO;
+import io.avand.web.rest.vm.response.CandidateIncludeVM;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,7 +12,7 @@ import org.mapstruct.Mapping;
         CandidateEvaluationCriteriaMapper.class,
         CandidateScheduleMapper.class,
         FileMapper.class})
-public interface CandidateMapper extends EntityMapper<CandidateDTO, CandidateEntity> {
+public interface CandidateMapper extends EntityMapper<CandidateDTO, CandidateEntity> , VmMapper<CandidateDTO,CandidateIncludeVM>{
 
     @Override
     @Mapping(source = "file.id", target = "fileId")

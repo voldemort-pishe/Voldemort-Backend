@@ -1,19 +1,15 @@
 package io.avand.service.impl;
 
-import io.avand.domain.entity.jpa.InvoiceEntity;
-import io.avand.domain.entity.jpa.PaymentTransactionEntity;
-import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.domain.entity.jpa.*;
 import io.avand.domain.enumeration.InvoiceStatus;
 import io.avand.repository.jpa.InvoiceRepository;
-import io.avand.repository.jpa.PaymentTransactionRepository;
 import io.avand.repository.jpa.UserRepository;
+import io.avand.security.SecurityUtils;
 import io.avand.service.InvoiceService;
-import io.avand.service.SubscriptionService;
+import io.avand.service.PlanService;
 import io.avand.service.dto.InvoiceDTO;
-import io.avand.service.dto.PaymentTransactionDTO;
-import io.avand.service.dto.SubscriptionDTO;
+import io.avand.service.dto.PlanDTO;
 import io.avand.service.mapper.InvoiceMapper;
-import io.avand.service.mapper.PaymentTransactionMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,66 +17,85 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 
-    private Logger logger = LoggerFactory.getLogger(InvoiceServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(InvoiceServiceImpl.class);
 
     private final InvoiceRepository invoiceRepository;
 
-    private final InvoiceMapper invoiceMapper;
+    private final PlanService planService;
 
-    private final SubscriptionService subscriptionService;
+    private final InvoiceMapper invoiceMapper;
 
     private final UserRepository userRepository;
 
-    private final PaymentTransactionRepository paymentTransactionRepository;
-
-    private final PaymentTransactionMapper paymentTransactionMapper;
-
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository,
+                              PlanService planService,
                               InvoiceMapper invoiceMapper,
-                              SubscriptionService subscriptionService,
-                              UserRepository userRepository,
-                              PaymentTransactionRepository paymentTransactionRepository,
-                              PaymentTransactionMapper paymentTransactionMapper) {
+                              UserRepository userRepository) {
         this.invoiceRepository = invoiceRepository;
+        this.planService = planService;
         this.invoiceMapper = invoiceMapper;
-        this.subscriptionService = subscriptionService;
         this.userRepository = userRepository;
-        this.paymentTransactionRepository = paymentTransactionRepository;
-        this.paymentTransactionMapper = paymentTransactionMapper;
     }
 
     @Override
-    public InvoiceDTO save(InvoiceDTO invoiceDTO) {
-        logger.debug("Request for service to save an invoice : {}", invoiceDTO);
-        invoiceDTO.setStatus(InvoiceStatus.INITIALIZED);
-
-
+    public InvoiceDTO save(InvoiceDTO invoiceDTO) throws NotFoundException {
+        logger.debug("Request to save invoice : {}", invoiceDTO);
         InvoiceEntity invoiceEntity = invoiceMapper.toEntity(invoiceDTO);
-
-        Optional<UserEntity> userEntity = userRepository.findById(invoiceDTO.getUserId());
-
-        invoiceEntity.setUser(userEntity.get());
-        invoiceEntity = invoiceRepository.save(invoiceEntity);
-
-        return invoiceMapper.toDto(invoiceEntity);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(invoiceDTO.getUserId());
+        if (userEntityOptional.isPresent()) {
+            invoiceEntity.setUser(userEntityOptional.get());
+            for (InvoiceItemEntity invoiceItemEntity : invoiceEntity.getInvoiceItem()) {
+                invoiceItemEntity.setInvoice(invoiceEntity);
+            }
+            invoiceEntity = invoiceRepository.save(invoiceEntity);
+            return invoiceMapper.toDto(invoiceEntity);
+        } else {
+            throw new NotFoundException("User Not Available");
+        }
     }
 
     @Override
-    public InvoiceDTO update(InvoiceDTO invoiceDTO) {
-        logger.debug("Request for service to update an invoice : {}", invoiceDTO);
-        InvoiceEntity invoiceEntity = invoiceMapper.toEntity(invoiceDTO);
+    public InvoiceDTO saveByPlanId(Long planId) throws NotFoundException {
+        logger.debug("Request to save invoice by planId : {}", planId);
+        Optional<PlanDTO> planDTOOptional = planService.findOneById(planId);
+        if (planDTOOptional.isPresent()) {
+            InvoiceEntity invoiceEntity = new InvoiceEntity();
+            invoiceEntity.setStatus(InvoiceStatus.INITIALIZED);
 
-        Optional<UserEntity> userEntity = userRepository.findById(invoiceDTO.getUserId());
+            InvoiceItemEntity invoiceItemEntity = new InvoiceItemEntity();
+            invoiceItemEntity.setCount(1L);
+            invoiceItemEntity.setInvoice(invoiceEntity);
+            invoiceItemEntity.setPrice(planDTOOptional.get().getAmount());
+            invoiceItemEntity.setTotal(planDTOOptional.get().getAmount());
+            invoiceItemEntity.setTitle(String.format("خرید اشتراک %s", planDTOOptional.get().getTitle()));
 
-        invoiceEntity.setUser(userEntity.get());
-        invoiceEntity = invoiceRepository.save(invoiceEntity);
+            Set<InvoiceItemEntity> invoiceItemEntities = new HashSet<>();
+            invoiceItemEntities.add(invoiceItemEntity);
+            invoiceEntity.setInvoiceItem(invoiceItemEntities);
+            invoiceEntity.setAmount(planDTOOptional.get().getAmount());
+            invoiceEntity.setDiscount(0L);
+            invoiceEntity.setTax((planDTOOptional.get().getAmount() * 9) / 100);
+            invoiceEntity.setTotal(invoiceEntity.getAmount() + invoiceEntity.getTax() - invoiceEntity.getDiscount());
 
-        return invoiceMapper.toDto(invoiceEntity);
+            Optional<UserEntity> userEntityOptional = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
+            if (userEntityOptional.isPresent()) {
+                invoiceEntity.setUser(userEntityOptional.get());
+                invoiceEntity = invoiceRepository.save(invoiceEntity);
+                return invoiceMapper.toDto(invoiceEntity);
+            } else {
+                throw new NotFoundException("User Not Available");
+            }
+
+        } else {
+            throw new NotFoundException("Plan Not Available");
+        }
     }
 
     @Override
@@ -112,18 +127,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Optional<InvoiceDTO> findOneByTrackingCode(String trackingCode) throws NotFoundException {
         logger.debug("Request to invoice service to find a invoice by reference id : {}", trackingCode);
-
-        Optional<PaymentTransactionEntity> paymentTransactionEntity = paymentTransactionRepository.findByTrackingCode(trackingCode);
-        if (paymentTransactionEntity.isPresent()) {
-            Optional<InvoiceEntity> invoiceEntity = invoiceRepository.findByPaymentTransactions(paymentTransactionEntity.get());
-            return invoiceEntity.map(invoiceMapper::toDto);
-        } else {
-            throw new NotFoundException("Invoice is not available!");
-        }
+        return invoiceRepository
+            .findByTrackingCode(trackingCode)
+            .map(invoiceMapper::toDto);
     }
 
     @Override
-    public Page<InvoiceDTO> getAll(Pageable pageable) {
+    public Page<InvoiceDTO> findAll(Pageable pageable) {
         logger.debug("Request to get all invoices");
         return invoiceRepository.findAll(pageable).map(invoiceMapper::toDto);
     }

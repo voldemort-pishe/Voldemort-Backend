@@ -9,11 +9,9 @@ import java.util.Optional;
 
 public interface InvoiceService {
 
-    InvoiceDTO save(InvoiceDTO invoiceDTO);
+    InvoiceDTO save(InvoiceDTO invoiceDTO) throws NotFoundException;
 
-    InvoiceDTO update(InvoiceDTO invoiceDTO);
-
-    void delete(Long id);
+    InvoiceDTO saveByPlanId(Long planId) throws NotFoundException;
 
     Optional<InvoiceDTO> findOneById(Long id);
 
@@ -21,5 +19,7 @@ public interface InvoiceService {
 
     Optional<InvoiceDTO> findOneByTrackingCode(String trackingCode) throws NotFoundException;
 
-    Page<InvoiceDTO> getAll(Pageable pageable);
+    Page<InvoiceDTO> findAll(Pageable pageable);
+
+    void delete(Long id);
 }

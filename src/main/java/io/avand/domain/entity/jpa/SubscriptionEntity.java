@@ -1,6 +1,5 @@
 package io.avand.domain.entity.jpa;
 
-import io.avand.domain.enumeration.SubscriptionStatus;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -17,21 +16,19 @@ public class SubscriptionEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @OneToOne
+    @JoinColumn(unique = true)
+    private UserEntity user;
 
-    @Column(name = "plan_title")
-    private String planTitle;
+    @OneToOne
+    @JoinColumn(unique = true)
+    private UserPlanEntity plan;
 
     @Column(name = "start_date")
     private ZonedDateTime startDate;
 
     @Column(name = "end_date")
     private ZonedDateTime endDate;
-
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private SubscriptionStatus status;
 
     public Long getId() {
         return id;
@@ -41,20 +38,20 @@ public class SubscriptionEntity implements Serializable {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
-    public String getPlanTitle() {
-        return planTitle;
+    public UserPlanEntity getPlan() {
+        return plan;
     }
 
-    public void setPlanTitle(String planTitle) {
-        this.planTitle = planTitle;
+    public void setPlan(UserPlanEntity plan) {
+        this.plan = plan;
     }
 
     public ZonedDateTime getStartDate() {
@@ -73,23 +70,12 @@ public class SubscriptionEntity implements Serializable {
         this.endDate = endDate;
     }
 
-    public SubscriptionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(SubscriptionStatus status) {
-        this.status = status;
-    }
-
     @Override
     public String toString() {
         return "SubscriptionEntity{" +
             "id=" + id +
-            ", userId=" + userId +
-            ", planTitle='" + planTitle + '\'' +
             ", startDate=" + startDate +
             ", endDate=" + endDate +
-            ", status=" + status +
             '}';
     }
 }

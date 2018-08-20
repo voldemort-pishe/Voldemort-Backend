@@ -11,14 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringSecurityAuditorAware implements AuditorAware<String> {
 
-    private final SecurityUtils securityUtils;
-
-    public SpringSecurityAuditorAware(SecurityUtils securityUtils) {
-        this.securityUtils = securityUtils;
-    }
-
     @Override
     public String getCurrentAuditor() {
-        return securityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM_ACCOUNT);
+        return SecurityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM_ACCOUNT);
     }
 }

@@ -109,7 +109,7 @@ public class AccountResource {
     @PostMapping("/change-password")
     public ResponseEntity changePassword(@RequestBody @Valid UserChangePasswordVM changePasswordVM) {
         log.debug("REST Request to change password");
-        Optional<String> login = securityUtils.getCurrentUserLogin();
+        Optional<String> login = SecurityUtils.getCurrentUserLogin();
         if (login.isPresent()) {
             try {
                 userService.changePassword(login.get(), changePasswordVM.getOldPassword(), changePasswordVM.getNewPassword());

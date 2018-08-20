@@ -29,7 +29,7 @@ public class SecurityUtils {
      *
      * @return the login of the current user
      */
-    public Optional<String> getCurrentUserLogin() {
+    public static Optional<String> getCurrentUserLogin() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(securityContext.getAuthentication())
             .map(authentication -> {

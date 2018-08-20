@@ -64,13 +64,11 @@ public class CacheConfiguration {
             cm.createCache(FeedbackEntity.class.getName(), jcacheConfiguration);
             cm.createCache(UserPermissionEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CandidateScheduleEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(PaymentTransactionEntity.class.getName(), jcacheConfiguration);
             cm.createCache(TalentPoolEntity.class.getName(), jcacheConfiguration);
             cm.createCache(EvaluationCriteriaEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CompanyPipelineEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CandidateEvaluationCriteriaEntity.class.getName(), jcacheConfiguration);
             cm.createCache(SubscriptionEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(SubscriptionHistoryEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CompanyMemberEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CandidateMessageEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CandidateMessageEntity.class.getName()+".child", jcacheConfiguration);

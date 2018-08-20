@@ -41,48 +41,6 @@ public class InvoiceResource {
 
 
     /**
-     * POST  /invoice : Create a new invoiceDTO.
-     *
-     * @param invoiceDTO the invoiceDTO to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new invoiceDTO, or with status 400 (Bad Request) if the invoiceDTO has already an ID
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
-    @PostMapping("/invoice")
-    @Timed
-    public ResponseEntity createInvoice(@RequestBody InvoiceDTO invoiceDTO) throws URISyntaxException {
-        log.debug("REST request to save InvoiceDTO : {}", invoiceDTO);
-        if (invoiceDTO.getId() != null) {
-            throw new BadRequestAlertException("A new invoice cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        InvoiceDTO result = invoiceService.save(invoiceDTO);
-        return ResponseEntity.created(new URI("/api/invoice/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }
-
-    /**
-     * PUT  /invoice : Updates an existing invoiceDTO.
-     *
-     * @param invoiceDTO the invoiceDTO to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated invoiceDTO,
-     * or with status 400 (Bad Request) if the invoiceDTO is not valid,
-     * or with status 500 (Internal Server Error) if the invoiceDTO couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
-    @PutMapping("/invoice")
-    @Timed
-    public ResponseEntity updateInvoice(@RequestBody InvoiceDTO invoiceDTO) throws URISyntaxException {
-        log.debug("REST request to update InvoiceDTO : {}", invoiceDTO);
-        if (invoiceDTO.getId() == null) {
-            return createInvoice(invoiceDTO);
-        }
-        InvoiceDTO result = invoiceService.save(invoiceDTO);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, invoiceDTO.getId().toString()))
-            .body(result);
-    }
-
-    /**
      * GET  /invoice : get all the invoiceDTOs.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of invoiceDTOs in body
@@ -91,7 +49,7 @@ public class InvoiceResource {
     @Timed
     public ResponseEntity getAllInvoice(@ApiParam Pageable pageable) {
         log.debug("REST request to get all InvoiceDTOs");
-        Page<InvoiceDTO> invoiceDTOS = invoiceService.getAll(pageable);
+        Page<InvoiceDTO> invoiceDTOS = invoiceService.findAll(pageable);
         return new ResponseEntity<>(invoiceDTOS, HttpStatus.OK);
         }
 

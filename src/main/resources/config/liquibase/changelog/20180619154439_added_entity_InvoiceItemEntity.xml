@@ -15,26 +15,30 @@
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
     <!--
-        Added the entity SubscriptionEntity.
+        Added the entity InvoiceEntity.
     -->
-    <changeSet id="20180619154452-1" author="Morteza">
-        <createTable tableName="subscription_entity">
+    <changeSet id="20180619154439-1" author="jhipster">
+        <createTable tableName="invoice_item_entity">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="user_id" type="bigint">
-                <constraints nullable="false"/>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="true"/>
             </column>
 
-            <column name="plan_id" type="bigint">
-                <constraints nullable="false"/>
+            <column name="count" type="bigint">
+                <constraints nullable="true"/>
             </column>
 
-            <column name="start_date" type="timestamp">
-                <constraints nullable="false"/>
+            <column name="price" type="bigint">
+                <constraints nullable="true"/>
             </column>
 
-            <column name="end_date" type="timestamp">
+            <column name="total" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="invoice_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
 

@@ -19,7 +19,11 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154439_added_entity_InvoiceEntity.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154439_added_entity_InvoiceItemEntity.xml"
+             relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154440_added_entity_PlanEntity.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154441_added_entity_PlanConfigEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154442_added_entity_FileEntity.xml"
              relativeToChangelogFile="false"/>
@@ -31,8 +35,6 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154446_added_entity_CandidateScheduleEntity.xml"
              relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20180619154447_added_entity_PaymentTransactionEntity.xml"
-             relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154448_added_entity_TalentPoolEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154449_added_entity_EvaluationCriteriaEntity.xml"
@@ -43,11 +45,13 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154452_added_entity_SubscriptionEntity.xml"
              relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20180619154453_added_entity_SubscriptionHistoryEntity.xml"
-             relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180713152238_added_entity_CompanyMemberEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180719151436_added_entity_CandidateMessageEntity.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180820210000_added_entity_UserPlanEntity.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180820210001_added_entity_UserPlanConfigEntity.xml"
              relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20180619154433_added_entity_constraints_UserEntity.xml"
@@ -62,6 +66,10 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154439_added_entity_constraints_InvoiceEntity.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154439_added_entity_constraints_InvoiceItemEntity.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180619154441_added_entity_constraints_PlanConfigEntity.xml"
+             relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154443_added_entity_constraints_CommentEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154444_added_entity_constraints_FeedbackEntity.xml"
@@ -69,8 +77,6 @@
     <include file="config/liquibase/changelog/20180619154445_added_entity_constraints_UserPermissionEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154446_added_entity_constraints_CandidateScheduleEntity.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20180619154447_added_entity_constraints_PaymentTransactionEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180619154448_added_entity_constraints_TalentPoolEntity.xml"
              relativeToChangelogFile="false"/>
@@ -86,6 +92,10 @@
     <include file="config/liquibase/changelog/20180713152238_added_entity_constraints_CompanyMemberEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180719151436_added_entity_constraints_CandidateMessageEntity.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180820210000_added_entity_constraints_UserPlanEntity.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180820210001_added_entity_constraints_UserPlanConfigEntity.xml"
              relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

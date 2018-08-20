@@ -4,13 +4,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <!--
-        Added the constraints for entity PaymentTransactionEntity.
+        Added the constraints for entity CompanyEntity.
     -->
-    <changeSet id="20180619154447-2" author="jhipster">
-        
+    <changeSet id="20180619154439-2" author="jhipster">
+
         <addForeignKeyConstraint baseColumnNames="invoice_id"
-                                 baseTableName="payment_transaction_entity"
-                                 constraintName="fk_payment_transaction_entity_invoice_id"
+                                 baseTableName="invoice_item_entity"
+                                 constraintName="fk_invoice_item_entity_invoice_id"
                                  referencedColumnNames="id"
                                  referencedTableName="invoice_entity"/>
 

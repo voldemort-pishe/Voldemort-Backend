@@ -37,32 +37,9 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public PlanDTO update(PlanDTO planDTO) {
-        logger.debug("Request for service to save a plan : {}", planDTO);
-        PlanEntity planEntity = planRepository.findOne(planDTO.getId());
-        planEntity = planMapper.toEntity(planDTO);
-        return planMapper.toDto(planRepository.save(planEntity));
-    }
-
-    @Override
-    public void delete(Long planId) {
-        logger.debug("Request for service to delete a plan : {}", planId);
-        Optional<PlanDTO> planDTO = this.findOneById(planId);
-        if (planDTO.isPresent()) {
-            planRepository.delete(planId);
-        }
-    }
-
-    @Override
     public Optional<PlanDTO> findOneById(Long planId) {
         logger.debug("Request for service to get a plan by id : {}", planId);
         return planRepository.findById(planId).map(planMapper::toDto);
-    }
-
-    @Override
-    public Optional<PlanDTO> findOneByTitle(String planTitle) {
-        logger.debug("Request for service to get a plan by title : {}", planTitle);
-        return planRepository.findByTitle(planTitle).map(planMapper::toDto);
     }
 
     @Override
@@ -74,8 +51,16 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public Page<PlanDTO> getActivePlans(Pageable pageable) {
         logger.debug("Request for service to get active plans");
-        Page<PlanEntity> planEntities = planRepository.findAllByActiveIsTrue(pageable);
         return planRepository.findAllByActiveIsTrue(pageable)
             .map(planMapper::toDto);
+    }
+
+    @Override
+    public void delete(Long planId) {
+        logger.debug("Request for service to delete a plan : {}", planId);
+        Optional<PlanDTO> planDTO = this.findOneById(planId);
+        if (planDTO.isPresent()) {
+            planRepository.delete(planId);
+        }
     }
 }

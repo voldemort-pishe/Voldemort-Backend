@@ -1,6 +1,5 @@
 package io.avand.domain.entity.jpa;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -11,8 +10,6 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
-
-import io.avand.domain.enumeration.SubscribeState;
 
 import io.avand.domain.enumeration.PaymentType;
 
@@ -33,10 +30,6 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "subscription")
-    private SubscribeState subscription;
-
-    @Enumerated(EnumType.STRING)
     @Column(name = "payment_type")
     private PaymentType paymentType;
 
@@ -44,28 +37,33 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
     private ZonedDateTime paymentDate;
 
     @Column(name = "amount")
-    private Integer amount;
+    private Long amount;
 
-    @Column(name = "amount_with_tax")
-    private Integer amountWithTax;
+    @Column(name = "tax")
+    private Long tax;
+
+    @Column(name = "discount")
+    private Long discount;
+
+    @Column(name = "total")
+    private Long total;
+
+    @Column(name = "tracking_code")
+    private String trackingCode;
+
+    @Column(name = "reference_id")
+    private String referenceId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private InvoiceStatus status;
 
-    @OneToMany(mappedBy = "invoice",cascade = CascadeType.ALL,orphanRemoval = true)
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONE)
-    private Set<PaymentTransactionEntity> paymentTransactions = new HashSet<>();
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
+    private Set<InvoiceItemEntity> invoiceItem = new HashSet<>();
 
     @ManyToOne
     private UserEntity user;
 
-    @Column(name = "plan_title")
-    private String planTitle;
-
-
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -74,26 +72,8 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
         this.id = id;
     }
 
-    public SubscribeState getSubscription() {
-        return subscription;
-    }
-
-    public InvoiceEntity subscription(SubscribeState subscription) {
-        this.subscription = subscription;
-        return this;
-    }
-
-    public void setSubscription(SubscribeState subscription) {
-        this.subscription = subscription;
-    }
-
     public PaymentType getPaymentType() {
         return paymentType;
-    }
-
-    public InvoiceEntity paymentType(PaymentType paymentType) {
-        this.paymentType = paymentType;
-        return this;
     }
 
     public void setPaymentType(PaymentType paymentType) {
@@ -104,101 +84,81 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
         return paymentDate;
     }
 
-    public InvoiceEntity paymentDate(ZonedDateTime paymentDate) {
-        this.paymentDate = paymentDate;
-        return this;
-    }
-
     public void setPaymentDate(ZonedDateTime paymentDate) {
         this.paymentDate = paymentDate;
     }
 
-    public Integer getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public InvoiceEntity amount(Integer amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public void setAmount(Integer amount) {
+    public void setAmount(Long amount) {
         this.amount = amount;
     }
 
-    public Integer getAmountWithTax() {
-        return amountWithTax;
+    public Long getTax() {
+        return tax;
     }
 
-    public InvoiceEntity amountWithTax(Integer amountWithTax) {
-        this.amountWithTax = amountWithTax;
-        return this;
+    public void setTax(Long tax) {
+        this.tax = tax;
     }
 
-    public void setAmountWithTax(Integer amountWithTax) {
-        this.amountWithTax = amountWithTax;
+    public Long getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Long discount) {
+        this.discount = discount;
+    }
+
+    public Long getTotal() {
+        return total;
+    }
+
+    public void setTotal(Long total) {
+        this.total = total;
+    }
+
+    public String getTrackingCode() {
+        return trackingCode;
+    }
+
+    public void setTrackingCode(String trackingCode) {
+        this.trackingCode = trackingCode;
+    }
+
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
     }
 
     public InvoiceStatus getStatus() {
         return status;
     }
 
-    public InvoiceEntity status(InvoiceStatus status) {
-        this.status = status;
-        return this;
-    }
-
     public void setStatus(InvoiceStatus status) {
         this.status = status;
     }
 
-    public Set<PaymentTransactionEntity> getPaymentTransactions() {
-        return paymentTransactions;
+    public Set<InvoiceItemEntity> getInvoiceItem() {
+        return invoiceItem;
     }
 
-    public InvoiceEntity paymentTransactions(Set<PaymentTransactionEntity> paymentTransactionEntities) {
-        this.paymentTransactions = paymentTransactionEntities;
-        return this;
-    }
-
-    public InvoiceEntity addPaymentTransaction(PaymentTransactionEntity paymentTransactionEntity) {
-        this.paymentTransactions.add(paymentTransactionEntity);
-        paymentTransactionEntity.setInvoice(this);
-        return this;
-    }
-
-    public InvoiceEntity removePaymentTransaction(PaymentTransactionEntity paymentTransactionEntity) {
-        this.paymentTransactions.remove(paymentTransactionEntity);
-        paymentTransactionEntity.setInvoice(null);
-        return this;
-    }
-
-    public void setPaymentTransactions(Set<PaymentTransactionEntity> paymentTransactionEntities) {
-        this.paymentTransactions = paymentTransactionEntities;
+    public void setInvoiceItem(Set<InvoiceItemEntity> invoiceItem) {
+        this.invoiceItem = invoiceItem;
     }
 
     public UserEntity getUser() {
         return user;
     }
 
-    public InvoiceEntity user(UserEntity userEntity) {
-        this.user = userEntity;
-        return this;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
-
-    public void setUser(UserEntity userEntity) {
-        this.user = userEntity;
-    }
-
-    public String getPlanTitle() {
-        return planTitle;
-    }
-
-    public void setPlanTitle(String planTitle) {
-        this.planTitle = planTitle;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -223,13 +183,17 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
     @Override
     public String toString() {
         return "InvoiceEntity{" +
-            "id=" + getId() +
-            ", subscription='" + getSubscription() + "'" +
-            ", paymentType='" + getPaymentType() + "'" +
-            ", paymentDate='" + getPaymentDate() + "'" +
-            ", amount=" + getAmount() +
-            ", amountWithTax=" + getAmountWithTax() +
-            ", status='" + getStatus() + "'" +
-            "}";
+            "id=" + id +
+            ", paymentType=" + paymentType +
+            ", paymentDate=" + paymentDate +
+            ", amount=" + amount +
+            ", tax=" + tax +
+            ", discount=" + discount +
+            ", total=" + total +
+            ", trackingCode='" + trackingCode + '\'' +
+            ", referenceId='" + referenceId + '\'' +
+            ", status=" + status +
+            ", user=" + user +
+            '}';
     }
 }

@@ -77,7 +77,7 @@ public class PlanResource {
         if (planDTO.getId() == null) {
             return createPlanEntity(planDTO);
         }
-        PlanDTO result = planService.update(planDTO);
+        PlanDTO result = planService.save(planDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, planDTO.getId().toString()))
             .body(result);

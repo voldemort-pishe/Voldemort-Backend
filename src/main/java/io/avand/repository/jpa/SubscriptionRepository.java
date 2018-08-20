@@ -10,5 +10,7 @@ import java.time.ZonedDateTime;
 @Repository
 public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, Long> {
 
-    SubscriptionEntity findByStartDateBeforeAndEndDateAfterAndUserId(ZonedDateTime start,ZonedDateTime end,Long userId);
+    SubscriptionEntity findByUser_Id(Long userId);
+
+    SubscriptionEntity findByStartDateBeforeAndEndDateAfterAndUser_Id(ZonedDateTime start,ZonedDateTime end,Long userId);
 }

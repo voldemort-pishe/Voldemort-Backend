@@ -5,7 +5,7 @@ import io.avand.service.dto.InvoiceDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring",uses = {PaymentTransactionMapper.class})
+@Mapper(componentModel = "spring",uses = {InvoiceItemMapper.class})
 public interface InvoiceMapper extends EntityMapper<InvoiceDTO, InvoiceEntity> {
 
     @Override

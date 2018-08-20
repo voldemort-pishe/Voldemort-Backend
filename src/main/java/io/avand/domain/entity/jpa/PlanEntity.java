@@ -1,12 +1,15 @@
 package io.avand.domain.entity.jpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A PlanEntity.
@@ -36,6 +39,10 @@ public class PlanEntity implements Serializable {
 
     @Column(name = "active")
     private Boolean active;
+
+    @OneToMany(mappedBy = "plan")
+    @JsonIgnore
+    private Set<PlanConfigEntity> planConfig = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -104,6 +111,14 @@ public class PlanEntity implements Serializable {
 
     public void setActivation(Boolean activation) {
         this.active = activation;
+    }
+
+    public Set<PlanConfigEntity> getPlanConfig() {
+        return planConfig;
+    }
+
+    public void setPlanConfig(Set<PlanConfigEntity> planConfig) {
+        this.planConfig = planConfig;
     }
 
     @Override

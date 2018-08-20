@@ -20,7 +20,5 @@ public interface PlanRepository extends JpaRepository<PlanEntity, Long> {
 
     Optional<PlanEntity> findById(Long planId);
 
-    Optional<PlanEntity> findByTitle(String planTitle);
-
     Page<PlanEntity> findAllByActiveIsTrue(Pageable pageable);
 }

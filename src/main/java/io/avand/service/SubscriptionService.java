@@ -5,9 +5,7 @@ import javassist.NotFoundException;
 
 public interface SubscriptionService {
 
-    SubscriptionDTO save(SubscriptionDTO subscriptionDTO);
-
-    SubscriptionDTO update(SubscriptionDTO subscriptionDTO);
+    SubscriptionDTO save(SubscriptionDTO subscriptionDTO) throws NotFoundException;
 
     SubscriptionDTO checkSubscription(Long userId) throws NotFoundException;
 }

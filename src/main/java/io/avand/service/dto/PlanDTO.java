@@ -1,7 +1,11 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PlanDTO implements Serializable {
 
@@ -12,11 +16,14 @@ public class PlanDTO implements Serializable {
 
     private String description;
 
-    private Integer amount;
+    private Long amount;
 
-    private Integer length;
+    private Long length;
 
     private Boolean active;
+
+    @JsonIgnore
+    private Set<PlanConfigDTO> planConfig = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -42,19 +49,19 @@ public class PlanDTO implements Serializable {
         this.description = description;
     }
 
-    public Integer getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Long amount) {
         this.amount = amount;
     }
 
-    public Integer getLength() {
+    public Long getLength() {
         return length;
     }
 
-    public void setLength(Integer length) {
+    public void setLength(Long length) {
         this.length = length;
     }
 
@@ -64,6 +71,14 @@ public class PlanDTO implements Serializable {
 
     public void setActivation(Boolean activation) {
         this.active = activation;
+    }
+
+    public Set<PlanConfigDTO> getPlanConfig() {
+        return planConfig;
+    }
+
+    public void setPlanConfig(Set<PlanConfigDTO> planConfig) {
+        this.planConfig = planConfig;
     }
 
     @Override

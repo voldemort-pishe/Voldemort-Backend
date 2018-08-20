@@ -1,9 +1,7 @@
 package io.avand.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.InvoiceStatus;
 import io.avand.domain.enumeration.PaymentType;
-import io.avand.domain.enumeration.SubscribeState;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -13,31 +11,28 @@ import java.util.Set;
 
 public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
 
-    private SubscribeState subscribeState;
-
     private PaymentType paymentType;
 
     private ZonedDateTime paymentDate;
 
-    private Integer amount;
+    private Long amount;
+
+    private Long tax;
+
+    private Long discount;
+
+    private Long total;
+
+    private String trackingCode;
+
+    private String referenceId;
 
     private InvoiceStatus status;
 
-    private String planTitle;
-
-    @JsonIgnore
-    private Set<PaymentTransactionDTO> paymentTransactions = new HashSet<>();
+    private Set<InvoiceItemDTO> invoiceItem = new HashSet<>();
 
     @NotNull
     private Long userId;
-
-    public SubscribeState getSubscribeState() {
-        return subscribeState;
-    }
-
-    public void setSubscribeState(SubscribeState subscribeState) {
-        this.subscribeState = subscribeState;
-    }
 
     public PaymentType getPaymentType() {
         return paymentType;
@@ -55,12 +50,52 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
         this.paymentDate = paymentDate;
     }
 
-    public Integer getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Long amount) {
         this.amount = amount;
+    }
+
+    public Long getTax() {
+        return tax;
+    }
+
+    public void setTax(Long tax) {
+        this.tax = tax;
+    }
+
+    public Long getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Long discount) {
+        this.discount = discount;
+    }
+
+    public Long getTotal() {
+        return total;
+    }
+
+    public void setTotal(Long total) {
+        this.total = total;
+    }
+
+    public String getTrackingCode() {
+        return trackingCode;
+    }
+
+    public void setTrackingCode(String trackingCode) {
+        this.trackingCode = trackingCode;
+    }
+
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
     }
 
     public InvoiceStatus getStatus() {
@@ -71,20 +106,12 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
         this.status = status;
     }
 
-    public String getPlanTitle() {
-        return planTitle;
+    public Set<InvoiceItemDTO> getInvoiceItem() {
+        return invoiceItem;
     }
 
-    public void setPlanTitle(String planTitle) {
-        this.planTitle = planTitle;
-    }
-
-    public Set<PaymentTransactionDTO> getPaymentTransactions() {
-        return paymentTransactions;
-    }
-
-    public void setPaymentTransactions(Set<PaymentTransactionDTO> paymentTransactions) {
-        this.paymentTransactions = paymentTransactions;
+    public void setInvoiceItem(Set<InvoiceItemDTO> invoiceItem) {
+        this.invoiceItem = invoiceItem;
     }
 
     public Long getUserId() {
@@ -98,12 +125,14 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
     @Override
     public String toString() {
         return "InvoiceDTO{" +
-            "subscribeState=" + subscribeState +
-            ", paymentType=" + paymentType +
+            "paymentType=" + paymentType +
             ", paymentDate=" + paymentDate +
             ", amount=" + amount +
+            ", tax=" + tax +
+            ", discount=" + discount +
+            ", total=" + total +
             ", status=" + status +
-            ", paymentTransactions=" + paymentTransactions +
+            ", userId=" + userId +
             '}';
     }
 }

@@ -1,16 +1,16 @@
 package io.avand.web.rest.component.impl;
 
-import io.avand.service.CandidateService;
-import io.avand.service.FileService;
-import io.avand.service.JobService;
-import io.avand.service.UserService;
+import io.avand.service.*;
 import io.avand.service.dto.CandidateDTO;
+import io.avand.service.dto.CompanyPipelineDTO;
 import io.avand.service.dto.FileDTO;
 import io.avand.service.dto.UserDTO;
+import io.avand.service.mapper.CompanyPipelineMapper;
 import io.avand.service.mapper.JobMapper;
 import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.CandidateComponent;
 import io.avand.web.rest.util.PageMaker;
+import io.avand.web.rest.vm.response.CompanyPipelineIncludeVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -31,19 +31,26 @@ public class CandidateComponentImpl implements CandidateComponent {
     private final FileService fileService;
     private final UserMapper userMapper;
     private final JobMapper jobMapper;
+    private final CompanyPipelineService companyPipelineService;
+    private final CompanyPipelineMapper companyPipelineMapper;
+
 
     public CandidateComponentImpl(CandidateService candidateService,
                                   UserService userService,
                                   JobService jobService,
                                   FileService fileService,
                                   UserMapper userMapper,
-                                  JobMapper jobMapper) {
+                                  JobMapper jobMapper,
+                                  CompanyPipelineService companyPipelineService,
+                                  CompanyPipelineMapper companyPipelineMapper) {
         this.candidateService = candidateService;
         this.userService = userService;
         this.jobService = jobService;
         this.fileService = fileService;
         this.userMapper = userMapper;
         this.jobMapper = jobMapper;
+        this.companyPipelineService = companyPipelineService;
+        this.companyPipelineMapper = companyPipelineMapper;
     }
 
     @Override
@@ -110,6 +117,12 @@ public class CandidateComponentImpl implements CandidateComponent {
 
     private Map<String, Object> createIncluded(CandidateDTO candidateDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
+
+        try {
+            CompanyPipelineDTO companyPipelineDTO = companyPipelineService.findOne(candidateDTO.getCandidatePipeline());
+            included.put("pipeline", companyPipelineMapper.dtoToVm(companyPipelineDTO));
+        } catch (NotFoundException ignore) {
+        }
 
         Optional<FileDTO> fileDTOOptional = fileService.findById(candidateDTO.getFileId());
         fileDTOOptional.ifPresent(fileDTO -> included.put("file", fileDTO));

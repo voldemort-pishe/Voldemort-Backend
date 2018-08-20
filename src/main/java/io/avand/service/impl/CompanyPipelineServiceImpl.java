@@ -86,13 +86,16 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
     public CompanyPipelineDTO findOne(Long id) throws NotFoundException {
         logger.debug("Request to company pipeline service to find one : {}", id);
 
-        CompanyEntity companyEntity = companyRepository.findOne(id);
-
-        if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-            CompanyPipelineEntity companyPipelineEntity = companyPipelineRepository.findOne(id);
-            return companyPipelineMapper.toDto(companyPipelineEntity);
+        CompanyPipelineEntity companyPipelineEntity = companyPipelineRepository.findOne(id);
+        if (companyPipelineEntity != null) {
+            CompanyEntity companyEntity = companyPipelineEntity.getCompany();
+            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
+                return companyPipelineMapper.toDto(companyPipelineEntity);
+            } else {
+                throw new SecurityException("Sorry you do not have the right permission to get this!");
+            }
         } else {
-            throw new SecurityException("Sorry you do not have the right permission to get this!");
+            throw new NotFoundException("Pipeline Not Found");
         }
     }
 

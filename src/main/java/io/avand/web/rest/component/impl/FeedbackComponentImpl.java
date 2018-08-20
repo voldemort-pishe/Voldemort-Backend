@@ -2,8 +2,11 @@ package io.avand.web.rest.component.impl;
 
 import io.avand.service.CandidateService;
 import io.avand.service.FeedbackService;
+import io.avand.service.UserService;
 import io.avand.service.dto.FeedbackDTO;
+import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.CandidateMapper;
+import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.FeedbackComponent;
 import io.avand.web.rest.util.PageMaker;
 import io.avand.web.rest.vm.response.ResponseVM;
@@ -14,10 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class FeedbackComponentImpl implements FeedbackComponent {
@@ -25,14 +25,20 @@ public class FeedbackComponentImpl implements FeedbackComponent {
     private final Logger log = LoggerFactory.getLogger(FeedbackComponentImpl.class);
     private final FeedbackService feedbackService;
     private final CandidateService candidateService;
+    private final UserService userService;
     private final CandidateMapper candidateMapper;
+    private final UserMapper userMapper;
 
     public FeedbackComponentImpl(FeedbackService feedbackService,
                                  CandidateService candidateService,
-                                 CandidateMapper candidateMapper) {
+                                 UserService userService,
+                                 CandidateMapper candidateMapper,
+                                 UserMapper userMapper) {
         this.feedbackService = feedbackService;
         this.candidateService = candidateService;
+        this.userService = userService;
         this.candidateMapper = candidateMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -95,6 +101,10 @@ public class FeedbackComponentImpl implements FeedbackComponent {
 
     private Map<String, Object> createIncluded(FeedbackDTO feedbackDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
+        if (feedbackDTO.getUserId() != null) {
+            Optional<UserDTO> userDTOOptional = userService.findById(feedbackDTO.getUserId());
+            userDTOOptional.ifPresent(userDTO -> included.put("owner", userMapper.dtoToVm(userDTO)));
+        }
         included.put("candidate", candidateMapper.dtoToVm(candidateService.findById(feedbackDTO.getCandidateId())));
         return included;
     }

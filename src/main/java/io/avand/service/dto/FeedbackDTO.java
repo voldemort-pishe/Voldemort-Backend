@@ -14,6 +14,8 @@ public class FeedbackDTO implements Serializable {
 
     private FeedbackRate rating;
 
+    private Long userId;
+
     @NotNull
     private Long candidateId;
 
@@ -39,6 +41,14 @@ public class FeedbackDTO implements Serializable {
 
     public void setRating(FeedbackRate rating) {
         this.rating = rating;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getCandidateId() {

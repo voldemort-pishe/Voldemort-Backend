@@ -106,7 +106,7 @@ public class PaymentResource {
             ZarinpalVerifyResponseDTO zarinpalVerifyResponseDTO = (ZarinpalVerifyResponseDTO) paymentService
                 .paymentVerify(zarinpalVerifyRequestDTO).getBody();
             if ("OK".equals(status)) {
-                if (zarinpalVerifyResponseDTO.getStatus() == -21) {
+                if (zarinpalVerifyResponseDTO.getStatus() == 100) {
                     foundInvoice.setReferenceId(zarinpalVerifyResponseDTO.getRefId());
                     foundInvoice.setStatus(InvoiceStatus.SUCCESS);
                     foundInvoice.setPaymentDate(ZonedDateTime.now());

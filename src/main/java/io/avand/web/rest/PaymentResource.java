@@ -4,10 +4,8 @@ import com.codahale.metrics.annotation.Timed;
 import io.avand.config.ApplicationProperties;
 import io.avand.domain.enumeration.InvoiceStatus;
 import io.avand.domain.enumeration.PaymentType;
-import io.avand.service.InvoiceService;
-import io.avand.service.PaymentService;
-import io.avand.service.SubscriptionService;
-import io.avand.service.UserPlanService;
+import io.avand.security.AuthoritiesConstants;
+import io.avand.service.*;
 import io.avand.service.dto.*;
 import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
@@ -17,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -39,16 +38,20 @@ public class PaymentResource {
 
     private final ApplicationProperties applicationProperties;
 
+    private final UserAuthorityService userAuthorityService;
+
     public PaymentResource(PaymentService paymentService,
                            InvoiceService invoiceService,
                            UserPlanService userPlanService,
                            SubscriptionService subscriptionService,
-                           ApplicationProperties applicationProperties) {
+                           ApplicationProperties applicationProperties,
+                           UserAuthorityService userAuthorityService) {
         this.paymentService = paymentService;
         this.invoiceService = invoiceService;
         this.userPlanService = userPlanService;
         this.subscriptionService = subscriptionService;
         this.applicationProperties = applicationProperties;
+        this.userAuthorityService = userAuthorityService;
     }
 
     @GetMapping("/{invoiceId}")
@@ -123,6 +126,8 @@ public class PaymentResource {
                     subscriptionDTO.setStartDate(ZonedDateTime.now());
                     subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(userPlanDTO.get().getLength()));
                     subscriptionService.save(subscriptionDTO);
+
+                    userAuthorityService.grantAuthority(AuthoritiesConstants.SUBSCRIPTION, foundInvoice.getUserId());
                 }
             } else {
                 foundInvoice.setStatus(InvoiceStatus.FAILED);

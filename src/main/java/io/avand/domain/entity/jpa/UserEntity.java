@@ -56,7 +56,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "reset_date")
     private ZonedDateTime resetDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<UserAuthorityEntity> authorities = new HashSet<>();

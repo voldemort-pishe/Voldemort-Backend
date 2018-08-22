@@ -1,6 +1,7 @@
 package io.avand.config;
 
 import io.avand.interceptor.CompanyInterceptor;
+import io.avand.interceptor.SubscriptionInterceptor;
 import io.github.jhipster.config.locale.AngularCookieLocaleResolver;
 
 import org.springframework.context.EnvironmentAware;
@@ -21,8 +22,13 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
     }
 
     @Bean
-    public CompanyInterceptor companyInterceptor(){
+    public CompanyInterceptor companyInterceptor() {
         return new CompanyInterceptor();
+    }
+
+    @Bean
+    public SubscriptionInterceptor subscriptionInterceptor() {
+        return new SubscriptionInterceptor();
     }
 
     @Bean(name = "localeResolver")
@@ -46,5 +52,24 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-member/**");
         registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/candidate/company");
         registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company");
+
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate-message");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate-message/**");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate/**");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate-schedule");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate-schedule/**");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/comment");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/comment/**");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-member");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-member/**");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-pipeline");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-pipeline/**");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company/**");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/feedback");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/feedback/**");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/job");
+        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/job/**");
     }
 }

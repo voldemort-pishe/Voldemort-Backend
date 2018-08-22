@@ -28,13 +28,13 @@ public class UserAuthorityEntity implements Serializable {
     @Column(name = "authority_name")
     private String authorityName;
 
-    @OneToMany(mappedBy = "userAuthority",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userAuthority", cascade = CascadeType.ALL)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<UserPermissionEntity> userPermissions = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserAuthorityServiceImpl implements UserAuthorityService {
@@ -45,10 +46,20 @@ public class UserAuthorityServiceImpl implements UserAuthorityService {
     }
 
     @Override
-    public void removeAuthority(String authority, Long userId) {
+    public void removeAuthority(String authority, Long userId) throws NotFoundException {
         log.debug("Request to remove authority from user : {}", userId);
-        Optional<UserAuthorityEntity> userAuthorityEntityOptional =
-            userAuthorityRepository.findByAuthorityNameAndUser_Id(authority, userId);
-        userAuthorityEntityOptional.ifPresent(userAuthorityRepository::delete);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            Set<UserAuthorityEntity> userAuthorityEntities = userEntity.getUserAuthorities();
+            for (UserAuthorityEntity userAuthorityEntity : userAuthorityEntities) {
+                if (userAuthorityEntity.getAuthorityName().equals(authority))
+                    userAuthorityEntities.remove(userAuthorityEntity);
+            }
+            userEntity.setUserAuthorities(userAuthorityEntities);
+            userRepository.save(userEntity);
+        } else {
+            throw new NotFoundException("User Not Found");
+        }
     }
 }

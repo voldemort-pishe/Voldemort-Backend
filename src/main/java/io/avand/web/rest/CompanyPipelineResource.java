@@ -2,6 +2,7 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.avand.security.AuthoritiesConstants;
 import io.avand.service.CompanyPipelineService;
 import io.avand.service.dto.CompanyPipelineDTO;
 import io.avand.web.rest.component.CompanyPipelineComponent;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -28,7 +30,8 @@ import java.util.Optional;
  * REST controller for managing CompanyPipelineEntity.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/company-pipeline")
+@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyPipelineResource {
 
     private final Logger log = LoggerFactory.getLogger(CompanyPipelineResource.class);
@@ -52,7 +55,7 @@ public class CompanyPipelineResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new companyPipelineEntity, or with status 400 (Bad Request) if the companyPipelineEntity has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PostMapping("/company-pipeline")
+    @PostMapping
     @Timed
     public ResponseEntity<ResponseVM<CompanyPipelineDTO>> createCompanyPipeline(@RequestBody CompanyPipelineDTO companyPipelineDTO,
                                                                                 @RequestAttribute("companyId") Long companyId)
@@ -77,7 +80,7 @@ public class CompanyPipelineResource {
      * or with status 500 (Internal Server Error) if the companyPipelineEntity couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/company-pipeline")
+    @PutMapping
     @Timed
     public ResponseEntity<ResponseVM<CompanyPipelineDTO>> updateCompanyPipeline(@RequestBody CompanyPipelineDTO companyPipelineDTO,
                                                                                 @RequestAttribute("companyId") Long companyId)
@@ -98,7 +101,7 @@ public class CompanyPipelineResource {
      *
      * @return the ResponseEntity with status 200 (OK) and the list of companyPipelineEntities in body
      */
-    @GetMapping("/company-pipeline/company")
+    @GetMapping("/company")
     @Timed
     public ResponseEntity<Page<ResponseVM<CompanyPipelineDTO>>> getAllCompanyPipelineByCompany(@RequestAttribute("companyId") Long companyId,
                                                                                                @ApiParam Pageable pageable)
@@ -114,7 +117,7 @@ public class CompanyPipelineResource {
      * @param id the id of the companyPipelineEntity to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the companyPipelineEntity, or with status 404 (Not Found)
      */
-    @GetMapping("/company-pipeline/{id}")
+    @GetMapping("/{id}")
     @Timed
     public ResponseEntity<ResponseVM<CompanyPipelineDTO>> getCompanyPipeline(@PathVariable Long id)
         throws NotFoundException {
@@ -129,7 +132,7 @@ public class CompanyPipelineResource {
      * @param id the id of the companyPipelineEntity to delete
      * @return the ResponseEntity with status 200 (OK)
      */
-    @DeleteMapping("/company-pipeline/{id}")
+    @DeleteMapping("/{id}")
     @Timed
     public ResponseEntity<Void> deleteCompanyPipeline(@PathVariable Long id) throws NotFoundException {
         log.debug("REST request to delete CompanyPipelineEntity : {}", id);

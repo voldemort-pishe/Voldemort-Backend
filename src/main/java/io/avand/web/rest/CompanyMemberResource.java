@@ -1,5 +1,6 @@
 package io.avand.web.rest;
 
+import io.avand.security.AuthoritiesConstants;
 import io.avand.service.CompanyMemberService;
 import io.avand.service.dto.CompanyMemberDTO;
 import io.avand.web.rest.component.CompanyMemberComponent;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,6 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/company-member")
+@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyMemberResource {
 
     private final static String ENTITY_NAME = "CompanyMemberEntity";

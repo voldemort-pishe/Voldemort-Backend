@@ -2,6 +2,7 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.avand.security.AuthoritiesConstants;
 import io.avand.security.SecurityUtils;
 import io.avand.service.UserService;
 import io.avand.service.dto.UserDTO;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;

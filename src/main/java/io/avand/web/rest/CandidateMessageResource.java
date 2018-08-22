@@ -1,6 +1,7 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.avand.security.AuthoritiesConstants;
 import io.avand.service.CandidateMessageService;
 import io.avand.service.dto.CandidateMessageDTO;
 import io.avand.web.rest.component.CandidateMessageComponent;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,6 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/candidate-message")
+@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CandidateMessageResource {
 
     private final String ENTITY_NAME = "CandidateMessage";

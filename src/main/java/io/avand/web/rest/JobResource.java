@@ -2,6 +2,7 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.avand.security.AuthoritiesConstants;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
 import io.avand.service.util.RandomUtil;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,6 +34,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/job")
+@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class JobResource {
 
     private final Logger log = LoggerFactory.getLogger(JobResource.class);

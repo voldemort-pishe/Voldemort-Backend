@@ -4,10 +4,12 @@ import com.codahale.metrics.annotation.Timed;
 
 import io.avand.service.InvoiceService;
 import io.avand.service.dto.InvoiceDTO;
-import io.avand.web.rest.errors.BadRequestAlertException;
+import io.avand.web.rest.component.InvoiceComponent;
+import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import io.avand.web.rest.vm.response.ResponseVM;
 import io.swagger.annotations.ApiParam;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,10 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -35,8 +33,12 @@ public class InvoiceResource {
 
     private final InvoiceService invoiceService;
 
-    public InvoiceResource(InvoiceService invoiceService) {
+    private final InvoiceComponent invoiceComponent;
+
+    public InvoiceResource(InvoiceService invoiceService,
+                           InvoiceComponent invoiceComponent) {
         this.invoiceService = invoiceService;
+        this.invoiceComponent = invoiceComponent;
     }
 
 
@@ -47,11 +49,15 @@ public class InvoiceResource {
      */
     @GetMapping("/invoice")
     @Timed
-    public ResponseEntity getAllInvoice(@ApiParam Pageable pageable) {
+    public ResponseEntity<Page<ResponseVM<InvoiceDTO>>> getAllInvoice(@ApiParam Pageable pageable) {
         log.debug("REST request to get all InvoiceDTOs");
-        Page<InvoiceDTO> invoiceDTOS = invoiceService.findAll(pageable);
-        return new ResponseEntity<>(invoiceDTOS, HttpStatus.OK);
+        try {
+            Page<ResponseVM<InvoiceDTO>> invoiceDTOS = invoiceComponent.findAll(pageable);
+            return new ResponseEntity<>(invoiceDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
         }
+    }
 
     /**
      * GET  /invoice/:id : get the "id" invoiceDTO.
@@ -61,10 +67,14 @@ public class InvoiceResource {
      */
     @GetMapping("/invoice/{id}")
     @Timed
-    public ResponseEntity getInvoice(@PathVariable Long id) {
+    public ResponseEntity<ResponseVM<InvoiceDTO>> getInvoice(@PathVariable Long id) {
         log.debug("REST request to get InvoiceDTO : {}", id);
-        Optional<InvoiceDTO> invoiceDTO = invoiceService.findOneById(id);
-        return new ResponseEntity<>(invoiceDTO.get(), HttpStatus.OK);
+        try {
+            ResponseVM<InvoiceDTO> invoiceDTO = invoiceComponent.findById(id);
+            return new ResponseEntity<>(invoiceDTO, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     /**

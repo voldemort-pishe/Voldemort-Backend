@@ -34,14 +34,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final UserRepository userRepository;
 
+    private final SecurityUtils securityUtils;
+
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository,
                               PlanService planService,
                               InvoiceMapper invoiceMapper,
-                              UserRepository userRepository) {
+                              UserRepository userRepository,
+                              SecurityUtils securityUtils) {
         this.invoiceRepository = invoiceRepository;
         this.planService = planService;
         this.invoiceMapper = invoiceMapper;
         this.userRepository = userRepository;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -105,10 +109,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Optional<InvoiceDTO> findOneById(Long id) {
+    public Optional<InvoiceDTO> findOneById(Long id) throws NotFoundException {
         logger.debug("Request to get a invoice with an id : {}", id);
-
-        return invoiceRepository.findById(id).map(invoiceMapper::toDto);
+        return invoiceRepository.
+            findByIdAndUser_Id(id, securityUtils.getCurrentUserId())
+            .map(invoiceMapper::toDto);
     }
 
     @Override
@@ -133,8 +138,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Page<InvoiceDTO> findAll(Pageable pageable) {
+    public Page<InvoiceDTO> findAll(Pageable pageable) throws NotFoundException {
         logger.debug("Request to get all invoices");
-        return invoiceRepository.findAll(pageable).map(invoiceMapper::toDto);
+        return invoiceRepository
+            .findAllByUser_Id(securityUtils.getCurrentUserId(), pageable)
+            .map(invoiceMapper::toDto);
     }
 }

@@ -13,13 +13,13 @@ public interface InvoiceService {
 
     InvoiceDTO saveByPlanId(Long planId) throws NotFoundException;
 
-    Optional<InvoiceDTO> findOneById(Long id);
+    Optional<InvoiceDTO> findOneById(Long id) throws NotFoundException;
 
     Optional<InvoiceDTO> findOneByUserId(Long userId) throws NotFoundException;
 
     Optional<InvoiceDTO> findOneByTrackingCode(String trackingCode) throws NotFoundException;
 
-    Page<InvoiceDTO> findAll(Pageable pageable);
+    Page<InvoiceDTO> findAll(Pageable pageable) throws NotFoundException;
 
     void delete(Long id);
 }

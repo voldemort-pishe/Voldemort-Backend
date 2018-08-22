@@ -1,9 +1,9 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.avand.config.ApplicationProperties;
 import io.avand.service.*;
 import io.avand.service.dto.InvoiceDTO;
-import io.avand.service.dto.UserPlanDTO;
 import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user-plan")
 public class UserPlanResource {
 
     private final Logger logger = LoggerFactory.getLogger(UserPlanResource.class);
@@ -27,20 +27,24 @@ public class UserPlanResource {
 
     private final InvoiceService invoiceService;
 
+    private final ApplicationProperties applicationProperties;
+
     public UserPlanResource(UserPlanService userPlanService,
-                            InvoiceService invoiceService) {
+                            InvoiceService invoiceService,
+                            ApplicationProperties applicationProperties) {
         this.userPlanService = userPlanService;
         this.invoiceService = invoiceService;
+        this.applicationProperties = applicationProperties;
     }
 
-    @GetMapping("/user-plan-invoice/{planId}")
+    @GetMapping("/{planId}")
     @Timed
-    public ResponseEntity saveUserPlan(@PathVariable Long planId) {
+    public void saveUserPlan(@PathVariable Long planId, HttpServletResponse response) throws IOException {
         logger.debug("REST request to save a plan for a user : {}", planId);
         try {
             InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planId);
             userPlanService.save(planId, invoiceDTO.getId());
-            return new ResponseEntity<>(invoiceDTO, HttpStatus.OK);
+            response.sendRedirect(applicationProperties.getBase().getPanel() + "/#/pages/invoice?id=" + invoiceDTO.getId());
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }

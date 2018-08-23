@@ -1,6 +1,7 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.*;
+import io.avand.domain.enumeration.InvoiceStatus;
 import io.avand.repository.jpa.InvoiceRepository;
 import io.avand.repository.jpa.PlanRepository;
 import io.avand.repository.jpa.UserPlanRepository;
@@ -54,7 +55,14 @@ public class UserPlanServiceImpl implements UserPlanService {
             Optional<UserEntity> userEntityOptional = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
             if (userEntityOptional.isPresent()) {
                 Optional<UserPlanEntity> userPlanEntityOptional = userPlanRepository.findByUser_Id(userEntityOptional.get().getId());
-                UserPlanEntity userPlanEntity = userPlanEntityOptional.orElseGet(UserPlanEntity::new);
+                UserPlanEntity userPlanEntity;
+                InvoiceEntity oldInvoice = null;
+                if (userPlanEntityOptional.isPresent()) {
+                    userPlanEntity = userPlanEntityOptional.get();
+                    oldInvoice = userPlanEntity.getInvoice();
+                } else {
+                    userPlanEntity = new UserPlanEntity();
+                }
                 userPlanEntity.setLength(planEntity.getLength());
                 userPlanEntity.setUser(userEntityOptional.get());
 
@@ -78,6 +86,9 @@ public class UserPlanServiceImpl implements UserPlanService {
                 userPlanEntity.setPlanConfig(userPlanConfigEntities);
 
                 userPlanEntity = userPlanRepository.save(userPlanEntity);
+
+                if (oldInvoice != null && oldInvoice.getStatus() == InvoiceStatus.INITIALIZED)
+                    invoiceRepository.delete(oldInvoice);
 
                 return userPlanMapper.toDto(userPlanEntity);
             } else {

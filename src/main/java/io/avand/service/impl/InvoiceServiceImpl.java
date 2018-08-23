@@ -117,6 +117,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public Optional<InvoiceDTO> findOneByIdAndStatus(Long id, InvoiceStatus status) throws NotFoundException {
+        logger.debug("Request to get a invoice by id and status : {}, {}", id, status);
+        return invoiceRepository
+            .findByIdAndStatusAndUser_Id(id, status, securityUtils.getCurrentUserId())
+            .map(invoiceMapper::toDto);
+    }
+
+    @Override
     public Optional<InvoiceDTO> findOneByUserId(Long userId) throws NotFoundException {
         logger.debug("Request to invoice service to find a invoice by user id : {}", userId);
 

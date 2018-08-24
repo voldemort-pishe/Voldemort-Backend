@@ -7,6 +7,8 @@ public class CompanyMemberDTO implements Serializable {
 
     private Long id;
 
+    private String department;
+
     private Long userId;
 
     private Long companyId;
@@ -17,6 +19,14 @@ public class CompanyMemberDTO implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public Long getUserId() {
@@ -39,8 +49,7 @@ public class CompanyMemberDTO implements Serializable {
     public String toString() {
         return "CompanyMemberDTO{" +
             "id=" + id +
-            ", userId=" + userId +
-            ", companyId=" + companyId +
+            ", department='" + department + '\'' +
             '}';
     }
 }

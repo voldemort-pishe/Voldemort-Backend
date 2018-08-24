@@ -1,5 +1,6 @@
 package io.avand.service.impl;
 
+import afu.org.checkerframework.checker.oigj.qual.O;
 import io.avand.domain.entity.jpa.UserAuthorityEntity;
 import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.repository.jpa.UserAuthorityRepository;

@@ -18,6 +18,8 @@ public class CompanyMemberEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "department")
+    private String department;
 
     @OneToOne
     @JoinColumn
@@ -32,6 +34,14 @@ public class CompanyMemberEntity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public UserEntity getUser() {
@@ -54,8 +64,7 @@ public class CompanyMemberEntity implements Serializable {
     public String toString() {
         return "CompanyMemberEntity{" +
             "id=" + id +
-            ", user=" + user +
-            ", company=" + company +
+            ", department='" + department + '\'' +
             '}';
     }
 }

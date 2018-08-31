@@ -3,6 +3,8 @@
 <configuration scan="true">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
+    <property name="LOG_TEMP" value="./logs"/>
+
     <logger name="io.avand" level="INFO"/>
 
     <logger name="io.github.jhipster" level="WARN"/>

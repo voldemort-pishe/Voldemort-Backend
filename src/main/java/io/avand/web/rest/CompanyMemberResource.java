@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,8 @@ public class CompanyMemberResource {
         try {
             List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.save(companyMemberVM.getEmails(), companyId);
             return new ResponseEntity<>(result, HttpStatus.OK);
+        }catch(DataIntegrityViolationException e){
+            throw new ServerErrorException("شماه قبلا عضو شده‌اید");
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }

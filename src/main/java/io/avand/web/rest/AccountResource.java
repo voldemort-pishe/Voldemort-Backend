@@ -149,11 +149,11 @@ public class AccountResource {
     }
 
     @GetMapping("/logout")
-    public void logout(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    public ResponseEntity logout(HttpServletRequest request,HttpServletResponse response) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        response.sendRedirect(applicationProperties.getBase().getPanel()+"/#/auth/login");
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

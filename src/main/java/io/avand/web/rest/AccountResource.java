@@ -149,11 +149,7 @@ public class AccountResource {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity logout(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-        }
+    public ResponseEntity logout()  {
         return new ResponseEntity(HttpStatus.OK);
     }
 }

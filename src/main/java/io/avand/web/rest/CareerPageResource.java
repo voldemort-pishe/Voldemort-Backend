@@ -75,7 +75,11 @@ public class CareerPageResource {
             CareerPageJobVM jobVM = new CareerPageJobVM();
             jobVM.setId(jobDTO.getId());
             jobVM.setUniqueId(jobDTO.getUniqueId());
-            jobVM.setName(jobDTO.getNameFa());
+            jobVM.setNameFa(jobDTO.getNameFa());
+            jobVM.setDescriptionFa(jobDTO.getDescriptionFa());
+            jobVM.setNameEn(jobDTO.getNameEn());
+            jobVM.setDescriptionEn(jobDTO.getDescriptionEn());
+            jobVM.setLanguage(jobDTO.getLanguage());
             jobVM.setType(jobDTO.getType());
             jobVM.setLocation(jobDTO.getLocation());
             jobVMS.add(jobVM);
@@ -93,8 +97,11 @@ public class CareerPageResource {
             CareerPageJobVM jobVM = new CareerPageJobVM();
             jobVM.setId(jobDTO.getId());
             jobVM.setUniqueId(jobDTO.getUniqueId());
-            jobVM.setName(jobDTO.getNameFa());
-            jobVM.setDescription(jobDTO.getDescriptionFa());
+            jobVM.setNameFa(jobDTO.getNameFa());
+            jobVM.setDescriptionFa(jobDTO.getDescriptionFa());
+            jobVM.setNameEn(jobDTO.getNameEn());
+            jobVM.setDescriptionEn(jobDTO.getDescriptionEn());
+            jobVM.setLanguage(jobDTO.getLanguage());
             jobVM.setType(jobDTO.getType());
             jobVM.setLocation(jobDTO.getLocation());
             return new ResponseEntity<>(jobVM, HttpStatus.OK);

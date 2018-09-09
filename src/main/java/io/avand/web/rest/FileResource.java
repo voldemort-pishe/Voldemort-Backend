@@ -48,7 +48,10 @@ public class FileResource {
         if (fileDTO.isPresent()) {
             try {
                 Resource file = storageService.loadAsResource(fileDTO.get().getFilename());
-                return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
+                return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.parseMediaType(fileDTO.get().getFileType()))
+                    .body(file);
             } catch (StorageException e) {
                 throw new ServerErrorException(e.getMessage());
             }

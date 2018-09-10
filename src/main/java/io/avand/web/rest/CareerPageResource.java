@@ -1,11 +1,10 @@
 package io.avand.web.rest;
 
 import io.avand.config.ApplicationProperties;
+import io.avand.domain.enumeration.CandidateState;
+import io.avand.domain.enumeration.CandidateType;
 import io.avand.service.*;
-import io.avand.service.dto.CandidateDTO;
-import io.avand.service.dto.CompanyDTO;
-import io.avand.service.dto.FileDTO;
-import io.avand.service.dto.JobDTO;
+import io.avand.service.dto.*;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.vm.CareerPageCompanyVM;
 import io.avand.web.rest.vm.CareerPageJobVM;
@@ -111,10 +110,23 @@ public class CareerPageResource {
     }
 
     @PostMapping("/candidate/{subDomain}")
-    public ResponseEntity createCandidate(@RequestBody CandidateDTO candidateDTO,
+    public ResponseEntity createCandidate(@RequestBody CareerPageCandidateDTO careerPageCandidateDTO,
                                           @PathVariable("subDomain") String subDomain) {
         log.debug("REST Request to create candidate : {}", subDomain);
         try {
+    
+            JobDTO jobDTO = jobService.findByJobUniqueIdAndCompanySubDomain(careerPageCandidateDTO.getJobUniqueId(), subDomain);
+            
+            CandidateDTO candidateDTO = new CandidateDTO();
+            candidateDTO.setFirstName(careerPageCandidateDTO.getFirstName());
+            candidateDTO.setLastName(careerPageCandidateDTO.getLastName());
+            candidateDTO.setCellphone(careerPageCandidateDTO.getCellphone());
+            candidateDTO.setEmail(careerPageCandidateDTO.getEmail());
+            candidateDTO.setState(CandidateState.PENDING);
+            candidateDTO.setFileId(careerPageCandidateDTO.getFileId());
+            candidateDTO.setJobId(jobDTO.getId());
+            candidateDTO.setType(CandidateType.APPLICANT);
+            
             CandidateDTO result = candidateService.save(candidateDTO, subDomain);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {

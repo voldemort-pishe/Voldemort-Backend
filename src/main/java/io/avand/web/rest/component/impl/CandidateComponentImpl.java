@@ -118,10 +118,12 @@ public class CandidateComponentImpl implements CandidateComponent {
     private Map<String, Object> createIncluded(CandidateDTO candidateDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
 
-        try {
-            CompanyPipelineDTO companyPipelineDTO = companyPipelineService.findOne(candidateDTO.getCandidatePipeline());
-            included.put("pipeline", companyPipelineMapper.dtoToVm(companyPipelineDTO));
-        } catch (NotFoundException ignore) {
+        if(candidateDTO.getCandidatePipeline() != null) {
+            try {
+                CompanyPipelineDTO companyPipelineDTO = companyPipelineService.findOne(candidateDTO.getCandidatePipeline());
+                included.put("pipeline", companyPipelineMapper.dtoToVm(companyPipelineDTO));
+            } catch (NotFoundException ignore) {
+            }
         }
 
         Optional<FileDTO> fileDTOOptional = fileService.findById(candidateDTO.getFileId());

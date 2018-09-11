@@ -129,9 +129,6 @@ public class CandidateComponentImpl implements CandidateComponent {
         Optional<FileDTO> fileDTOOptional = fileService.findById(candidateDTO.getFileId());
         fileDTOOptional.ifPresent(fileDTO -> included.put("file", fileDTO));
 
-        Optional<UserDTO> userDTOOptional = userService.findById(candidateDTO.getEmployerId());
-        userDTOOptional.ifPresent(userDTO -> included.put("employer", userMapper.dtoToVm(userDTO)));
-
         included.put("job", jobMapper.dtoToVm(jobService.findById(candidateDTO.getJobId())));
 
         return included;

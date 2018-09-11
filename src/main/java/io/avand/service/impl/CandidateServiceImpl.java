@@ -56,17 +56,12 @@ public class CandidateServiceImpl implements CandidateService {
         if (jobEntity != null) {
             FileEntity fileEntity = fileRepository.findOne(candidateDTO.getFileId());
             if (fileEntity != null) {
-                Optional<UserEntity> employer = userRepository.findById(candidateDTO.getEmployerId());
-                if (employer.isPresent()) {
-                    CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
-                    candidateEntity.setJob(jobEntity);
-                    candidateEntity.setFile(fileEntity);
-                    candidateEntity.setEmployer(employer.get());
-                    candidateEntity = candidateRepository.save(candidateEntity);
-                    return candidateMapper.toDto(candidateEntity);
-                } else {
-                    throw new NotFoundException("Employer Not Found");
-                }
+                CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
+                candidateEntity.setJob(jobEntity);
+                candidateEntity.setFile(fileEntity);
+                candidateEntity.setEmployer(candidateDTO.getEmployer());
+                candidateEntity = candidateRepository.save(candidateEntity);
+                return candidateMapper.toDto(candidateEntity);
             } else {
                 throw new NotFoundException("File Not Available");
             }

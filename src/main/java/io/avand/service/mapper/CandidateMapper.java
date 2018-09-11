@@ -17,6 +17,5 @@ public interface CandidateMapper extends EntityMapper<CandidateDTO, CandidateEnt
     @Override
     @Mapping(source = "file.id", target = "fileId")
     @Mapping(source = "job.id", target = "jobId")
-    @Mapping(source = "employer.id", target = "employerId")
     CandidateDTO toDto(CandidateEntity entity);
 }

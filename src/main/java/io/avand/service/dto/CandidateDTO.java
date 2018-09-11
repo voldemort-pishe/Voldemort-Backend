@@ -42,9 +42,8 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
 
     @NotNull
     private Long fileId;
-
-    @NotNull
-    private Long employerId;
+    
+    private String employer;
 
     @NotNull
     private Long jobId;
@@ -152,15 +151,15 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
     public void setFileId(Long fileId) {
         this.fileId = fileId;
     }
-
-    public Long getEmployerId() {
-        return employerId;
+    
+    public String getEmployer() {
+        return employer;
     }
-
-    public void setEmployerId(Long employerId) {
-        this.employerId = employerId;
+    
+    public void setEmployer(String employer) {
+        this.employer = employer;
     }
-
+    
     public Long getJobId() {
         return jobId;
     }
@@ -180,7 +179,7 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
             ", type=" + type +
             ", candidatePipeline=" + candidatePipeline +
             ", fileId=" + fileId +
-            ", employerId=" + employerId +
+            ", employer=" + employer +
             ", jobId=" + jobId +
             '}';
     }

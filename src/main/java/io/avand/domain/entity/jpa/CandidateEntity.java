@@ -50,6 +50,9 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
 
     @Column(name = "candidate_pipeline")
     private Long candidatePipeline;
+    
+    @Column(name = "employer")
+    private String employer;
 
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -79,10 +82,6 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     @OneToOne(optional = false)
     @JoinColumn(unique = true)
     private FileEntity file;
-
-    @OneToOne
-    @JoinColumn
-    private UserEntity employer;
 
     @ManyToOne
     private JobEntity job;
@@ -302,15 +301,15 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     public void setFile(FileEntity fileEntity) {
         this.file = fileEntity;
     }
-
-    public UserEntity getEmployer() {
+    
+    public String getEmployer() {
         return employer;
     }
-
-    public void setEmployer(UserEntity employer) {
+    
+    public void setEmployer(String employer) {
         this.employer = employer;
     }
-
+    
     public JobEntity getJob() {
         return job;
     }

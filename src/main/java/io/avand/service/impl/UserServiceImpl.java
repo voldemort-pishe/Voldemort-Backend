@@ -110,45 +110,35 @@ public class UserServiceImpl implements UserService {
     public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, Boolean active) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
-        UserEntity userEntity;
-        if (userEntityOptional.isPresent()) {
-            userEntity = userEntityOptional.get();
-            userEntity.setFirstName(firstName);
-            userEntity.setLastName(lastName);
-            userEntity.setEmail(email);
-            userEntity.setActivated(active);
-        } else {
-            userEntity = new UserEntity();
-            userEntity.setLogin(login);
-            userEntity.setPasswordHash(passwordEncoder.encode(password));
-            userEntity.setFirstName(firstName);
-            userEntity.setLastName(lastName);
-            userEntity.setEmail(email);
-            userEntity.setActivationKey(RandomUtil.generateActivationKey());
-            userEntity.setActivated(active);
 
-            UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-            UserPermissionEntity userPermissionEntity = new UserPermissionEntity();
-            userPermissionEntity.setAction(PermissionAction.FULL);
-            userPermissionEntity.setUserAuthority(userAuthorityEntity);
+        UserEntity userEntity = userEntityOptional.get();
+        userEntity.setLogin(login);
+        userEntity.setPasswordHash(passwordEncoder.encode(password));
+        userEntity.setFirstName(firstName);
+        userEntity.setLastName(lastName);
+        userEntity.setEmail(email);
+        userEntity.setActivated(active);
+        userEntity.setInvitationKey(null);
 
-            Set<UserPermissionEntity> userPermissionEntities = new HashSet<>();
-            userPermissionEntities.add(userPermissionEntity);
-            AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
+        UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
+        UserPermissionEntity userPermissionEntity = new UserPermissionEntity();
+        userPermissionEntity.setAction(PermissionAction.FULL);
+        userPermissionEntity.setUserAuthority(userAuthorityEntity);
 
-            userAuthorityEntity.setAuthorityName(authorityEntity.getName());
-            userAuthorityEntity.setUserPermissions(userPermissionEntities);
-            userAuthorityEntity.setUser(userEntity);
+        Set<UserPermissionEntity> userPermissionEntities = new HashSet<>();
+        userPermissionEntities.add(userPermissionEntity);
+        AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
-            Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
-            userAuthorityEntities.add(userAuthorityEntity);
+        userAuthorityEntity.setAuthorityName(authorityEntity.getName());
+        userAuthorityEntity.setUserPermissions(userPermissionEntities);
+        userAuthorityEntity.setUser(userEntity);
 
-            userEntity.setUserAuthorities(userAuthorityEntities);
-        }
+        Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
+        userAuthorityEntities.add(userAuthorityEntity);
+
+        userEntity.setUserAuthorities(userAuthorityEntities);
 
         userEntity = userRepository.save(userEntity);
-
-        mailService.sendInviationMemberEmailWithRegister(userEntity);
 
         return userMapper.toDto(userEntity);
     }

@@ -116,6 +116,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setFirstName(firstName);
             userEntity.setLastName(lastName);
             userEntity.setEmail(email);
+            userEntity.setActivated(active);
         } else {
             userEntity = new UserEntity();
             userEntity.setLogin(login);
@@ -147,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
         userEntity = userRepository.save(userEntity);
 
-        mailService.sendActivationEmail(userEntity);
+        mailService.sendInviationMemberEmail(userEntity);
 
         return userMapper.toDto(userEntity);
     }

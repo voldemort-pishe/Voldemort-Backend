@@ -25,6 +25,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByActivationKey(String activationKey);
 
+    Optional<UserEntity> findByInvitationKey(String invitationKey);
+
     Optional<UserEntity> findByResetKey(String resetKey);
 
     @EntityGraph(attributePaths = "userAuthorities")

@@ -13,11 +13,17 @@ public interface UserService {
 
     UserDTO save(String login,String firstName,String lastName,String email,String password);
 
+    UserDTO saveActive(String login,String firstName,String lastName,String email,String password, Boolean activated);
+
     UserDTO update(UserDTO userDTO) throws NotFoundException;
 
     Optional<UserDTO> findById(Long id);
 
     Optional<UserDTO> findByLogin(String login);
+
+    Optional<UserDTO> findByActivationKey(String activationKey);
+
+    Optional<UserDTO> findByInvitationKey(String invitationKey);
 
     Page<UserDTO> findAll(Pageable pageable);
 

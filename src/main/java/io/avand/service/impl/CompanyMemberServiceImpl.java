@@ -67,7 +67,7 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
                         user.setInvitationKey(RandomUtil.generateInvitationKey());
                         userEntity = userRepository.save(user);
 
-                        mailService.sendInviationEmail(userEntity);
+                        mailService.sendInviationMemberEmailWithRegister(userEntity);
                     } else {
                         userEntity = userEntityOp.get();
                         mailService.sendInviationMemberEmail(userEntity);

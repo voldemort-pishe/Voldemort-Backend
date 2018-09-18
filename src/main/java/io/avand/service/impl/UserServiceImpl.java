@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
+
     private final AuthorityRepository authorityRepository;
 
     private final UserMapper userMapper;
@@ -106,6 +107,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, Boolean active) {
+        log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
+        Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
+        UserEntity userEntity;
+        if (userEntityOptional.isPresent()) {
+            userEntity = userEntityOptional.get();
+            userEntity.setFirstName(firstName);
+            userEntity.setLastName(lastName);
+            userEntity.setEmail(email);
+        } else {
+            userEntity = new UserEntity();
+            userEntity.setLogin(login);
+            userEntity.setPasswordHash(passwordEncoder.encode(password));
+            userEntity.setFirstName(firstName);
+            userEntity.setLastName(lastName);
+            userEntity.setEmail(email);
+            userEntity.setActivationKey(RandomUtil.generateActivationKey());
+            userEntity.setActivated(active);
+
+            UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
+            UserPermissionEntity userPermissionEntity = new UserPermissionEntity();
+            userPermissionEntity.setAction(PermissionAction.FULL);
+            userPermissionEntity.setUserAuthority(userAuthorityEntity);
+
+            Set<UserPermissionEntity> userPermissionEntities = new HashSet<>();
+            userPermissionEntities.add(userPermissionEntity);
+            AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
+
+            userAuthorityEntity.setAuthorityName(authorityEntity.getName());
+            userAuthorityEntity.setUserPermissions(userPermissionEntities);
+            userAuthorityEntity.setUser(userEntity);
+
+            Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
+            userAuthorityEntities.add(userAuthorityEntity);
+
+            userEntity.setUserAuthorities(userAuthorityEntities);
+        }
+
+        userEntity = userRepository.save(userEntity);
+
+        mailService.sendActivationEmail(userEntity);
+
+        return userMapper.toDto(userEntity);
+    }
+
+    @Override
     public UserDTO update(UserDTO userDTO) throws NotFoundException {
         log.debug("Request to update user : {}", userDTO);
         UserEntity userEntity = userRepository.findOne(userDTO.getId());
@@ -138,6 +185,20 @@ public class UserServiceImpl implements UserService {
     public Optional<UserDTO> findByLogin(String login) {
         log.debug("Request to find user by login : {}", login);
         return userRepository.findByLogin(login)
+            .map(userMapper::toDto);
+    }
+
+    @Override
+    public Optional<UserDTO> findByActivationKey(String activationKey) {
+        log.debug("Request to find user by activation key : {}", activationKey);
+        return userRepository.findByActivationKey(activationKey)
+            .map(userMapper::toDto);
+    }
+
+    @Override
+    public Optional<UserDTO> findByInvitationKey(String invitationKey) {
+        log.debug("Request to find user by invitation key : {}", invitationKey);
+        return userRepository.findByInvitationKey(invitationKey)
             .map(userMapper::toDto);
     }
 

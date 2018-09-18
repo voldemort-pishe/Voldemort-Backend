@@ -10,7 +10,11 @@
         عزیز
     </p>
     <p th:text="#{email.invitationMember.text1}">
-        مجوز دسترسی به شما در سایت آوند داده شده است
+        مجوز دسترسی به شما در سایت آوند داده شده است، برای تکمیل اطلاعات خود بر روی لینک زیر کلیک کنید
+    </p>
+    <p>
+        <a th:href="@{|${panelUrl}/register-by-invite/${user.invitationKey}|}"
+           th:text="@{|${panelUrl}/register-by-invite/${user.invitationKey}|}">لینک ثبت نام</a>
     </p>
     <p>
         <span th:text="#{email.invitationMember.text2}">با احترام،</span>

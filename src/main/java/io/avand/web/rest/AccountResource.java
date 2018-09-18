@@ -65,6 +65,30 @@ public class AccountResource {
         }
     }
 
+    @PostMapping("/register-by-invite")
+    public ResponseEntity registerByInvite(@RequestBody @Valid UserRegisterInviteVM userRegisterInviteVM) {
+        log.debug("REST Request to register user : {}", userRegisterInviteVM);
+
+        Optional<UserDTO> userFound = userService.findByInvitationKey(userRegisterInviteVM.getInvitationKey());
+
+        if (userFound.isPresent()) {
+            userService
+                .saveActive(
+                    userFound.get().getEmail(),
+                    userRegisterInviteVM.getFirstName(),
+                    userRegisterInviteVM.getLastName(),
+                    userFound.get().getEmail(),
+                    userRegisterInviteVM.getPassword(),
+                    true
+                );
+            ServerMessage serverMessage = new ServerMessage();
+            serverMessage.setMessage("حساب کاربری شما با موفقیت ایجاد شد، جهت تایید حساب کاربری به پست الکترونیکی خودمراجعه کنید.");
+            return new ResponseEntity<>(serverMessage, HttpStatus.OK);
+        } else {
+            throw new ServerErrorException(ServerErrorConstants.USER_NOT_FOUND);
+        }
+    }
+
     @GetMapping("/activate/{activation-key}")
     public void activate(@PathVariable("activation-key") String activationKey,
                                    HttpServletResponse response,

@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
         userEntity = userRepository.save(userEntity);
 
-        mailService.sendInviationMemberEmail(userEntity);
+        mailService.sendInviationMemberEmailWithRegister(userEntity);
 
         return userMapper.toDto(userEntity);
     }

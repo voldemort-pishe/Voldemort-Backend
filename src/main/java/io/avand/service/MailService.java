@@ -1,5 +1,6 @@
 package io.avand.service;
 
+import io.avand.config.ApplicationProperties;
 import io.avand.domain.entity.jpa.UserEntity;
 import io.github.jhipster.config.JHipsterProperties;
 import org.apache.commons.lang3.CharEncoding;
@@ -31,7 +32,11 @@ public class MailService {
 
 	private static final String BASE_URL = "baseUrl";
 
+	private static final String PANEL_URL = "panelUrl";
+
 	private final JHipsterProperties jHipsterProperties;
+
+	private final ApplicationProperties applicationProperties;
 
 	private final JavaMailSender javaMailSender;
 
@@ -41,13 +46,14 @@ public class MailService {
 	private final Environment environment;
 
 	public MailService(JHipsterProperties jHipsterProperties,
-                       JavaMailSender javaMailSender,
+                       ApplicationProperties applicationProperties, JavaMailSender javaMailSender,
                        MessageSource messageSource,
                        SpringTemplateEngine templateEngine,
                        Environment environment) {
 
 		this.jHipsterProperties = jHipsterProperties;
-		this.javaMailSender = javaMailSender;
+        this.applicationProperties = applicationProperties;
+        this.javaMailSender = javaMailSender;
 		this.messageSource = messageSource;
 		this.templateEngine = templateEngine;
 		this.environment = environment;
@@ -83,6 +89,7 @@ public class MailService {
 		Context context = new Context(locale);
 		context.setVariable(USER, user);
 		context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+		context.setVariable(PANEL_URL, applicationProperties.getBase().getPanel());
 		String content = templateEngine.process(templateName, context);
 		String subject = messageSource.getMessage(titleKey, null, locale);
 		sendEmail(user.getEmail(), subject, content, false, true);
@@ -105,6 +112,12 @@ public class MailService {
     public void sendInviationMemberEmail(UserEntity user) {
         log.debug("Sending activation email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "invitationMemberEmail", "email.activation.title");
+    }
+
+    @Async
+    public void sendInviationMemberEmailWithRegister(UserEntity user) {
+        log.debug("Sending activation email to '{}'", user.getEmail());
+        sendEmailFromTemplate(user, "invitationMemberEmailWithRegister", "email.activation.title");
     }
 
 	@Async

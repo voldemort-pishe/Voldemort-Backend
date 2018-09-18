@@ -82,7 +82,7 @@ public class AccountResource {
                     true
                 );
             ServerMessage serverMessage = new ServerMessage();
-            serverMessage.setMessage("حساب کاربری شما با موفقیت ایجاد شد، جهت تایید حساب کاربری به پست الکترونیکی خودمراجعه کنید.");
+            serverMessage.setMessage("اطلاعات شما با موفقیت ثبت شد");
             return new ResponseEntity<>(serverMessage, HttpStatus.OK);
         } else {
             throw new ServerErrorException(ServerErrorConstants.USER_NOT_FOUND);

@@ -14,9 +14,10 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
     private String message;
     private String subject;
     @NotNull
-    private Long fromId;
+    private Long fromUserId;
     @NotNull
-    private Long toId;
+    private Long toUserId;
+    private String messageId;
     private MessageOwnerType owner;
     private Long parentId;
 
@@ -42,20 +43,28 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
         this.subject = subject;
     }
 
-    public Long getFromId() {
-        return fromId;
+    public Long getFromUserId() {
+        return fromUserId;
     }
 
-    public void setFromId(Long fromId) {
-        this.fromId = fromId;
+    public void setFromUserId(Long fromUserId) {
+        this.fromUserId = fromUserId;
     }
 
-    public Long getToId() {
-        return toId;
+    public Long getToUserId() {
+        return toUserId;
     }
 
-    public void setToId(Long toId) {
-        this.toId = toId;
+    public void setToUserId(Long toUserId) {
+        this.toUserId = toUserId;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
     public MessageOwnerType getOwner() {
@@ -95,8 +104,9 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
         return "CandidateMessageDTO{" +
             "message='" + message + '\'' +
             ", subject='" + subject + '\'' +
-            ", fromId=" + fromId +
-            ", toId=" + toId +
+            ", fromUserId=" + fromUserId +
+            ", toUserId=" + toUserId +
+            ", messageId='" + messageId + '\'' +
             ", owner=" + owner +
             ", parentId=" + parentId +
             ", child=" + child +

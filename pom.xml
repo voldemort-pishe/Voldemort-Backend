@@ -326,7 +326,11 @@
             <artifactId>icu4j</artifactId>
             <version>58.2</version>
         </dependency>
-        <!-- jhipster-needle-maven-add-dependency -->
+        <dependency>
+            <groupId>io.avand</groupId>
+            <artifactId>mailgun</artifactId>
+            <version>0.0.2-RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>

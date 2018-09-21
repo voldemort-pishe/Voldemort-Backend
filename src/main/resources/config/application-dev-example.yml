@@ -148,4 +148,4 @@ application:
     url: http://localhost:8080/
     panel: http://localhost:4200
 storage:
-  location: /Users/pouya/Project/Avand/static-files
+  location: /path-to/static-files

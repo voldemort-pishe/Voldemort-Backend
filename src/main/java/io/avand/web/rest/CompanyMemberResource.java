@@ -61,7 +61,7 @@ public class CompanyMemberResource {
                                                                      @ApiParam Pageable pageable) {
         log.debug("Request to find all company member by company id : {}", companyId);
         try {
-            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAll(companyId, pageable);
+            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllActiveMember(companyId, pageable);
             return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

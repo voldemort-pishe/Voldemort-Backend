@@ -17,4 +17,6 @@ public interface CompanyMemberComponent {
 
     Page<ResponseVM<CompanyMemberDTO>> findAll(Long companyId, Pageable pageable) throws NotFoundException;
 
+    Page<ResponseVM<CompanyMemberDTO>> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException;
+
 }

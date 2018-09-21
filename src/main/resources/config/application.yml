@@ -61,6 +61,12 @@ info:
     project:
         version: #project.version#
 
+mailgun:
+    from: postmaster@mg.avand.io
+    domain: mg.avand.io
+    username: api
+    apiKey: f066257be5bee16639b8cb420426711d-a5d1a068-3f41d055
+
 # ===================================================================
 # JHipster specific properties
 #

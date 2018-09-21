@@ -80,9 +80,9 @@ public class CandidateMessageComponentImpl implements CandidateMessageComponent 
 
     private Map<String, Object> createIncluded(CandidateMessageDTO candidateMessageDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
-        included.put("from", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getFromId()).get()));
-        included.put("to", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getToId()).get()));
-        included.put("candidate", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getToId())));
+        included.put("from", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getFromUserId()).get()));
+        included.put("to", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getToUserId()).get()));
+        included.put("candidate", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getToUserId())));
         return included;
     }
 }

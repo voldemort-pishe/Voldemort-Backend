@@ -27,11 +27,14 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
     @Column(name = "message")
     private String message;
 
-    @Column(name = "from_id")
-    private Long fromId;
+    @Column(name = "from_user_id")
+    private Long fromUserId;
 
-    @Column(name = "to_id")
-    private Long toId;
+    @Column(name = "to_user_id")
+    private Long toUserId;
+
+    @Column(name = "message_id")
+    private String messageId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "owner")
@@ -72,20 +75,28 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
         this.message = message;
     }
 
-    public Long getFromId() {
-        return fromId;
+    public Long getFromUserId() {
+        return fromUserId;
     }
 
-    public void setFromId(Long fromId) {
-        this.fromId = fromId;
+    public void setFromUserId(Long fromUserId) {
+        this.fromUserId = fromUserId;
     }
 
-    public Long getToId() {
-        return toId;
+    public Long getToUserId() {
+        return toUserId;
     }
 
-    public void setToId(Long toId) {
-        this.toId = toId;
+    public void setToUserId(Long toUserId) {
+        this.toUserId = toUserId;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
     public MessageOwnerType getOwner() {
@@ -126,11 +137,13 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
             "id=" + id +
             ", subject='" + subject + '\'' +
             ", message='" + message + '\'' +
-            ", fromId=" + fromId +
-            ", toId=" + toId +
+            ", fromUserId=" + fromUserId +
+            ", toUserId=" + toUserId +
+            ", messageId='" + messageId + '\'' +
             ", owner=" + owner +
             ", parent=" + parent +
             ", child=" + child +
+            ", candidate=" + candidate +
             '}';
     }
 }

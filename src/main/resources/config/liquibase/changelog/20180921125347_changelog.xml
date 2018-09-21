@@ -1,0 +1,16 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="ehdi (generated)" id="20180921125347-1">
+        <renameColumn columnDataType="bigint"
+                      newColumnName="from_user_id"
+                      oldColumnName="from_id"
+                      tableName="candidate_message_entity"/>
+        <renameColumn columnDataType="bigint"
+                      newColumnName="to_user_id"
+                      oldColumnName="to_id"
+                      tableName="candidate_message_entity"/>
+        <addColumn tableName="candidate_message_entity">
+            <column name="message_id" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

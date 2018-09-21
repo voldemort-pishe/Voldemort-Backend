@@ -77,6 +77,20 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
         return new PageMaker<>(responseVMS, companyMemberDTOS);
     }
 
+
+    @Override
+    public Page<ResponseVM<CompanyMemberDTO>> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException {
+        Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAllActiveMember(companyId, pageable);
+        List<ResponseVM<CompanyMemberDTO>> responseVMS = new ArrayList<>();
+        for (CompanyMemberDTO companyMemberDTO : companyMemberDTOS) {
+            ResponseVM<CompanyMemberDTO> responseVM = new ResponseVM<>();
+            responseVM.setData(companyMemberDTO);
+            responseVM.setInclude(this.createIncluded(companyMemberDTO));
+            responseVMS.add(responseVM);
+        }
+        return new PageMaker<>(responseVMS, companyMemberDTOS);
+    }
+
     private Map<String, Object> createIncluded(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
 

@@ -113,6 +113,14 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
+    public Page<CompanyMemberDTO> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException {
+        log.debug("Request to find all active company member by id : {}", companyId);
+        return companyMemberRepository
+            .findAllByCompany_User_IdAndUser_ActivatedAndCompany_Id(securityUtils.getCurrentUserId(), true, companyId, pageable)
+            .map(companyMemberMapper::toDto);
+    }
+
+    @Override
     public void delete(Long id) throws NotFoundException {
         log.debug("Request to delete company member by id : {}", id);
         CompanyMemberEntity companyMemberEntity = companyMemberRepository.findOne(id);

@@ -15,6 +15,8 @@ public interface CompanyMemberService {
 
     Page<CompanyMemberDTO> findAll(Long companyId, Pageable pageable) throws NotFoundException;
 
+    Page<CompanyMemberDTO> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException;
+
     void delete(Long id) throws NotFoundException;
 
 }

@@ -1,11 +1,13 @@
 package io.avand.web.rest;
 
+import com.codahale.metrics.annotation.Timed;
 import io.avand.config.ApplicationProperties;
 import io.avand.security.SecurityUtils;
 import io.avand.security.jwt.JWTConfigurer;
 import io.avand.service.UserService;
 import io.avand.service.dto.TokenDTO;
 import io.avand.service.dto.UserDTO;
+import io.avand.web.rest.errors.InternalServerErrorException;
 import io.avand.web.rest.errors.ServerErrorConstants;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.errors.ServerMessage;
@@ -128,6 +130,19 @@ public class AccountResource {
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
+    }
+
+    /**
+     * GET  /account : get the current user.
+     *
+     * @return the current user
+     * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be returned
+     */
+    @GetMapping
+    @Timed
+    public UserDTO getAccount() {
+        return userService.getUserWithAuthorities()
+            .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
     }
 
     @PostMapping("/change-password")

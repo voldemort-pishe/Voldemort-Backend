@@ -15,10 +15,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-    String USERS_BY_LOGIN_CACHE = "usersByLogin";
-
-    String USERS_BY_EMAIL_CACHE = "usersByEmail";
-
     Optional<UserEntity> findById(Long id);
 
     Optional<UserEntity> findByLogin(String login);
@@ -29,15 +25,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByResetKey(String resetKey);
 
-    @EntityGraph(attributePaths = "userAuthorities")
+    @EntityGraph(attributePaths = "authorities")
     Optional<UserEntity> findOneWithAuthoritiesById(Long id);
 
-    @EntityGraph(attributePaths = "userAuthorities")
-    @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)
+    @EntityGraph(attributePaths = "authorities")
     Optional<UserEntity> findOneWithAuthoritiesByLogin(String login);
 
-    @EntityGraph(attributePaths = "userAuthorities")
-    @Cacheable(cacheNames = USERS_BY_EMAIL_CACHE)
+    @EntityGraph(attributePaths = "authorities")
     Optional<UserEntity> findOneWithAuthoritiesByEmail(String email);
 
 }

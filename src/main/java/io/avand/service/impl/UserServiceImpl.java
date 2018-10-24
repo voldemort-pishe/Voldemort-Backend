@@ -6,6 +6,7 @@ import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.SecurityUtils;
 import io.avand.service.MailService;
 import io.avand.service.TokenService;
 import io.avand.service.UserService;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -300,5 +302,12 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new NotFoundException("User Not Found");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserDTO> getUserWithAuthorities() {
+        return SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneWithAuthoritiesByLogin)
+            .map(userMapper::toDto);
     }
 }

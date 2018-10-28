@@ -1,7 +1,6 @@
 package io.avand.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.avand.domain.enumeration.MessageOwnerType;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -17,7 +16,6 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
     @NotNull
     private Long toUserId;
     private String messageId;
-    private MessageOwnerType owner;
     private Long parentId;
 
     @JsonIgnore
@@ -66,14 +64,6 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
         this.messageId = messageId;
     }
 
-    public MessageOwnerType getOwner() {
-        return owner;
-    }
-
-    public void setOwner(MessageOwnerType owner) {
-        this.owner = owner;
-    }
-
     public Long getParentId() {
         return parentId;
     }
@@ -106,7 +96,6 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
             ", fromUserId=" + fromUserId +
             ", toUserId=" + toUserId +
             ", messageId='" + messageId + '\'' +
-            ", owner=" + owner +
             ", parentId=" + parentId +
             ", child=" + child +
             ", candidateId=" + candidateId +

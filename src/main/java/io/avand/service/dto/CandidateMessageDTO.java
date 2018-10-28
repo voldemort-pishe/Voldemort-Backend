@@ -13,7 +13,6 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
     @NotNull
     private String message;
     private String subject;
-    @NotNull
     private Long fromUserId;
     @NotNull
     private Long toUserId;

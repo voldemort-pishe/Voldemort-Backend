@@ -38,10 +38,6 @@
                 <constraints nullable="true"/>
             </column>
 
-            <column name="owner" type="varchar(255)">
-                <constraints nullable="true"/>
-            </column>
-
             <column name="parent_id" type="bigint">
                 <constraints nullable="true"/>
             </column>

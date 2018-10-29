@@ -2,11 +2,19 @@ package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CandidateMessageEntity;
+import io.avand.mailgun.service.MailGunMessageService;
+import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
+import io.avand.mailgun.service.dto.response.MailGunSendMessageResponseDTO;
+import io.avand.mailgun.service.error.MailGunException;
 import io.avand.repository.jpa.CandidateMessageRepository;
 import io.avand.repository.jpa.CandidateRepository;
+import io.avand.security.SecurityUtils;
 import io.avand.service.CandidateMessageService;
+import io.avand.service.UserService;
 import io.avand.service.dto.CandidateMessageDTO;
+import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.CandidateMessageMapper;
+import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class CandidateMessageServiceImpl implements CandidateMessageService {
@@ -24,13 +31,22 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
     private final CandidateMessageRepository candidateMessageRepository;
     private final CandidateMessageMapper candidateMessageMapper;
     private final CandidateRepository candidateRepository;
+    private final SecurityUtils securityUtils;
+    private final MailGunMessageService mailGunMessageService;
+    private final UserService userService;
 
     public CandidateMessageServiceImpl(CandidateMessageRepository candidateMessageRepository,
                                        CandidateMessageMapper candidateMessageMapper,
-                                       CandidateRepository candidateRepository) {
+                                       CandidateRepository candidateRepository,
+                                       SecurityUtils securityUtils,
+                                       MailGunMessageService mailGunMessageService,
+                                       UserService userService) {
         this.candidateMessageRepository = candidateMessageRepository;
         this.candidateMessageMapper = candidateMessageMapper;
         this.candidateRepository = candidateRepository;
+        this.securityUtils = securityUtils;
+        this.mailGunMessageService = mailGunMessageService;
+        this.userService = userService;
     }
 
 
@@ -48,11 +64,30 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
                 }
             }
 
-            CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
-            candidateMessageEntity.setCandidate(candidateEntity);
-            candidateMessageEntity.setParent(parentMessage);
-            candidateMessageEntity = candidateMessageRepository.save(candidateMessageEntity);
-            return candidateMessageMapper.toDto(candidateMessageEntity);
+            Optional<UserDTO> userDTO = userService.findById(candidateMessageDTO.getToUserId());
+            if (userDTO.isPresent()) {
+
+                MailGunSendMessageRequestDTO mailGunSendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+                mailGunSendMessageRequestDTO.setSubject(candidateMessageDTO.getSubject());
+                mailGunSendMessageRequestDTO.setText(candidateMessageDTO.getMessage());
+                mailGunSendMessageRequestDTO.setTo(userDTO.get().getEmail());
+                try {
+                    MailGunSendMessageResponseDTO mailGunSendMessageResponseDTO =
+                        mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
+
+                    CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
+                    candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());
+                    candidateMessageEntity.setCandidate(candidateEntity);
+                    candidateMessageEntity.setParent(parentMessage);
+                    candidateMessageEntity.setMessageId(mailGunSendMessageResponseDTO.getId());
+                    candidateMessageEntity = candidateMessageRepository.save(candidateMessageEntity);
+                    return candidateMessageMapper.toDto(candidateMessageEntity);
+                } catch (MailGunException e) {
+                    throw new ServerErrorException(e.getMessage());
+                }
+            } else {
+                throw new NotFoundException("User Not Found To Send Email");
+            }
         } else {
             throw new NotFoundException("Candidate Not Found");
         }

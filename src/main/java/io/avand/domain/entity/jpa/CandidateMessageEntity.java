@@ -1,7 +1,6 @@
 package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.avand.domain.enumeration.MessageOwnerType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -36,14 +35,10 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
     @Column(name = "message_id")
     private String messageId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "owner")
-    private MessageOwnerType owner;
-
     @ManyToOne
     private CandidateMessageEntity parent;
 
-    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateMessageEntity> child = new HashSet<>();
@@ -99,14 +94,6 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
         this.messageId = messageId;
     }
 
-    public MessageOwnerType getOwner() {
-        return owner;
-    }
-
-    public void setOwner(MessageOwnerType owner) {
-        this.owner = owner;
-    }
-
     public CandidateMessageEntity getParent() {
         return parent;
     }
@@ -140,7 +127,6 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
             ", fromUserId=" + fromUserId +
             ", toUserId=" + toUserId +
             ", messageId='" + messageId + '\'' +
-            ", owner=" + owner +
             ", parent=" + parent +
             ", child=" + child +
             ", candidate=" + candidate +

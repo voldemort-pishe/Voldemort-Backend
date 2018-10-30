@@ -12,7 +12,7 @@ public class UserRegisterVM implements Serializable {
     @NotNull
     private String lastName;
     @NotNull
-    @Size(min = 4)
+    @Size(min = 6)
     private String password;
     @NotNull
     @Pattern(regexp = Constants.EMAIL_REGEX)

@@ -41,4 +41,6 @@ public interface UserService {
 
     void changePassword(String login,String oldPassword,String newPassword) throws NotFoundException;
 
+    Optional<UserDTO> getUserWithAuthorities();
+
 }

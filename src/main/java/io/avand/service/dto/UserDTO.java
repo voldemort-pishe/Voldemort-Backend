@@ -12,6 +12,7 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     private String login;
 
+    @JsonIgnore
     private String passwordHash;
 
     private String firstName;
@@ -20,17 +21,21 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     private String email;
 
+    @JsonIgnore
     private Boolean activated;
 
+    @JsonIgnore
     private String activationKey;
 
+    @JsonIgnore
     private String invitationKey;
 
+    @JsonIgnore
     private String resetKey;
 
+    @JsonIgnore
     private ZonedDateTime resetDate;
 
-    @JsonIgnore
     private Set<UserAuthorityDTO> userAuthorities = new HashSet<>();
 
     @JsonIgnore

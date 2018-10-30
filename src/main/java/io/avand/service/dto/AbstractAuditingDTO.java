@@ -1,5 +1,6 @@
 package io.avand.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -14,12 +15,16 @@ public class AbstractAuditingDTO implements Serializable {
 
     private Long id;
 
+    @JsonIgnore
     private String createdBy;
 
+    @JsonIgnore
     private ZonedDateTime createdDate;
 
+    @JsonIgnore
     private String lastModifiedBy;
 
+    @JsonIgnore
     private ZonedDateTime lastModifiedDate;
 
     public Long getId() {

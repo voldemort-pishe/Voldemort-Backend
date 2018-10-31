@@ -1,9 +1,13 @@
 package io.avand.service.impl;
 
+import io.avand.config.ApplicationProperties;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CandidateMessageEntity;
 import io.avand.mailgun.service.MailGunMessageService;
+import io.avand.mailgun.service.MailGunRouteService;
+import io.avand.mailgun.service.dto.request.MailGunCreateRouteRequestDTO;
 import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
+import io.avand.mailgun.service.dto.response.MailGunCreateRouteResponseDTO;
 import io.avand.mailgun.service.dto.response.MailGunSendMessageResponseDTO;
 import io.avand.mailgun.service.error.MailGunException;
 import io.avand.repository.jpa.CandidateMessageRepository;
@@ -33,20 +37,26 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
     private final CandidateRepository candidateRepository;
     private final SecurityUtils securityUtils;
     private final MailGunMessageService mailGunMessageService;
+    private final MailGunRouteService mailGunRouteService;
     private final UserService userService;
+    private final ApplicationProperties applicationProperties;
 
     public CandidateMessageServiceImpl(CandidateMessageRepository candidateMessageRepository,
                                        CandidateMessageMapper candidateMessageMapper,
                                        CandidateRepository candidateRepository,
                                        SecurityUtils securityUtils,
                                        MailGunMessageService mailGunMessageService,
-                                       UserService userService) {
+                                       MailGunRouteService mailGunRouteService,
+                                       UserService userService,
+                                       ApplicationProperties applicationProperties) {
         this.candidateMessageRepository = candidateMessageRepository;
         this.candidateMessageMapper = candidateMessageMapper;
         this.candidateRepository = candidateRepository;
         this.securityUtils = securityUtils;
         this.mailGunMessageService = mailGunMessageService;
+        this.mailGunRouteService = mailGunRouteService;
         this.userService = userService;
+        this.applicationProperties = applicationProperties;
     }
 
 
@@ -75,6 +85,10 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
                     MailGunSendMessageResponseDTO mailGunSendMessageResponseDTO =
                         mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
 
+                    MailGunCreateRouteRequestDTO createRouteRequestDTO = new MailGunCreateRouteRequestDTO();
+                    createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
+                    createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
+                    mailGunRouteService.createRoute(createRouteRequestDTO);
                     CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
                     candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());
                     candidateMessageEntity.setCandidate(candidateEntity);
@@ -94,6 +108,39 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
     }
 
     @Override
+    public CandidateMessageDTO saveInReply(CandidateMessageDTO candidateMessageDTO) throws NotFoundException {
+        log.debug("Request to saveInReply candidateMessage : {}", candidateMessageDTO);
+
+        CandidateEntity candidateEntity = candidateRepository.findOne(candidateMessageDTO.getCandidateId());
+
+        if (candidateEntity != null) {
+            CandidateMessageEntity parentMessage = null;
+
+            if (candidateMessageDTO.getParentId() != null) {
+                parentMessage = candidateMessageRepository.findOne(candidateMessageDTO.getParentId());
+                if (parentMessage == null) {
+                    throw new NotFoundException("Parent Message Not Found");
+                }
+            }
+
+            Optional<UserDTO> userDTO = userService.findById(candidateMessageDTO.getToUserId());
+            if (userDTO.isPresent()) {
+
+                CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
+                candidateMessageEntity.setCandidate(candidateEntity);
+                candidateMessageEntity.setParent(parentMessage);
+                candidateMessageEntity = candidateMessageRepository.save(candidateMessageEntity);
+                return candidateMessageMapper.toDto(candidateMessageEntity);
+            } else {
+                throw new NotFoundException("User Not Found To Send Email");
+            }
+        } else {
+            throw new NotFoundException("Candidate Not Found");
+        }
+
+    }
+
+    @Override
     public CandidateMessageDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find candidate Message by id : {}", id);
         CandidateMessageEntity candidateMessageEntity = candidateMessageRepository.findOne(id);
@@ -108,6 +155,14 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
     public Page<CandidateMessageDTO> findByCandidateId(Long candidateId, Pageable pageable) {
         log.debug("Request to find all candidate message by candidate id : {}", candidateId);
         return candidateMessageRepository.findAllByCandidate_Id(candidateId, pageable)
+            .map(candidateMessageMapper::toDto);
+    }
+
+    @Override
+    public Optional<CandidateMessageDTO> findByMessageId(String messageId) {
+        log.debug("Request to find candidate message by messageId : {}", messageId);
+        return candidateMessageRepository
+            .findByMessageId(messageId)
             .map(candidateMessageMapper::toDto);
     }
 

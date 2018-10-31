@@ -10,11 +10,10 @@
             عزیز
         </p>
         <p th:text="#{email.activation.text1}">
-            حساب کاربری شما با موفقیت ایجاد شد، برای فعال سازی حساب کاربری خود بر روی لینک زیر کلیک کنید
+            حساب کاربری شما با موفقیت ایجاد شد، برای فعال سازی حساب کاربری کد زیر را در سایت آوند وارد نمایید
         </p>
         <p>
-            <a th:href="@{|${baseUrl}/api/account/activate/${user.activationKey}|}"
-               th:text="@{|${baseUrl}/api/account/activate/${user.activationKey}|}">لینک فعال سازی</a>
+کد تایید :             <span th:text="${user.activationKey}"></span>
         </p>
         <p>
             <span th:text="#{email.activation.text2}">با احترام،</span>

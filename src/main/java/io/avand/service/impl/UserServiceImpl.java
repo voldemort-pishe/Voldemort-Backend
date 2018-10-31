@@ -277,7 +277,7 @@ public class UserServiceImpl implements UserService {
                 throw new IllegalStateException("User Is Active");
             }
         } else {
-            throw new NotFoundException("User Not Found By Activation Key");
+            throw new NotFoundException("کد وارد شده اشتباه است");
         }
     }
 

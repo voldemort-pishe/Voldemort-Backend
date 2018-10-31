@@ -288,6 +288,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public TokenDTO authorizeWithoutPassword(UserDTO userDTO) {
+        log.debug("Request to authorize user : {}, {}, {}", userDTO.getEmail());
+        return tokenService.createAccessTokenByUserName(userDTO);
+    }
+
+    @Override
     public void changePassword(String login, String oldPassword, String newPassword) throws NotFoundException {
         log.debug("Request to change password by login : {}", login);
         Optional<UserEntity> userOptional = userRepository.findByLogin(login);

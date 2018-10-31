@@ -17,9 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,13 +89,15 @@ public class AccountResource {
     }
 
     @GetMapping("/activate/{activation-key}")
-    public void activate(@PathVariable("activation-key") String activationKey,
+    public ResponseEntity activate(@PathVariable("activation-key") String activationKey,
                                    HttpServletResponse response,
                                    HttpServletRequest request) throws IOException {
         log.debug("REST Request to activate user by activationKey : {}", activationKey);
         try {
-            userService.activate(activationKey);
-            response.sendRedirect(applicationProperties.getBase().getPanel()+"/#/auth/login?activate=success");
+            UserDTO activatedUser = userService.activate(activationKey);
+            TokenDTO tokenDTO = userService.authorizeWithoutPassword(activatedUser);
+            response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
+            return new ResponseEntity<>(tokenDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }

@@ -39,6 +39,8 @@ public interface UserService {
 
     TokenDTO authorize(String username,String password,Boolean isRemember) throws NotFoundException;
 
+    TokenDTO authorizeWithoutPassword(UserDTO userDTO);
+
     void changePassword(String login,String oldPassword,String newPassword) throws NotFoundException;
 
     Optional<UserDTO> getUserWithAuthorities();

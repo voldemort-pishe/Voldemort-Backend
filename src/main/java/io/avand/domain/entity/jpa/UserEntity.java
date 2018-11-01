@@ -76,6 +76,11 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<InvoiceEntity> invoices = new HashSet<>();
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
+    private Set<EventEntity> events = new HashSet<>();
+
     @OneToOne
     @JoinColumn
     private FileEntity file;
@@ -312,6 +317,14 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setInvoices(Set<InvoiceEntity> invoiceEntities) {
         this.invoices = invoiceEntities;
+    }
+
+    public Set<EventEntity> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<EventEntity> events) {
+        this.events = events;
     }
 
     public FileEntity getFile() {

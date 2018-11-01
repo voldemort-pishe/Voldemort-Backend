@@ -1,7 +1,10 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.EventEntity;
+import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.domain.enumeration.EventStatus;
 import io.avand.repository.jpa.EventRepository;
+import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.EventService;
 import io.avand.service.dto.EventDTO;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,27 +26,39 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final SecurityUtils securityUtils;
+    private final UserRepository userRepository;
 
     public EventServiceImpl(EventRepository eventRepository,
                             EventMapper eventMapper,
-                            SecurityUtils securityUtils) {
+                            SecurityUtils securityUtils,
+                            UserRepository userRepository) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.securityUtils = securityUtils;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public EventDTO save(EventDTO eventDTO) {
+    public EventDTO save(EventDTO eventDTO) throws NotFoundException {
         log.debug("Request to save event : {}", eventDTO);
         EventEntity eventEntity;
         if (eventDTO.getId() != null) {
             eventEntity = eventRepository.findOne(eventDTO.getId());
-            eventEntity.setRead(eventDTO.getRead());
+            eventEntity.setStatus(eventDTO.getStatus());
+            eventEntity.setDescription(eventDTO.getDescription());
+            eventEntity.setTitle(eventDTO.getTitle());
         } else {
             eventEntity = eventMapper.toEntity(eventDTO);
+            eventEntity.setStatus(EventStatus.UNREAD);
         }
-        eventEntity = eventRepository.save(eventEntity);
-        return eventMapper.toDto(eventEntity);
+        Optional<UserEntity> userEntity = userRepository.findById(eventDTO.getOwnerId());
+        if (userEntity.isPresent()) {
+            eventEntity.setOwner(userEntity.get());
+            eventEntity = eventRepository.save(eventEntity);
+            return eventMapper.toDto(eventEntity);
+        } else {
+            throw new NotFoundException("User Not Found");
+        }
     }
 
     @Override

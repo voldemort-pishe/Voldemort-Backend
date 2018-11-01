@@ -47,6 +47,8 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180713152238_added_entity_CompanyMemberEntity.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180719151436_added_entity_CandidateMessageEntity.xml"
+             relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180820210000_added_entity_UserPlanEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180820210001_added_entity_UserPlanConfigEntity.xml"
@@ -90,6 +92,8 @@
     <include file="config/liquibase/changelog/20180619154452_added_entity_constraints_SubscriptionEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180713152238_added_entity_constraints_CompanyMemberEntity.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20180719151436_added_entity_constraints_CandidateMessageEntity.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180820210000_added_entity_constraints_UserPlanEntity.xml"
              relativeToChangelogFile="false"/>

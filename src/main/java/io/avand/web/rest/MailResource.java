@@ -1,11 +1,14 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.avand.aop.event.CustomEvent;
+import io.avand.domain.enumeration.EventType;
 import io.avand.service.CandidateMessageService;
 import io.avand.service.dto.CandidateMessageDTO;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -23,9 +26,12 @@ public class MailResource {
 
     private final Logger log = LoggerFactory.getLogger(MailResource.class);
     private final CandidateMessageService candidateMessageService;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public MailResource(CandidateMessageService candidateMessageService) {
+    public MailResource(CandidateMessageService candidateMessageService,
+                        ApplicationEventPublisher eventPublisher) {
         this.candidateMessageService = candidateMessageService;
+        this.eventPublisher = eventPublisher;
     }
 
     @PostMapping("/income")
@@ -57,7 +63,15 @@ public class MailResource {
                 newMessage.setSubject(mail.get("Subject") == null ? "" : this.getValue(mail, "Subject"));
                 newMessage.setMessage(mail.get("body-plain") == null ? "" : this.getValue(mail, "body-plain"));
                 newMessage.setMessageId(this.getValue(mail, "Message-Id").replace("[", "").replace("]", ""));
-                candidateMessageService.saveInReply(newMessage);
+                newMessage = candidateMessageService.saveInReply(newMessage);
+
+                CustomEvent customEvent = new CustomEvent(this);
+                customEvent.setTitle(newMessage.getSubject());
+                customEvent.setDescription("New Email From : " + newMessage.getFromUserId() + " To : " + newMessage.getToUserId());
+                customEvent.setType(EventType.EMAIL);
+                customEvent.setExtra(newMessage.getId().toString());
+                customEvent.setOwner(newMessage.getToUserId());
+                eventPublisher.publishEvent(customEvent);
             }
         }
         return new ResponseEntity(HttpStatus.OK);

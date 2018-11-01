@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class CandidateScheduleDTO extends AbstractAuditingDTO implements Serializable {
+public class CandidateScheduleDTO  implements Serializable {
 
     @NotNull
     private Long id;
@@ -15,9 +15,9 @@ public class CandidateScheduleDTO extends AbstractAuditingDTO implements Seriali
 
     private ZonedDateTime scheduleDate;
 
-    private ScheduleStatus status;
-
-    private String description;
+//    private ScheduleStatus status;
+//
+//    private String description;
 
     @NotNull
     private Long candidateId;
@@ -46,21 +46,21 @@ public class CandidateScheduleDTO extends AbstractAuditingDTO implements Seriali
         this.scheduleDate = scheduleDate;
     }
 
-    public ScheduleStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ScheduleStatus status) {
-        this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+//    public ScheduleStatus getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(ScheduleStatus status) {
+//        this.status = status;
+//    }
+//
+//    public String getDescription() {
+//        return description;
+//    }
+//
+//    public void setDescription(String description) {
+//        this.description = description;
+//    }
 
     public Long getCandidateId() {
         return candidateId;
@@ -76,8 +76,8 @@ public class CandidateScheduleDTO extends AbstractAuditingDTO implements Seriali
             "id=" + id +
             ", owner=" + owner +
             ", scheduleDate=" + scheduleDate +
-            ", status=" + status +
-            ", description='" + description + '\'' +
+//            ", status=" + status +
+//            ", description='" + description + '\'' +
             ", candidateId=" + candidateId +
             '}';
     }

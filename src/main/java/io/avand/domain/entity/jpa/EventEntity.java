@@ -1,5 +1,6 @@
 package io.avand.domain.entity.jpa;
 
+import io.avand.domain.enumeration.EventStatus;
 import io.avand.domain.enumeration.EventType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -31,8 +32,9 @@ public class EventEntity extends AbstractAuditingEntity implements Serializable 
     @Column(name = "extra")
     private String extra;
 
-    @Column(name = "read")
-    private Boolean read;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private EventStatus status;
 
     @ManyToOne
     private UserEntity owner;
@@ -77,12 +79,12 @@ public class EventEntity extends AbstractAuditingEntity implements Serializable 
         this.extra = extra;
     }
 
-    public Boolean getRead() {
-        return read;
+    public EventStatus getStatus() {
+        return status;
     }
 
-    public void setRead(Boolean read) {
-        this.read = read;
+    public void setStatus(EventStatus status) {
+        this.status = status;
     }
 
     public UserEntity getOwner() {
@@ -101,7 +103,7 @@ public class EventEntity extends AbstractAuditingEntity implements Serializable 
             ", description='" + description + '\'' +
             ", type=" + type +
             ", extra='" + extra + '\'' +
-            ", read=" + read +
+            ", status=" + status +
             ", owner=" + owner +
             '}';
     }

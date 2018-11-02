@@ -4,7 +4,9 @@ import com.codahale.metrics.annotation.Timed;
 import io.avand.aop.event.CustomEvent;
 import io.avand.domain.enumeration.EventType;
 import io.avand.service.CandidateMessageService;
+import io.avand.service.UserService;
 import io.avand.service.dto.CandidateMessageDTO;
+import io.avand.service.dto.UserDTO;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +29,13 @@ public class MailResource {
     private final Logger log = LoggerFactory.getLogger(MailResource.class);
     private final CandidateMessageService candidateMessageService;
     private final ApplicationEventPublisher eventPublisher;
+    private final UserService userService;
 
     public MailResource(CandidateMessageService candidateMessageService,
-                        ApplicationEventPublisher eventPublisher) {
+                        ApplicationEventPublisher eventPublisher, UserService userService) {
         this.candidateMessageService = candidateMessageService;
         this.eventPublisher = eventPublisher;
+        this.userService = userService;
     }
 
     @PostMapping("/income")
@@ -65,9 +69,12 @@ public class MailResource {
                 newMessage.setMessageId(this.getValue(mail, "Message-Id").replace("[", "").replace("]", ""));
                 newMessage = candidateMessageService.saveInReply(newMessage);
 
+                Optional<UserDTO> userDTO = userService.findById(newMessage.getFromUserId());
+
+                String name = userDTO.map(userDTO1 -> userDTO1.getFirstName() + " " + userDTO1.getLastName()).orElse("ناشناس");
                 CustomEvent customEvent = new CustomEvent(this);
-                customEvent.setTitle(newMessage.getSubject());
-                customEvent.setDescription("New Email From : " + newMessage.getFromUserId() + " To : " + newMessage.getToUserId());
+                customEvent.setTitle(name);
+                customEvent.setDescription(String.format("ایمیل از %s %S", name, newMessage.getSubject()));
                 customEvent.setType(EventType.EMAIL);
                 customEvent.setExtra(newMessage.getId().toString());
                 customEvent.setOwner(newMessage.getToUserId());

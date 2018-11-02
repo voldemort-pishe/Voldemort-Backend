@@ -1,23 +1,26 @@
 package io.avand.service.impl;
 
+import io.avand.aop.event.CustomEvent;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.FeedbackEntity;
+import io.avand.domain.enumeration.EventType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FeedbackRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.FeedbackService;
+import io.avand.service.UserService;
 import io.avand.service.dto.FeedbackDTO;
+import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.FeedbackMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
@@ -27,15 +30,21 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final CandidateRepository candidateRepository;
     private final FeedbackMapper feedbackMapper;
     private final SecurityUtils securityUtils;
+    private final ApplicationEventPublisher eventPublisher;
+    private final UserService userService;
 
     public FeedbackServiceImpl(FeedbackRepository feedbackRepository,
                                CandidateRepository candidateRepository,
                                FeedbackMapper feedbackMapper,
-                               SecurityUtils securityUtils) {
+                               SecurityUtils securityUtils,
+                               ApplicationEventPublisher eventPublisher,
+                               UserService userService) {
         this.feedbackRepository = feedbackRepository;
         this.candidateRepository = candidateRepository;
         this.feedbackMapper = feedbackMapper;
         this.securityUtils = securityUtils;
+        this.eventPublisher = eventPublisher;
+        this.userService = userService;
     }
 
     @Override
@@ -51,6 +60,18 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedbackEntity.setUserId(userId);
                 feedbackEntity.setCandidate(candidateEntity);
                 feedbackEntity = feedbackRepository.save(feedbackEntity);
+
+                Optional<UserDTO> userDTO = userService.findById(userId);
+                String name = userDTO.map(userDTO1 -> userDTO1.getFirstName() + " " + userDTO1.getLastName()).orElse("ناشناس");
+
+                CustomEvent customEvent = new CustomEvent(this);
+                customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                customEvent.setDescription(String.format("نظر از %s - %s", name, feedbackEntity.getFeedbackText()));
+                customEvent.setExtra(feedbackEntity.getId().toString());
+                customEvent.setOwner(userId);
+                customEvent.setType(EventType.FEEDBACK);
+                eventPublisher.publishEvent(customEvent);
+
                 return feedbackMapper.toDto(feedbackEntity);
             } else {
                 throw new IllegalStateException("شما قبلا برای این کارجو نظر داده‌اید");

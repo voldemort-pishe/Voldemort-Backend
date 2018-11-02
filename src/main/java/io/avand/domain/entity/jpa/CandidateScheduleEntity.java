@@ -30,12 +30,12 @@ public class CandidateScheduleEntity  implements Serializable {
     @Column(name = "schedule_date")
     private ZonedDateTime scheduleDate;
 
-//    @Column(name = "status")
-//    @Enumerated(EnumType.STRING)
-//    private ScheduleStatus status;
-//
-//    @Column(name = "description")
-//    private String description;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ScheduleStatus status;
+
+    @Column(name = "description")
+    private String description;
 
     @ManyToOne
     private CandidateEntity candidate;
@@ -75,21 +75,21 @@ public class CandidateScheduleEntity  implements Serializable {
         this.scheduleDate = scheduleDate;
     }
 
-//    public ScheduleStatus getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(ScheduleStatus status) {
-//        this.status = status;
-//    }
-//
-//    public String getDescription() {
-//        return description;
-//    }
-//
-//    public void setDescription(String description) {
-//        this.description = description;
-//    }
+    public ScheduleStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ScheduleStatus status) {
+        this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public CandidateEntity getCandidate() {
         return candidate;
@@ -131,8 +131,8 @@ public class CandidateScheduleEntity  implements Serializable {
             "id=" + id +
             ", owner=" + owner +
             ", scheduleDate=" + scheduleDate +
-//            ", status=" + status +
-//            ", description='" + description + '\'' +
+            ", status=" + status +
+            ", description='" + description + '\'' +
             '}';
     }
 }

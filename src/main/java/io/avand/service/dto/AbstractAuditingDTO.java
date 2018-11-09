@@ -18,7 +18,6 @@ public class AbstractAuditingDTO implements Serializable {
     @JsonIgnore
     private String createdBy;
 
-    @JsonIgnore
     private ZonedDateTime createdDate;
 
     @JsonIgnore

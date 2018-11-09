@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user-plan")
@@ -38,7 +39,7 @@ public class UserPlanResource {
         this.applicationProperties = applicationProperties;
     }
 
-    @GetMapping("/{planId}")
+    @PostMapping("{planId}")
     @Timed
     public ResponseEntity<InvoiceDTO> saveUserPlan(@PathVariable Long planId, HttpServletResponse response) throws IOException {
         logger.debug("REST request to save a plan for a user : {}", planId);
@@ -50,4 +51,17 @@ public class UserPlanResource {
             throw new ServerErrorException(e.getMessage());
         }
     }
+
+    @GetMapping("{planId}")
+    @Timed
+    public ResponseEntity<InvoiceDTO> getUserPlan(@PathVariable Long planId, HttpServletResponse response) throws IOException {
+        logger.debug("REST request to get a plan for a user : {}", planId);
+        try {
+            Optional<InvoiceDTO> oneById = invoiceService.findOneById(planId);
+            return new ResponseEntity<>(oneById.orElse(null), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
 }

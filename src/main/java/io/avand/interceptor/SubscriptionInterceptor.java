@@ -30,7 +30,7 @@ public class SubscriptionInterceptor implements HandlerInterceptor {
             return true;
         } catch (NotFoundException e) {
             userAuthorityService.removeAuthority(AuthoritiesConstants.SUBSCRIPTION, userId);
-            httpServletResponse.sendError(401, "Subscription Needed");
+            httpServletResponse.sendError(402, "Subscription Needed");
             return false;
         }
     }

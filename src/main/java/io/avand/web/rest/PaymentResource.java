@@ -54,12 +54,12 @@ public class PaymentResource {
         this.userAuthorityService = userAuthorityService;
     }
 
-    @GetMapping("/{invoiceId}")
+    @PostMapping("/{invoiceId}")
     @Timed
     public ResponseEntity createPaymentToken(@PathVariable("invoiceId") Long invoiceId) {
         logger.debug("REST request to create a zarinpal payment token for a invoice : {}", invoiceId);
         try {
-            Optional<InvoiceDTO> foundInvoiceDTOOptional = invoiceService.findOneByIdAndStatus(invoiceId, InvoiceStatus.INITIALIZED);
+            Optional<InvoiceDTO> foundInvoiceDTOOptional = invoiceService.findOneById(invoiceId);
 
             if (!foundInvoiceDTOOptional.isPresent()) {
                 throw new ServerErrorException("فاکتور مورد نظر یافت نشد");
@@ -141,7 +141,7 @@ public class PaymentResource {
                 invoiceService.save(foundInvoice);
             }
             try {
-                response.sendRedirect(applicationProperties.getBase().getPanel() + "/#/pages/invoice?id=" + foundInvoice.getId());
+                response.sendRedirect(applicationProperties.getBase().getPanel() + "/#/invoice/" + foundInvoice.getId());
             } catch (IOException e) {
                 throw new ServerErrorException(e.getMessage());
             }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface EventService {
 
-    EventDTO save(EventDTO eventDTO);
+    EventDTO save(EventDTO eventDTO) throws NotFoundException;
 
     EventDTO findById(Long id) throws NotFoundException;
 

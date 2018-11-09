@@ -1,5 +1,6 @@
 package io.avand.domain.entity.jpa;
 
+import io.avand.domain.enumeration.ScheduleStatus;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "candidate_schedule_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
-public class CandidateScheduleEntity implements Serializable {
+public class CandidateScheduleEntity  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,6 +29,13 @@ public class CandidateScheduleEntity implements Serializable {
 
     @Column(name = "schedule_date")
     private ZonedDateTime scheduleDate;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ScheduleStatus status;
+
+    @Column(name = "description")
+    private String description;
 
     @ManyToOne
     private CandidateEntity candidate;
@@ -67,6 +75,22 @@ public class CandidateScheduleEntity implements Serializable {
         this.scheduleDate = scheduleDate;
     }
 
+    public ScheduleStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ScheduleStatus status) {
+        this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public CandidateEntity getCandidate() {
         return candidate;
     }
@@ -104,9 +128,11 @@ public class CandidateScheduleEntity implements Serializable {
     @Override
     public String toString() {
         return "CandidateScheduleEntity{" +
-            "id=" + getId() +
-            ", owner=" + getOwner() +
-            ", scheduleDate='" + getScheduleDate() + "'" +
-            "}";
+            "id=" + id +
+            ", owner=" + owner +
+            ", scheduleDate=" + scheduleDate +
+            ", status=" + status +
+            ", description='" + description + '\'' +
+            '}';
     }
 }

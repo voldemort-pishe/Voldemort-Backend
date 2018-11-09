@@ -1,28 +1,18 @@
-package io.avand.service.dto;
+package io.avand.aop.event;
 
-import io.avand.domain.enumeration.EventStatus;
 import io.avand.domain.enumeration.EventType;
+import org.springframework.context.ApplicationEvent;
 
-import java.io.Serializable;
+public class CustomEvent extends ApplicationEvent {
 
-public class EventDTO extends AbstractAuditingDTO implements Serializable {
-
-    private Long id;
     private String title;
     private String description;
     private EventType type;
     private String extra;
-    private EventStatus status;
-    private Long ownerId;
+    private Long owner;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
+    public CustomEvent(Object source) {
+        super(source);
     }
 
     public String getTitle() {
@@ -57,32 +47,22 @@ public class EventDTO extends AbstractAuditingDTO implements Serializable {
         this.extra = extra;
     }
 
-    public EventStatus getStatus() {
-        return status;
+    public Long getOwner() {
+        return owner;
     }
 
-    public void setStatus(EventStatus status) {
-        this.status = status;
-    }
-
-    public Long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(Long owner) {
+        this.owner = owner;
     }
 
     @Override
     public String toString() {
-        return "EventDTO{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
+        return "CustomEvent{" +
+            "title='" + title + '\'' +
             ", description='" + description + '\'' +
             ", type=" + type +
             ", extra='" + extra + '\'' +
-            ", status=" + status +
-            ", ownerId=" + ownerId +
+            ", owner=" + owner +
             '}';
     }
 }

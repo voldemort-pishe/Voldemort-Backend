@@ -86,9 +86,9 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
                         mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
 
                     MailGunCreateRouteRequestDTO createRouteRequestDTO = new MailGunCreateRouteRequestDTO();
-                    createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
-                    createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
-                    mailGunRouteService.createRoute(createRouteRequestDTO);
+//                    createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
+//                    createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
+//                    mailGunRouteService.createRoute(createRouteRequestDTO);
                     CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
                     candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());
                     candidateMessageEntity.setCandidate(candidateEntity);

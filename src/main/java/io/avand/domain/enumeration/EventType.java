@@ -1,5 +1,5 @@
 package io.avand.domain.enumeration;
 
 public enum  EventType {
-    EMAIL,SCHEDULE,REMINDER,FEEDBACK,COMMENT
+    EMAIL,SCHEDULE,ALARM,FEEDBACK,COMMENT
 }

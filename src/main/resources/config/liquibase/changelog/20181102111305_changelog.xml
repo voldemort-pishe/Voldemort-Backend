@@ -24,9 +24,17 @@
 
         <addForeignKeyConstraint baseColumnNames="owner_id"
                                  baseTableName="event_entity"
-                                 constraintName="fk_event_entity_user_id"
+                                 constraintName="fk_event_entity_owner_id"
                                  referencedColumnNames="id"
                                  referencedTableName="user_entity"/>
 
+
+        <loadData tableName="event_entity"
+                  file="config/liquibase/event_entity.csv"
+                  separator=";"
+                  encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
     </changeSet>
 </databaseChangeLog>

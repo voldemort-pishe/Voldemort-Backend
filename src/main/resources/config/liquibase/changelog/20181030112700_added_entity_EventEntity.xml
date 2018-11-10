@@ -67,14 +67,6 @@
         <dropDefaultValue tableName="event_entity" columnName="created_date" columnDataType="datetime"/>
         <dropDefaultValue tableName="event_entity" columnName="last_modified_date" columnDataType="datetime"/>
 
-        <loadData tableName="event_entity"
-                  file="config/liquibase/event_entity.csv"
-                  separator=";"
-                  encoding="UTF-8">
-            <column name="created_date" type="timestamp"/>
-            <column name="last_modified_date" type="timestamp"/>
-        </loadData>
-
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

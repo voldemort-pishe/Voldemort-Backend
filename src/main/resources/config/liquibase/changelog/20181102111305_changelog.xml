@@ -20,7 +20,7 @@
                       oldColumnName="user_id"
                       tableName="event_entity"/>
 
-        <dropForeignKeyConstraint baseTableName="user_entity" constraintName="fk_event_entity_user_id"/>
+        <dropForeignKeyConstraint baseTableName="event_entity" constraintName="fk_event_entity_user_id"/>
 
         <addForeignKeyConstraint baseColumnNames="owner_id"
                                  baseTableName="event_entity"

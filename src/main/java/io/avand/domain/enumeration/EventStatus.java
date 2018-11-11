@@ -1,5 +1,5 @@
 package io.avand.domain.enumeration;
 
 public enum EventStatus {
-    READ,UNREAD
+    READ,UNREAD,DONE
 }

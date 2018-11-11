@@ -13,6 +13,7 @@ public class EventDTO extends AbstractAuditingDTO implements Serializable {
     private EventType type;
     private String extra;
     private EventStatus status;
+    private Boolean flag;
     private Long ownerId;
 
     @Override
@@ -65,6 +66,14 @@ public class EventDTO extends AbstractAuditingDTO implements Serializable {
         this.status = status;
     }
 
+    public Boolean getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Boolean flag) {
+        this.flag = flag;
+    }
+
     public Long getOwnerId() {
         return ownerId;
     }
@@ -82,6 +91,7 @@ public class EventDTO extends AbstractAuditingDTO implements Serializable {
             ", type=" + type +
             ", extra='" + extra + '\'' +
             ", status=" + status +
+            ", flag=" + flag +
             ", ownerId=" + ownerId +
             '}';
     }

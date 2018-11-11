@@ -36,6 +36,9 @@ public class EventEntity extends AbstractAuditingEntity implements Serializable 
     @Enumerated(EnumType.STRING)
     private EventStatus status;
 
+    @Column(name = "flag")
+    private Boolean flag;
+
     @ManyToOne
     private UserEntity owner;
 
@@ -87,6 +90,14 @@ public class EventEntity extends AbstractAuditingEntity implements Serializable 
         this.status = status;
     }
 
+    public Boolean getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Boolean flag) {
+        this.flag = flag;
+    }
+
     public UserEntity getOwner() {
         return owner;
     }
@@ -104,6 +115,7 @@ public class EventEntity extends AbstractAuditingEntity implements Serializable 
             ", type=" + type +
             ", extra='" + extra + '\'' +
             ", status=" + status +
+            ", flag=" + flag +
             ", owner=" + owner +
             '}';
     }

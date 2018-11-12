@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/event")
@@ -41,10 +42,10 @@ public class EventResource {
 
     @GetMapping
     @Timed
-    public ResponseEntity<List<ResponseVM<EventDTO>>> findAllByOwner() {
+    public ResponseEntity<List<ResponseVM<EventDTO>>> findAllByOwner(@RequestParam Map<String, String> requestParam) {
         log.debug("Request to findAll event by owner");
         try {
-            List<ResponseVM<EventDTO>> byOwnerId = eventComponent.findByOwnerId();
+            List<ResponseVM<EventDTO>> byOwnerId = eventComponent.findByOwnerId(requestParam);
             return new ResponseEntity<>(byOwnerId, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

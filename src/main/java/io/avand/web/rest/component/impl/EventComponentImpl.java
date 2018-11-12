@@ -44,9 +44,9 @@ public class EventComponentImpl implements EventComponent {
     }
 
     @Override
-    public List<ResponseVM<EventDTO>> findByOwnerId() throws NotFoundException {
+    public List<ResponseVM<EventDTO>> findByOwnerId(Map<String,String> requestParam) throws NotFoundException {
         log.debug("Request to find event via component by ownerId");
-        List<EventDTO> eventDTOS = eventService.findByOwnerId();
+        List<EventDTO> eventDTOS = eventService.findByOwnerId(requestParam);
         List<ResponseVM<EventDTO>> responseVMS = new ArrayList<>();
         for (EventDTO eventDTO : eventDTOS) {
             ResponseVM<EventDTO> responseVM = new ResponseVM<>();

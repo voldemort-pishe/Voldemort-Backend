@@ -5,6 +5,7 @@ import javassist.NotFoundException;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface EventService {
 
@@ -12,7 +13,7 @@ public interface EventService {
 
     EventDTO findById(Long id) throws NotFoundException;
 
-    List<EventDTO> findByOwnerId() throws NotFoundException;
+    List<EventDTO> findByOwnerId(Map<String,String> requestParam) throws NotFoundException;
 
     List<EventDTO> findByOwnerIdAndDate(ZonedDateTime startDate,ZonedDateTime endDate) throws NotFoundException;
 

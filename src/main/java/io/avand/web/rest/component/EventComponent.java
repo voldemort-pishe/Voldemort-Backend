@@ -6,11 +6,12 @@ import javassist.NotFoundException;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface EventComponent {
     ResponseVM<EventDTO> findById(Long id) throws NotFoundException;
 
-    List<ResponseVM<EventDTO>> findByOwnerId() throws NotFoundException;
+    List<ResponseVM<EventDTO>> findByOwnerId(Map<String,String> requestParam) throws NotFoundException;
 
     List<ResponseVM<EventDTO>> findByOwnerIdAndDate(ZonedDateTime start, ZonedDateTime end) throws NotFoundException;
 }

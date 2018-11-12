@@ -9,6 +9,7 @@ import io.avand.security.SecurityUtils;
 import io.avand.service.EventService;
 import io.avand.service.dto.EventDTO;
 import io.avand.service.mapper.EventMapper;
+import io.avand.web.specification.BaseSpecification;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,15 +29,18 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
+    private final BaseSpecification<EventEntity> specification;
 
     public EventServiceImpl(EventRepository eventRepository,
                             EventMapper eventMapper,
                             SecurityUtils securityUtils,
-                            UserRepository userRepository) {
+                            UserRepository userRepository,
+                            BaseSpecification<EventEntity> specification) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.securityUtils = securityUtils;
         this.userRepository = userRepository;
+        this.specification = specification;
     }
 
     @Override
@@ -76,10 +81,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDTO> findByOwnerId() throws NotFoundException {
+    public List<EventDTO> findByOwnerId(Map<String, String> requestParam) throws NotFoundException {
         log.debug("Request to find events by ownerId");
+        //TODO inja bayad avaz she ba eventRepository.findAllByOwner_Id()
         return eventRepository
-            .findAllByOwner_Id(securityUtils.getCurrentUserId())
+            .findAll(specification.getFilter(requestParam))
             .stream()
             .map(eventMapper::toDto)
             .collect(Collectors.toList());

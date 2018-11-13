@@ -2,6 +2,7 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.avand.domain.enumeration.JobStatus;
 import io.avand.security.AuthoritiesConstants;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
@@ -71,6 +72,7 @@ public class JobResource {
         try {
             jobDTO.setCompanyId(companyId);
             jobDTO.setUniqueId(RandomUtil.getUniqueId());
+            jobDTO.setStatus(JobStatus.OPEN);
             ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
             return ResponseEntity.created(new URI("/api/job/" + result.getData().getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))

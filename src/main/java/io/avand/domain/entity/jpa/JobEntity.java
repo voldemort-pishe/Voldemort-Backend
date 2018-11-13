@@ -1,6 +1,7 @@
 package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.JobStatus;
 import io.avand.domain.enumeration.JobType;
 import io.avand.domain.enumeration.LanguageType;
 import org.checkerframework.checker.units.qual.C;
@@ -59,6 +60,10 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "department")
     private String department;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private JobStatus status;
 
     @OneToOne
     @JoinColumn
@@ -150,6 +155,14 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
         this.department = department;
     }
 
+    public JobStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(JobStatus status) {
+        this.status = status;
+    }
+
     public UserEntity getHiredManager() {
         return hiredManager;
     }
@@ -220,7 +233,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     public String toString() {
         return "JobEntity{" +
             "id=" + id +
-            ", uniqueId=" + uniqueId +
+            ", uniqueId='" + uniqueId + '\'' +
             ", nameFa='" + nameFa + '\'' +
             ", descriptionFa='" + descriptionFa + '\'' +
             ", nameEn='" + nameEn + '\'' +
@@ -229,6 +242,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
             ", type=" + type +
             ", location='" + location + '\'' +
             ", department='" + department + '\'' +
+            ", status=" + status +
             '}';
     }
 }

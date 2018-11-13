@@ -1,6 +1,7 @@
 package io.avand.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.JobStatus;
 import io.avand.domain.enumeration.JobType;
 import io.avand.domain.enumeration.LanguageType;
 
@@ -20,6 +21,7 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
     private JobType type;
     private String location;
     private String department;
+    private JobStatus status;
     @NotNull
     private Long hiredManagerId;
     @NotNull
@@ -27,7 +29,7 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
 
     @JsonIgnore
     private Set<CandidateDTO> candidate = new HashSet<>();
-    
+
     private Long companyId;
 
     public String getUniqueId() {
@@ -102,6 +104,14 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
         this.department = department;
     }
 
+    public JobStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(JobStatus status) {
+        this.status = status;
+    }
+
     public Long getHiredManagerId() {
         return hiredManagerId;
     }
@@ -146,6 +156,7 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
             ", type=" + type +
             ", location='" + location + '\'' +
             ", department='" + department + '\'' +
+            ", status=" + status +
             ", hiredManagerId=" + hiredManagerId +
             ", hiredExpertId=" + hiredExpertId +
             ", companyId=" + companyId +

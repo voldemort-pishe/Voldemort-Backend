@@ -9,7 +9,8 @@ import io.avand.security.SecurityUtils;
 import io.avand.service.EventService;
 import io.avand.service.dto.EventDTO;
 import io.avand.service.mapper.EventMapper;
-import io.avand.web.specification.BaseSpecification;
+import io.avand.web.rest.vm.EventFilterVM;
+import io.avand.web.specification.EventSpecification;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +30,13 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
-    private final BaseSpecification<EventEntity> specification;
+    private final EventSpecification specification;
 
     public EventServiceImpl(EventRepository eventRepository,
                             EventMapper eventMapper,
                             SecurityUtils securityUtils,
                             UserRepository userRepository,
-                            BaseSpecification<EventEntity> specification) {
+                            EventSpecification specification) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.securityUtils = securityUtils;
@@ -81,9 +82,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDTO> findByOwnerId(Map<String, String> requestParam) throws NotFoundException {
+    public List<EventDTO> findByOwnerId(EventFilterVM requestParam) throws NotFoundException {
         log.debug("Request to find events by ownerId");
-        //TODO inja bayad avaz she ba eventRepository.findAllByOwner_Id()
+        if (requestParam == null)
+            requestParam = new EventFilterVM();
+        requestParam.setOwnerId(securityUtils.getCurrentUserId());
         return eventRepository
             .findAll(specification.getFilter(requestParam))
             .stream()

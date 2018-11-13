@@ -1,6 +1,7 @@
 package io.avand.service;
 
 import io.avand.service.dto.EventDTO;
+import io.avand.web.rest.vm.EventFilterVM;
 import javassist.NotFoundException;
 
 import java.time.ZonedDateTime;
@@ -13,7 +14,7 @@ public interface EventService {
 
     EventDTO findById(Long id) throws NotFoundException;
 
-    List<EventDTO> findByOwnerId(Map<String,String> requestParam) throws NotFoundException;
+    List<EventDTO> findByOwnerId(EventFilterVM request) throws NotFoundException;
 
     List<EventDTO> findByOwnerIdAndDate(ZonedDateTime startDate,ZonedDateTime endDate) throws NotFoundException;
 

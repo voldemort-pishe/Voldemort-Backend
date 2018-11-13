@@ -8,6 +8,7 @@ import io.avand.service.dto.FileDTO;
 import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.EventComponent;
+import io.avand.web.rest.vm.EventFilterVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class EventComponentImpl implements EventComponent {
     }
 
     @Override
-    public List<ResponseVM<EventDTO>> findByOwnerId(Map<String,String> requestParam) throws NotFoundException {
+    public List<ResponseVM<EventDTO>> findByOwnerId(EventFilterVM requestParam) throws NotFoundException {
         log.debug("Request to find event via component by ownerId");
         List<EventDTO> eventDTOS = eventService.findByOwnerId(requestParam);
         List<ResponseVM<EventDTO>> responseVMS = new ArrayList<>();

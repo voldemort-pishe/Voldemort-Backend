@@ -5,6 +5,7 @@ import io.avand.service.dto.EventDTO;
 import io.avand.web.rest.component.EventComponent;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.vm.EventDateVM;
+import io.avand.web.rest.vm.EventFilterVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class EventResource {
 
     @GetMapping
     @Timed
-    public ResponseEntity<List<ResponseVM<EventDTO>>> findAllByOwner(@RequestParam Map<String, String> requestParam) {
+    public ResponseEntity<List<ResponseVM<EventDTO>>> findAllByOwner(EventFilterVM requestParam) {
         log.debug("Request to findAll event by owner");
         try {
             List<ResponseVM<EventDTO>> byOwnerId = eventComponent.findByOwnerId(requestParam);

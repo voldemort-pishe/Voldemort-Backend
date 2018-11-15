@@ -10,6 +10,7 @@ import io.avand.service.mapper.JobMapper;
 import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.CandidateComponent;
 import io.avand.web.rest.util.PageMaker;
+import io.avand.web.rest.vm.CandidateFilterVM;
 import io.avand.web.rest.vm.response.CompanyPipelineIncludeVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import javassist.NotFoundException;
@@ -88,9 +89,9 @@ public class CandidateComponentImpl implements CandidateComponent {
     }
 
     @Override
-    public Page<ResponseVM<CandidateDTO>> findByJobId(Long jobId, Pageable pageable) throws NotFoundException {
-        log.debug("Request to findAll candidate by jobId via component : {}", jobId);
-        Page<CandidateDTO> candidateDTOS = candidateService.findByJobId(jobId, pageable);
+    public Page<ResponseVM<CandidateDTO>> findByJobId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException {
+        log.debug("Request to findAll candidate by jobId via component : {}", filterVM.getJob());
+        Page<CandidateDTO> candidateDTOS = candidateService.findByJobId(filterVM, pageable);
         List<ResponseVM<CandidateDTO>> responseVMS = new ArrayList<>();
         for (CandidateDTO candidateDTO : candidateDTOS) {
             ResponseVM<CandidateDTO> responseVM = new ResponseVM<>();
@@ -102,9 +103,9 @@ public class CandidateComponentImpl implements CandidateComponent {
     }
 
     @Override
-    public Page<ResponseVM<CandidateDTO>> findByCompanyId(Long companyId, Pageable pageable) throws NotFoundException {
-        log.debug("Request to findAll candidate by companyId via component : {}", companyId);
-        Page<CandidateDTO> candidateDTOS = candidateService.findByCompanyId(companyId, pageable);
+    public Page<ResponseVM<CandidateDTO>> findByCompanyId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException {
+        log.debug("Request to findAll candidate by companyId via component : {}", filterVM);
+        Page<CandidateDTO> candidateDTOS = candidateService.findByCompanyId(filterVM, pageable);
         List<ResponseVM<CandidateDTO>> responseVMS = new ArrayList<>();
         for (CandidateDTO candidateDTO : candidateDTOS) {
             ResponseVM<CandidateDTO> responseVM = new ResponseVM<>();

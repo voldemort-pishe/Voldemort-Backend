@@ -1,6 +1,7 @@
 package io.avand.service;
 
 import io.avand.service.dto.CandidateDTO;
+import io.avand.web.rest.vm.CandidateFilterVM;
 import javassist.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +18,9 @@ public interface CandidateService {
 
     Page<CandidateDTO> findAll(Pageable pageable);
 
-    Page<CandidateDTO> findByJobId(Long jobId,Pageable pageable) throws NotFoundException;
+    Page<CandidateDTO> findByJobId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException;
 
-    Page<CandidateDTO> findByCompanyId(Long jobId,Pageable pageable) throws NotFoundException;
+    Page<CandidateDTO> findByCompanyId(CandidateFilterVM filterVM,Pageable pageable) throws NotFoundException;
 
     void delete(Long id);
 

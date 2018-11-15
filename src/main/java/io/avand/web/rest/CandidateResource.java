@@ -10,6 +10,7 @@ import io.avand.web.rest.component.CandidateComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.CandidateFilterVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -140,10 +141,14 @@ public class CandidateResource {
     @GetMapping("/job/{id}")
     @Timed
     public ResponseEntity<Page<ResponseVM<CandidateDTO>>> getCandidateByJobId(@PathVariable("id") Long jobId,
-                                                                              @ApiParam Pageable pageable) {
+                                                                              @ApiParam Pageable pageable,
+                                                                              CandidateFilterVM filterVM) {
         log.debug("REST Request to get Candidates by job id : {}");
         try {
-            Page<ResponseVM<CandidateDTO>> candidateDTOS = candidateComponent.findByJobId(jobId, pageable);
+            if (filterVM == null)
+                filterVM = new CandidateFilterVM();
+            filterVM.setJob(jobId);
+            Page<ResponseVM<CandidateDTO>> candidateDTOS = candidateComponent.findByJobId(filterVM, pageable);
             return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -153,10 +158,14 @@ public class CandidateResource {
     @GetMapping("/company")
     @Timed
     public ResponseEntity<Page<ResponseVM<CandidateDTO>>> getCandidateByCompany(@RequestAttribute("companyId") Long companyId,
-                                                                                @ApiParam Pageable pageable) {
+                                                                                @ApiParam Pageable pageable,
+                                                                                CandidateFilterVM filterVM) {
         log.debug("REST Request to get Candidates by job id : {}");
         try {
-            Page<ResponseVM<CandidateDTO>> candidateDTOS = candidateComponent.findByCompanyId(companyId, pageable);
+            if (filterVM == null)
+                filterVM = new CandidateFilterVM();
+            filterVM.setCompany(companyId);
+            Page<ResponseVM<CandidateDTO>> candidateDTOS = candidateComponent.findByCompanyId(filterVM, pageable);
             return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

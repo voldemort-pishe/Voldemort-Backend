@@ -3,7 +3,6 @@ package io.avand.service.impl;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.FileEntity;
 import io.avand.domain.entity.jpa.JobEntity;
-import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.domain.enumeration.CandidateState;
 import io.avand.domain.enumeration.CandidateType;
 import io.avand.repository.jpa.CandidateRepository;
@@ -14,14 +13,14 @@ import io.avand.security.SecurityUtils;
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
 import io.avand.service.mapper.CandidateMapper;
+import io.avand.web.rest.vm.CandidateFilterVM;
+import io.avand.web.specification.CandidateSpecification;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CandidateServiceImpl implements CandidateService {
@@ -33,13 +32,15 @@ public class CandidateServiceImpl implements CandidateService {
     private final CandidateMapper candidateMapper;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
+    private final CandidateSpecification specification;
 
     public CandidateServiceImpl(CandidateRepository candidateRepository,
                                 JobRepository jobRepository,
                                 FileRepository fileRepository,
                                 CandidateMapper candidateMapper,
                                 SecurityUtils securityUtils,
-                                UserRepository userRepository) {
+                                UserRepository userRepository,
+                                CandidateSpecification specification) {
         this.candidateRepository = candidateRepository;
         this.jobRepository = jobRepository;
         this.fileRepository = fileRepository;
@@ -47,6 +48,7 @@ public class CandidateServiceImpl implements CandidateService {
         this.securityUtils = securityUtils;
 
         this.userRepository = userRepository;
+        this.specification = specification;
     }
 
     @Override
@@ -115,16 +117,16 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public Page<CandidateDTO> findByJobId(Long jobId, Pageable pageable) throws NotFoundException {
+    public Page<CandidateDTO> findByJobId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException {
         return candidateRepository
-            .findAllByJob_IdAndJob_Company_User_Id(jobId, securityUtils.getCurrentUserId(), pageable)
+            .findAll(specification.getFilter(filterVM), pageable)
             .map(candidateMapper::toDto);
     }
 
     @Override
-    public Page<CandidateDTO> findByCompanyId(Long companyId, Pageable pageable) throws NotFoundException {
+    public Page<CandidateDTO> findByCompanyId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException {
         return candidateRepository
-            .findAllByJob_Company_IdAndJob_Company_User_Id(companyId, securityUtils.getCurrentUserId(), pageable)
+            .findAll(specification.getFilter(filterVM), pageable)
             .map(candidateMapper::toDto);
     }
 

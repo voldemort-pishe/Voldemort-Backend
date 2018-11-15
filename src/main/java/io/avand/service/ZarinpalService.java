@@ -25,7 +25,7 @@ public class ZarinpalService {
 
     private final static String API_URL = "https://www.zarinpal.com/pg/rest/WebGate/";
 
-    private final static String MERCHANT_ID = "dc28de2a-6553-11e7-9504-005056a205be";
+    private final static String MERCHANT_ID = "cb812188-aea2-11e8-b869-000c295eb8fc";
 
     private final ApplicationProperties applicationProperties;
 

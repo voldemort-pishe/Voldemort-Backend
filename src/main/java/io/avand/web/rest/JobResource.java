@@ -11,6 +11,7 @@ import io.avand.web.rest.component.JobComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.JobFilterVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -172,10 +173,13 @@ public class JobResource {
      */
     @GetMapping("/company-list")
     @Timed
-    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJobByCompany(@ApiParam Pageable pageable, @RequestAttribute("companyId") Long companyId) {
+    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJobByCompany(@ApiParam Pageable pageable,
+                                                                       @RequestAttribute("companyId") Long companyId,
+                                                                       JobFilterVM filterVM) {
         log.debug("REST request to get all Job");
         try {
-            Page<ResponseVM<JobDTO>> jobDTOS = jobComponent.findAllByCompany(companyId, pageable);
+            filterVM.setCompany(companyId);
+            Page<ResponseVM<JobDTO>> jobDTOS = jobComponent.findAllByCompany(filterVM, pageable);
             return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

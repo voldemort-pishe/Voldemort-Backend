@@ -10,7 +10,8 @@ import io.avand.security.SecurityUtils;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
 import io.avand.service.mapper.JobMapper;
-import io.avand.service.util.RandomUtil;
+import io.avand.web.rest.vm.JobFilterVM;
+import io.avand.web.specification.JobSpecification;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,17 +32,20 @@ public class JobServiceImpl implements JobService {
     private final JobMapper jobMapper;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
+    private final JobSpecification jobSpecification;
 
     public JobServiceImpl(JobRepository jobRepository,
                           CompanyRepository companyRepository,
                           JobMapper jobMapper,
                           SecurityUtils securityUtils,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          JobSpecification jobSpecification) {
         this.jobRepository = jobRepository;
         this.companyRepository = companyRepository;
         this.jobMapper = jobMapper;
         this.securityUtils = securityUtils;
         this.userRepository = userRepository;
+        this.jobSpecification = jobSpecification;
     }
 
     @Override
@@ -118,9 +122,9 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Page<JobDTO> findAllByCompanyId(Pageable pageable, Long id) throws NotFoundException {
+    public Page<JobDTO> findAllByCompanyId(Pageable pageable, JobFilterVM filterVM) {
         log.debug("Request to find all job");
-        return jobRepository.findAllByCompany_Id(pageable, id)
+        return jobRepository.findAll(jobSpecification.getFilter(filterVM), pageable)
             .map(jobMapper::toDto);
     }
 

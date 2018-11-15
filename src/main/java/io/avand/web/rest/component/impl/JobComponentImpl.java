@@ -9,6 +9,7 @@ import io.avand.service.mapper.CompanyMapper;
 import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.JobComponent;
 import io.avand.web.rest.util.PageMaker;
+import io.avand.web.rest.vm.JobFilterVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -76,9 +77,9 @@ public class JobComponentImpl implements JobComponent {
     }
 
     @Override
-    public Page<ResponseVM<JobDTO>> findAllByCompany(Long companyId, Pageable pageable) throws NotFoundException {
-        log.debug("Request to findAll jobDTO by companyId via component : {}", companyId);
-        Page<JobDTO> jobDTOS = jobService.findAllByCompanyId(pageable, companyId);
+    public Page<ResponseVM<JobDTO>> findAllByCompany(JobFilterVM filterVM, Pageable pageable) throws NotFoundException {
+        log.debug("Request to findAll jobDTO by companyId via component : {}", filterVM.getCompany());
+        Page<JobDTO> jobDTOS = jobService.findAllByCompanyId(pageable, filterVM);
         List<ResponseVM<JobDTO>> responseVMS = new ArrayList<>();
         for (JobDTO jobDTO : jobDTOS) {
             ResponseVM<JobDTO> responseVM = new ResponseVM<>();

@@ -3,7 +3,9 @@ package io.avand.web.rest;
 import com.codahale.metrics.annotation.Timed;
 
 import io.avand.security.AuthoritiesConstants;
+import io.avand.service.CloudflareService;
 import io.avand.service.CompanyService;
+import io.avand.service.dto.CloudflareRequestDTO;
 import io.avand.service.dto.CompanyDTO;
 import io.avand.web.rest.component.CompanyComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
@@ -35,12 +37,15 @@ public class CompanyResource {
     private static final String ENTITY_NAME = "companyEntity";
 
     private final CompanyService companyService;
+    private final CloudflareService cloudflareService;
 
     private final CompanyComponent companyComponent;
 
     public CompanyResource(CompanyService companyService,
+                           CloudflareService cloudflareService,
                            CompanyComponent companyComponent) {
         this.companyService = companyService;
+        this.cloudflareService = cloudflareService;
         this.companyComponent = companyComponent;
     }
 
@@ -61,10 +66,19 @@ public class CompanyResource {
             throw new BadRequestAlertException("A new companyEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
-            return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
-                .body(result);
+            CloudflareRequestDTO requestDTO = new CloudflareRequestDTO();
+            requestDTO.setType("CNAME");
+            requestDTO.setName(companyDTO.getSubDomain() + ".avand.hr");
+            requestDTO.setContent("avand.hr");
+            requestDTO.setProxied(true);
+            if (cloudflareService.createDNSRecord(requestDTO)) {
+                ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
+                return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))
+                    .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
+                    .body(result);
+            } else {
+                throw new ServerErrorException("مشگلی در ایجاد دامنه پیش آمده است لطفا مجدد تلاش نمایید");
+            }
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }

@@ -11,6 +11,7 @@ public class CandidateFilterVM implements Serializable {
     private CandidateType type;
     private Long job;
     private Long company;
+    private String search;
 
     public CandidateState getState() {
         return state;
@@ -52,6 +53,14 @@ public class CandidateFilterVM implements Serializable {
         this.company = company;
     }
 
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
+
     @Override
     public String toString() {
         return "CandidateFilterVM{" +
@@ -60,6 +69,7 @@ public class CandidateFilterVM implements Serializable {
             ", type=" + type +
             ", job=" + job +
             ", company=" + company +
+            ", search='" + search + '\'' +
             '}';
     }
 }

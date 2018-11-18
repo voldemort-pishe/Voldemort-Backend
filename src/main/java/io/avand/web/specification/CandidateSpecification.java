@@ -15,12 +15,27 @@ public class CandidateSpecification extends BaseSpecification<CandidateEntity, C
     public Specification<CandidateEntity> getFilter(CandidateFilterVM request) {
         return
             where(
-                where(stateContains(request.getState()))
+                where(firstNameContains(request.getSearch()))
+                    .or(lastNameContains(request.getSearch()))
+                    .or(stateContains(request.getState()))
+                    .or(employerContains(request.getSearch()))
                     .or(typeContains(request.getType()))
                     .or(pipelineContains(request.getPipeline())))
                 .and(
                     where(jobContains(request.getJob()))
                         .or(companyContains(request.getCompany())));
+    }
+
+    private Specification<CandidateEntity> firstNameContains(String value) {
+        return nameAttributeContains("firstName", value);
+    }
+
+    private Specification<CandidateEntity> lastNameContains(String value) {
+        return nameAttributeContains("lastName", value);
+    }
+
+    private Specification<CandidateEntity> employerContains(String value) {
+        return nameAttributeContains("employer", value);
     }
 
     private Specification<CandidateEntity> stateContains(CandidateState value) {

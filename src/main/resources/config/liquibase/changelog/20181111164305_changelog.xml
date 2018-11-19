@@ -9,5 +9,12 @@
             <column name="flag" type="tinyint" defaultValue="false"/>
         </addColumn>
 
+        <loadData tableName="event_entity"
+                  file="config/liquibase/event_entity.csv"
+                  separator=";"
+                  encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
     </changeSet>
 </databaseChangeLog>

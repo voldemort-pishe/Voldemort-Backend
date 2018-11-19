@@ -1,9 +1,9 @@
-id;title;description;type;extra;status;owner_id;created_by;created_date;last_modified_by;last_modified_date
-1;[Re: Test save in db 3];New Email From : 2 To : 1;EMAIL;2;UNREAD;1;anonymousUser;2018-02-02 15:44:15;anonymousUser;2018-02-02 15:44:15
-2;Pouya Ashna;Email Az Pooya AShna;EMAIL;4;UNREAD;1;anonymousUser;2018-02-02 13:26:03;anonymousUser;2018-02-02 13:26:03
-3;System System;Nazar Good Az System;FEEDBACK;4;UNREAD;1;admin@avand.com;2018-02-02 14:04:33;admin@avand.com;2018-02-02 14:04:33
-4;System System;Ezhar Nazar Good Az System;COMMENT;4;UNREAD;1;admin@avand.com;2018-02-02 14:13:15;admin@avand.com;2018-02-02 14:13:15
-5;System System;1 roydad zaman bandi shode;SCHEDULE;1;UNREAD;1;admin@avand.com;2018-02-02 14:30:05;admin@avand.com;2018-02-02 14:30:05
-6;Mehdi Shariatmadari;Nazar Good Az System;FEEDBACK;5;UNREAD;1;admin@avand.com;2018-02-02 14:32:36;admin@avand.com;2018-02-02 14:32:36
-7;Pooya Ashena;Ezhar Nazar Good Az System;COMMENT;5;UNREAD;1;admin@avand.com;2018-02-02 14:32:45;admin@avand.com;2018-02-02 14:32:45
-8;Mehdi Shariatmadari;1 roydad zaman bandi shode;SCHEDULE;2;UNREAD;1;admin@avand.com;2018-02-02 14:32:52;admin@avand.com;2018-02-02 14:32:52
+id;title;description;type;extra;status;owner_id;created_by;created_date;last_modified_by;last_modified_date;flag
+1;[Re: Test save in db 3];New Email From : 2 To : 1;EMAIL;2;UNREAD;1;anonymousUser;2018-02-02 15:44:15;anonymousUser;2018-02-02 15:44:15;0
+2;Pouya Ashna;Email Az Pooya AShna;EMAIL;4;UNREAD;1;anonymousUser;2018-02-02 13:26:03;anonymousUser;2018-02-02 13:26:03;0
+3;System System;Nazar Good Az System;FEEDBACK;4;UNREAD;1;admin@avand.com;2018-02-02 14:04:33;admin@avand.com;2018-02-02 14:04:33;0
+4;System System;Ezhar Nazar Good Az System;COMMENT;4;UNREAD;1;admin@avand.com;2018-02-02 14:13:15;admin@avand.com;2018-02-02 14:13:15;0
+5;System System;1 roydad zaman bandi shode;SCHEDULE;1;UNREAD;1;admin@avand.com;2018-02-02 14:30:05;admin@avand.com;2018-02-02 14:30:05;0
+6;Mehdi Shariatmadari;Nazar Good Az System;FEEDBACK;5;UNREAD;1;admin@avand.com;2018-02-02 14:32:36;admin@avand.com;2018-02-02 14:32:36;0
+7;Pooya Ashena;Ezhar Nazar Good Az System;COMMENT;5;UNREAD;1;admin@avand.com;2018-02-02 14:32:45;admin@avand.com;2018-02-02 14:32:45;0
+8;Mehdi Shariatmadari;1 roydad zaman bandi shode;SCHEDULE;2;UNREAD;1;admin@avand.com;2018-02-02 14:32:52;admin@avand.com;2018-02-02 14:32:52;0

@@ -1,6 +1,7 @@
 package io.avand.service;
 
 import io.avand.service.dto.CompanyMemberDTO;
+import io.avand.web.rest.vm.CompanyMemberFilterVM;
 import javassist.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,8 @@ public interface CompanyMemberService {
 
     CompanyMemberDTO findByUserId(Long userId) throws NotFoundException;
 
-    Page<CompanyMemberDTO> findAll(Pageable pageable) throws NotFoundException;
+    Page<CompanyMemberDTO> findAllByFilter(CompanyMemberFilterVM filterVM, Pageable pageable)
+        throws NotFoundException;
 
     Page<CompanyMemberDTO> findAllActiveMember(Pageable pageable) throws NotFoundException;
 

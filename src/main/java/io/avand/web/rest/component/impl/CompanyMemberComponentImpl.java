@@ -9,6 +9,7 @@ import io.avand.service.mapper.CompanyMapper;
 import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.CompanyMemberComponent;
 import io.avand.web.rest.util.PageMaker;
+import io.avand.web.rest.vm.CompanyMemberFilterVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -65,8 +66,9 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
     }
 
     @Override
-    public Page<ResponseVM<CompanyMemberDTO>> findAll(Pageable pageable) throws NotFoundException {
-        Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAll(pageable);
+    public Page<ResponseVM<CompanyMemberDTO>> findAllByFilter(CompanyMemberFilterVM filterVM, Pageable pageable)
+        throws NotFoundException {
+        Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAllByFilter(filterVM, pageable);
         List<ResponseVM<CompanyMemberDTO>> responseVMS = new ArrayList<>();
         for (CompanyMemberDTO companyMemberDTO : companyMemberDTOS) {
             ResponseVM<CompanyMemberDTO> responseVM = new ResponseVM<>();

@@ -12,6 +12,8 @@ import io.avand.service.MailService;
 import io.avand.service.dto.CompanyMemberDTO;
 import io.avand.service.mapper.CompanyMemberMapper;
 import io.avand.service.util.RandomUtil;
+import io.avand.web.rest.vm.CompanyMemberFilterVM;
+import io.avand.web.specification.CompanyMemberSpecification;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +35,22 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     private final MailService mailService;
     private final CompanyRepository companyRepository;
     private final SecurityUtils securityUtils;
+    private final CompanyMemberSpecification companyMemberSpecification;
 
     public CompanyMemberServiceImpl(CompanyMemberRepository companyMemberRepository,
                                     CompanyMemberMapper companyMemberMapper,
                                     UserRepository userRepository,
                                     MailService mailService,
                                     CompanyRepository companyRepository,
-                                    SecurityUtils securityUtils) {
+                                    SecurityUtils securityUtils,
+                                    CompanyMemberSpecification companyMemberSpecification) {
         this.companyMemberRepository = companyMemberRepository;
         this.companyMemberMapper = companyMemberMapper;
         this.userRepository = userRepository;
         this.mailService = mailService;
         this.companyRepository = companyRepository;
         this.securityUtils = securityUtils;
+        this.companyMemberSpecification = companyMemberSpecification;
     }
 
     @Override
@@ -107,10 +112,14 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
-    public Page<CompanyMemberDTO> findAll(Pageable pageable) throws NotFoundException {
+    public Page<CompanyMemberDTO> findAllByFilter(CompanyMemberFilterVM filterVM, Pageable pageable)
+        throws NotFoundException {
         log.debug("Request to find all company member");
+        if (filterVM == null)
+            filterVM = new CompanyMemberFilterVM();
+        filterVM.setCompany(securityUtils.getCurrentCompanyId());
         return companyMemberRepository
-            .findAllByCompany_Id(securityUtils.getCurrentCompanyId(), pageable)
+            .findAll(companyMemberSpecification.getFilter(filterVM), pageable)
             .map(companyMemberMapper::toDto);
     }
 

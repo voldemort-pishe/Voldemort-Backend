@@ -5,6 +5,7 @@ import io.avand.service.CompanyMemberService;
 import io.avand.service.dto.CompanyMemberDTO;
 import io.avand.web.rest.component.CompanyMemberComponent;
 import io.avand.web.rest.errors.ServerErrorException;
+import io.avand.web.rest.vm.CompanyMemberFilterVM;
 import io.avand.web.rest.vm.CompanyMemberVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.swagger.annotations.ApiParam;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -67,10 +67,11 @@ public class CompanyMemberResource {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAll(@ApiParam Pageable pageable) {
+    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAll
+        (@ApiParam Pageable pageable, CompanyMemberFilterVM filterVM) {
         log.debug("Request to find all company member");
         try {
-            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAll(pageable);
+            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllByFilter(filterVM,pageable);
             return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

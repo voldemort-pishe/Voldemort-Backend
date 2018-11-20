@@ -80,7 +80,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find comment by id : {}", id);
-        CommentEntity commentEntity = commentRepository.findOne(id);
+        CommentEntity commentEntity = commentRepository
+            .findByIdAndCandidate_Job_Company_Id(id,securityUtils.getCurrentUserId());
         if (commentEntity != null) {
             return commentMapper.toDto(commentEntity);
         } else {
@@ -89,16 +90,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Page<CommentDTO> findAll(Pageable pageable) {
-        log.debug("Request to find all comment");
-        return commentRepository.findAll(pageable)
-            .map(commentMapper::toDto);
-    }
-
-    @Override
-    public Page<CommentDTO> findAllByCandidateId(Pageable pageable, Long id) {
+    public Page<CommentDTO> findAllByCandidateId(Pageable pageable, Long candidateId) throws NotFoundException {
         log.debug("Request to find all comment by candidate id");
-        return commentRepository.findAllByCandidate_Id(pageable, id)
+        return commentRepository
+            .findAllByCandidate_IdAndCandidate_Job_Company_Id
+                (pageable, candidateId, securityUtils.getCurrentCompanyId())
             .map(commentMapper::toDto);
     }
 

@@ -19,6 +19,10 @@ public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Long> 
 
     Optional<FeedbackEntity> findByUserIdAndCandidate_Id(Long userId,Long candidateId);
 
-    Page<FeedbackEntity> findAllByCandidate_Id(Pageable pageable, Long id);
+    FeedbackEntity findByIdAndCandidate_Job_Company_Id(Long id,Long companyId);
+
+    Page<FeedbackEntity> findAllByCandidate_Job_Company_Id(Long companyId,Pageable pageable);
+
+    Page<FeedbackEntity> findAllByCandidate_IdAndCandidate_Job_Company_Id(Long id,Long companyId,Pageable pageable);
 
 }

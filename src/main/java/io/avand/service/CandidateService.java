@@ -16,11 +16,7 @@ public interface CandidateService {
 
     CandidateDTO findById(Long id) throws NotFoundException;
 
-    Page<CandidateDTO> findAll(Pageable pageable);
-
-    Page<CandidateDTO> findByJobId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException;
-
-    Page<CandidateDTO> findByCompanyId(CandidateFilterVM filterVM,Pageable pageable) throws NotFoundException;
+    Page<CandidateDTO> findByFilter(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException;
 
     void delete(Long id);
 

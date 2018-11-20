@@ -18,11 +18,20 @@ import java.util.List;
 @Repository
 public interface CandidateScheduleRepository extends JpaRepository<CandidateScheduleEntity, Long> {
 
-    Page<CandidateScheduleEntity> findAllByCandidate_Id(Long candidateId,Pageable pageable);
+    Page<CandidateScheduleEntity> findAllByCandidate_IdAndCandidate_Job_Company_Id(
+        Long candidateId,
+        Long companyId,
+        Pageable pageable
+    );
 
-    Page<CandidateScheduleEntity> findAllByOwner(Long ownerId, Pageable pageable);
+    Page<CandidateScheduleEntity> findAllByCandidate_Job_Company_Id(Long companyId, Pageable pageable);
 
     Page<CandidateScheduleEntity>
-    findAllByOwnerAndScheduleDateAfterAndScheduleDateBefore(Long ownerId, ZonedDateTime startDate, ZonedDateTime endDate,Pageable pageable);
+    findAllByCandidate_Job_Company_IdAndScheduleDateAfterAndScheduleDateBefore(
+        Long companyId,
+        ZonedDateTime startDate,
+        ZonedDateTime endDate,
+        Pageable pageable
+    );
 
 }

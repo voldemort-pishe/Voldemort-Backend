@@ -102,7 +102,8 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public FeedbackDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find feedback by id : {}", id);
-        FeedbackEntity feedbackEntity = feedbackRepository.findOne(id);
+        FeedbackEntity feedbackEntity = feedbackRepository
+            .findByIdAndCandidate_Job_Company_Id(id, securityUtils.getCurrentCompanyId());
         if (feedbackEntity != null) {
             return feedbackMapper.toDto(feedbackEntity);
         } else {
@@ -111,16 +112,17 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public Page<FeedbackDTO> findAll(Pageable pageable) {
+    public Page<FeedbackDTO> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find all feedback");
-        return feedbackRepository.findAll(pageable)
+        return feedbackRepository.findAllByCandidate_Job_Company_Id(securityUtils.getCurrentCompanyId(), pageable)
             .map(feedbackMapper::toDto);
     }
 
     @Override
-    public Page<FeedbackDTO> findAllByCandidateId(Pageable pageable, Long id) {
+    public Page<FeedbackDTO> findAllByCandidateId(Pageable pageable, Long id) throws NotFoundException {
         log.debug("Request to find all feedback by candidate id");
-        return feedbackRepository.findAllByCandidate_Id(pageable, id)
+        return feedbackRepository
+            .findAllByCandidate_IdAndCandidate_Job_Company_Id(id, securityUtils.getCurrentUserId(), pageable)
             .map(feedbackMapper::toDto);
     }
 

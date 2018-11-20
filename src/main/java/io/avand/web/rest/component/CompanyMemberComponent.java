@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface CompanyMemberComponent {
 
-    List<ResponseVM<CompanyMemberDTO>> save(List<String> emails, Long companyId) throws NotFoundException;
+    List<ResponseVM<CompanyMemberDTO>> save(List<String> emails) throws NotFoundException;
 
     ResponseVM<CompanyMemberDTO> findById(Long id) throws NotFoundException;
 
-    Page<ResponseVM<CompanyMemberDTO>> findAll(Long companyId, Pageable pageable) throws NotFoundException;
+    Page<ResponseVM<CompanyMemberDTO>> findAll(Pageable pageable) throws NotFoundException;
 
-    Page<ResponseVM<CompanyMemberDTO>> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException;
+    Page<ResponseVM<CompanyMemberDTO>> findAllActiveMember(Pageable pageable) throws NotFoundException;
 
 }

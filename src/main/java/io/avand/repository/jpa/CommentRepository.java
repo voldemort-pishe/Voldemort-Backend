@@ -15,6 +15,8 @@ import org.springframework.data.jpa.repository.*;
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
-    Page<CommentEntity> findAllByCandidate_Id(Pageable pageable, Long id);
+    CommentEntity findByIdAndCandidate_Job_Company_Id(Long id,Long companyId);
+
+    Page<CommentEntity> findAllByCandidate_IdAndCandidate_Job_Company_Id(Pageable pageable, Long id, Long companyId);
 
 }

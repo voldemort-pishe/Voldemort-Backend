@@ -41,41 +41,16 @@ public class CompanyMemberResource {
     }
 
     @PostMapping
-    public ResponseEntity<List<ResponseVM<CompanyMemberDTO>>> save(@RequestBody @Valid CompanyMemberVM companyMemberVM,
-                                                                   @RequestAttribute("companyId") Long companyId)
+    public ResponseEntity<List<ResponseVM<CompanyMemberDTO>>> save(@RequestBody @Valid CompanyMemberVM companyMemberVM)
         throws URISyntaxException {
         log.debug("REST Request to save company member : {}", companyMemberVM);
 
         try {
-            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.save(companyMemberVM.getEmails(), companyId);
+            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.save(companyMemberVM.getEmails());
             return new ResponseEntity<>(result, HttpStatus.OK);
-        }catch(DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new ServerErrorException("شماه قبلا عضو شده‌اید");
         } catch (NotFoundException | SecurityException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
-    @GetMapping("/company")
-    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAll(@RequestAttribute("companyId") Long companyId,
-                                                                     @ApiParam Pageable pageable) {
-        log.debug("Request to find active company member by company id : {}", companyId);
-        try {
-            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllActiveMember(companyId, pageable);
-            return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
-    @GetMapping("/all-member")
-    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAllCompanyMember(@RequestAttribute("companyId") Long companyId,
-                                                                     @ApiParam Pageable pageable) {
-        log.debug("Request to find all company member by company id : {}", companyId);
-        try {
-            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAll(companyId, pageable);
-            return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -91,6 +66,28 @@ public class CompanyMemberResource {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAll(@ApiParam Pageable pageable) {
+        log.debug("Request to find all company member");
+        try {
+            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAll(pageable);
+            return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAllActive(@ApiParam Pageable pageable) {
+        log.debug("Request to find active company member");
+        try {
+            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllActiveMember(pageable);
+            return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         log.debug("REST Request to delete company member by id : {}", id);
@@ -100,16 +97,5 @@ public class CompanyMemberResource {
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
-    }
-
-    @GetMapping("/emails")
-    public ResponseEntity getMemberEmails() {
-        List<String> emails = new ArrayList<>();
-        emails.add("farhang.darzi@gmail.com");
-        emails.add("majid.khoshnasib@gmail.com");
-        emails.add("mortezamrd75@gmail.com");
-        emails.add("ehdi.sh@gmail.com");
-        emails.add("pouyaashna@gmail.com");
-        return new ResponseEntity<>(emails, HttpStatus.OK);
     }
 }

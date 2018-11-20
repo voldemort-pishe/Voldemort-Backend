@@ -13,7 +13,5 @@ public interface JobComponent {
 
     ResponseVM<JobDTO> findById(Long id) throws NotFoundException;
 
-    Page<ResponseVM<JobDTO>> findAll(Pageable pageable) throws NotFoundException;
-
-    Page<ResponseVM<JobDTO>> findAllByCompany(JobFilterVM filterVM, Pageable pageable) throws NotFoundException;
+    Page<ResponseVM<JobDTO>> findAllByFilter(JobFilterVM filterVM, Pageable pageable) throws NotFoundException;
 }

@@ -13,10 +13,6 @@ public interface CandidateComponent {
 
     ResponseVM<CandidateDTO> findById(Long id) throws NotFoundException;
 
-    Page<ResponseVM<CandidateDTO>> findAll(Pageable pageable) throws NotFoundException;
-
-    Page<ResponseVM<CandidateDTO>> findByJobId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException;
-
-    Page<ResponseVM<CandidateDTO>> findByCompanyId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException;
+    Page<ResponseVM<CandidateDTO>> findByFilter(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException;
 
 }

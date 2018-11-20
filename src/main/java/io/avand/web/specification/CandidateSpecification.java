@@ -20,10 +20,10 @@ public class CandidateSpecification extends BaseSpecification<CandidateEntity, C
                     .or(stateContains(request.getState()))
                     .or(employerContains(request.getSearch()))
                     .or(typeContains(request.getType()))
-                    .or(pipelineContains(request.getPipeline())))
+                    .or(pipelineContains(request.getPipeline()))
+                    .or(jobContains(request.getJob())))
                 .and(
-                    where(jobContains(request.getJob()))
-                        .or(companyContains(request.getCompany())));
+                    where(companyContains(request.getCompany())));
     }
 
     private Specification<CandidateEntity> firstNameContains(String value) {

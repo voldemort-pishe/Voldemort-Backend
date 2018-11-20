@@ -16,16 +16,13 @@ import java.util.Objects;
 @Entity
 @Table(name = "candidate_schedule_entity")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
-public class CandidateScheduleEntity  implements Serializable {
+public class CandidateScheduleEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "owner")
-    private Long owner;
 
     @Column(name = "schedule_date")
     private ZonedDateTime scheduleDate;
@@ -47,19 +44,6 @@ public class CandidateScheduleEntity  implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getOwner() {
-        return owner;
-    }
-
-    public CandidateScheduleEntity owner(Long owner) {
-        this.owner = owner;
-        return this;
-    }
-
-    public void setOwner(Long owner) {
-        this.owner = owner;
     }
 
     public ZonedDateTime getScheduleDate() {
@@ -129,7 +113,6 @@ public class CandidateScheduleEntity  implements Serializable {
     public String toString() {
         return "CandidateScheduleEntity{" +
             "id=" + id +
-            ", owner=" + owner +
             ", scheduleDate=" + scheduleDate +
             ", status=" + status +
             ", description='" + description + '\'' +

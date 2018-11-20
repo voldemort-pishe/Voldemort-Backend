@@ -11,7 +11,11 @@ import java.util.List;
 @Repository
 public interface CompanyMemberRepository extends JpaRepository<CompanyMemberEntity, Long> {
 
-    Page<CompanyMemberEntity> findAllByCompany_User_IdAndCompany_Id(Long userId, Long companyId, Pageable pageable);
+    CompanyMemberEntity findByIdAndCompany_Id(Long id,Long companyId);
 
-    Page<CompanyMemberEntity> findAllByCompany_User_IdAndUser_ActivatedAndCompany_Id(Long userId, Boolean activated,Long companyId, Pageable pageable);
+    CompanyMemberEntity findByUser_Id(Long userId);
+
+    Page<CompanyMemberEntity> findAllByCompany_Id(Long companyId, Pageable pageable);
+
+    Page<CompanyMemberEntity> findAllByUser_ActivatedAndCompany_Id(Boolean activated,Long companyId, Pageable pageable);
 }

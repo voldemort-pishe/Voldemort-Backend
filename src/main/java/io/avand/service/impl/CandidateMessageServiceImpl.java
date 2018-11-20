@@ -86,9 +86,9 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
                         mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
 
                     MailGunCreateRouteRequestDTO createRouteRequestDTO = new MailGunCreateRouteRequestDTO();
-//                    createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
-//                    createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
-//                    mailGunRouteService.createRoute(createRouteRequestDTO);
+                    createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
+                    createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
+                    mailGunRouteService.createRoute(createRouteRequestDTO);
                     CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
                     candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());
                     candidateMessageEntity.setCandidate(candidateEntity);
@@ -143,7 +143,8 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
     @Override
     public CandidateMessageDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find candidate Message by id : {}", id);
-        CandidateMessageEntity candidateMessageEntity = candidateMessageRepository.findOne(id);
+        CandidateMessageEntity candidateMessageEntity =
+            candidateMessageRepository.findByIdAndCandidate_Job_Company_Id(id, securityUtils.getCurrentCompanyId());
         if (candidateMessageEntity != null) {
             return candidateMessageMapper.toDto(candidateMessageEntity);
         } else {
@@ -152,9 +153,10 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
     }
 
     @Override
-    public Page<CandidateMessageDTO> findByCandidateId(Long candidateId, Pageable pageable) {
+    public Page<CandidateMessageDTO> findByCandidateId(Long candidateId, Pageable pageable) throws NotFoundException {
         log.debug("Request to find all candidate message by candidate id : {}", candidateId);
-        return candidateMessageRepository.findAllByCandidate_Id(candidateId, pageable)
+        return candidateMessageRepository
+            .findAllByCandidate_IdAndCandidate_Job_Company_Id(candidateId, securityUtils.getCurrentCompanyId(), pageable)
             .map(candidateMessageMapper::toDto);
     }
 

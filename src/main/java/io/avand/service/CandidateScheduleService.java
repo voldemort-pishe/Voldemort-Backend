@@ -14,12 +14,11 @@ public interface CandidateScheduleService {
 
     CandidateScheduleDTO findById(Long id) throws NotFoundException;
 
-    Page<CandidateScheduleDTO> findByOwnerId(Pageable pageable) throws NotFoundException;
+    Page<CandidateScheduleDTO> findAll(Pageable pageable) throws NotFoundException;
 
-    Page<CandidateScheduleDTO> findByOwnerIdAndDateBetween(ZonedDateTime startDate, ZonedDateTime endDate,Pageable pageable) throws NotFoundException;
+    Page<CandidateScheduleDTO> findByDate(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable) throws NotFoundException;
 
-    Page<CandidateScheduleDTO> findByCandidateId(Long candidateId,Pageable pageable);
-
+    Page<CandidateScheduleDTO> findByCandidateId(Long candidateId, Pageable pageable) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;
 

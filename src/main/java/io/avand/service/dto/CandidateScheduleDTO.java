@@ -6,12 +6,10 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class CandidateScheduleDTO  implements Serializable {
+public class CandidateScheduleDTO implements Serializable {
 
     @NotNull
     private Long id;
-
-    private Long owner;
 
     private ZonedDateTime scheduleDate;
 
@@ -28,14 +26,6 @@ public class CandidateScheduleDTO  implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Long owner) {
-        this.owner = owner;
     }
 
     public ZonedDateTime getScheduleDate() {
@@ -74,7 +64,6 @@ public class CandidateScheduleDTO  implements Serializable {
     public String toString() {
         return "CandidateScheduleDTO{" +
             "id=" + id +
-            ", owner=" + owner +
             ", scheduleDate=" + scheduleDate +
             ", status=" + status +
             ", description='" + description + '\'' +

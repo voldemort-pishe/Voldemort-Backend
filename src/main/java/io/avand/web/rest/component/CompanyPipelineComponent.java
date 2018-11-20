@@ -12,5 +12,5 @@ public interface CompanyPipelineComponent {
 
     ResponseVM<CompanyPipelineDTO> findById(Long id) throws NotFoundException;
 
-    Page<ResponseVM<CompanyPipelineDTO>> findAllByCompany(Long companyId, Pageable pageable) throws NotFoundException;
+    Page<ResponseVM<CompanyPipelineDTO>> findAll(Pageable pageable) throws NotFoundException;
 }

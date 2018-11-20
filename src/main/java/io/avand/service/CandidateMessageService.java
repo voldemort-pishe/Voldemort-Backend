@@ -16,7 +16,7 @@ public interface CandidateMessageService {
 
     CandidateMessageDTO findById(Long id) throws NotFoundException;
 
-    Page<CandidateMessageDTO> findByCandidateId(Long candidateId, Pageable pageable);
+    Page<CandidateMessageDTO> findByCandidateId(Long candidateId, Pageable pageable) throws NotFoundException;
 
     Optional<CandidateMessageDTO> findByMessageId(String messageId);
 

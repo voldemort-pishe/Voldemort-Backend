@@ -4,21 +4,16 @@ import com.codahale.metrics.annotation.Timed;
 
 import io.avand.security.AuthoritiesConstants;
 import io.avand.service.CandidateScheduleService;
-import io.avand.service.CandidateService;
-import io.avand.service.UserService;
 import io.avand.service.dto.CandidateScheduleDTO;
-import io.avand.service.dto.UserDTO;
 import io.avand.web.rest.component.CandidateScheduleComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
-import io.avand.web.rest.vm.CandidateScheduleOwnerDateVM;
-import io.avand.web.rest.vm.CandidateScheduleVm;
+import io.avand.web.rest.vm.CandidateScheduleDateVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -32,8 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -66,7 +59,9 @@ public class CandidateScheduleResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity<ResponseVM<CandidateScheduleDTO>> create(@RequestBody CandidateScheduleDTO CandidateScheduleDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<CandidateScheduleDTO>> create
+    (@RequestBody CandidateScheduleDTO CandidateScheduleDTO)
+        throws URISyntaxException {
         log.debug("REST request to save CandidateScheduleDTO : {}", CandidateScheduleDTO);
         if (CandidateScheduleDTO.getId() != null) {
             throw new BadRequestAlertException("A new CandidateScheduleDTO cannot already have an ID", ENTITY_NAME, "idexists");
@@ -92,7 +87,9 @@ public class CandidateScheduleResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity<ResponseVM<CandidateScheduleDTO>> update(@RequestBody CandidateScheduleDTO CandidateScheduleDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<CandidateScheduleDTO>> update
+    (@RequestBody CandidateScheduleDTO CandidateScheduleDTO)
+        throws URISyntaxException {
         log.debug("REST request to update CandidateScheduleDTO : {}", CandidateScheduleDTO);
         if (CandidateScheduleDTO.getId() == null) {
             return create(CandidateScheduleDTO);
@@ -125,24 +122,27 @@ public class CandidateScheduleResource {
         }
     }
 
-    @GetMapping("/owner")
+    @GetMapping
     @Timed
-    public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getByOwner(@ApiParam Pageable pageable) {
-        log.debug("REST Request to get CandidateSchedule by owner");
+    public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getAll(@ApiParam Pageable pageable) {
+        log.debug("REST Request to get CandidateSchedules");
         try {
-            Page<ResponseVM<CandidateScheduleDTO>> candidateScheduleDTOS = candidateScheduleComponent.findByOwner(pageable);
+            Page<ResponseVM<CandidateScheduleDTO>> candidateScheduleDTOS =
+                candidateScheduleComponent.findAll(pageable);
             return new ResponseEntity<>(candidateScheduleDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
 
-    @PostMapping("/owner")
+    @PostMapping("/time")
     @Timed
-    public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getByOwnerTimed(@ApiParam Pageable pageable, @RequestBody CandidateScheduleOwnerDateVM ownerDateVM) {
-        log.debug("REST Request to get CandidateSchedule by date : {}", ownerDateVM);
+    public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getByTime
+        (@ApiParam Pageable pageable, @RequestBody CandidateScheduleDateVM dateVM) {
+        log.debug("REST Request to get CandidateSchedules by date : {}", dateVM);
         try {
-            Page<ResponseVM<CandidateScheduleDTO>> candidateScheduleDTOS = candidateScheduleComponent.findByOwnerAndDate(ownerDateVM.getStartDate(), ownerDateVM.getEndDate(), pageable);
+            Page<ResponseVM<CandidateScheduleDTO>> candidateScheduleDTOS =
+                candidateScheduleComponent.findByDate(dateVM.getStartDate(), dateVM.getEndDate(), pageable);
             return new ResponseEntity<>(candidateScheduleDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -151,10 +151,12 @@ public class CandidateScheduleResource {
 
     @GetMapping("/candidate/{id}")
     @Timed
-    public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getByCandidateId(@ApiParam Pageable pageable, @PathVariable("id") Long candidateId) {
+    public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getByCandidateId
+        (@ApiParam Pageable pageable, @PathVariable("id") Long candidateId) {
         log.debug("REST Request to get by candidateId : {}", candidateId);
         try {
-            Page<ResponseVM<CandidateScheduleDTO>> candidateScheduleDTOS = candidateScheduleComponent.findByCandidate(candidateId, pageable);
+            Page<ResponseVM<CandidateScheduleDTO>> candidateScheduleDTOS =
+                candidateScheduleComponent.findByCandidate(candidateId, pageable);
             return new ResponseEntity<>(candidateScheduleDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

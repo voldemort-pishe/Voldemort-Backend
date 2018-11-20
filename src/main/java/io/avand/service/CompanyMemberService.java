@@ -9,13 +9,15 @@ import java.util.List;
 
 public interface CompanyMemberService {
 
-    List<CompanyMemberDTO> save(List<String> emails,Long companyId) throws NotFoundException;
+    List<CompanyMemberDTO> save(List<String> emails) throws NotFoundException;
 
     CompanyMemberDTO findById(Long id) throws NotFoundException;
 
-    Page<CompanyMemberDTO> findAll(Long companyId, Pageable pageable) throws NotFoundException;
+    CompanyMemberDTO findByUserId(Long userId) throws NotFoundException;
 
-    Page<CompanyMemberDTO> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException;
+    Page<CompanyMemberDTO> findAll(Pageable pageable) throws NotFoundException;
+
+    Page<CompanyMemberDTO> findAllActiveMember(Pageable pageable) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;
 

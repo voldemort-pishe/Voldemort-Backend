@@ -1,6 +1,9 @@
 package io.avand.security;
 
+import io.avand.domain.entity.jpa.CompanyMemberEntity;
+import io.avand.repository.jpa.CompanyMemberRepository;
 import io.avand.service.UserService;
+import io.avand.service.dto.CompanyMemberDTO;
 import io.avand.service.dto.UserDTO;
 import javassist.NotFoundException;
 import org.springframework.security.core.context.SecurityContext;
@@ -8,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 /**
@@ -19,10 +21,14 @@ public class SecurityUtils {
 
 
     private final UserService userService;
+    private final CompanyMemberRepository companyMemberRepository;
 
-    private SecurityUtils(UserService userService) {
+    public SecurityUtils(UserService userService,
+                         CompanyMemberRepository companyMemberRepository) {
         this.userService = userService;
+        this.companyMemberRepository = companyMemberRepository;
     }
+
 
     /**
      * Get the login of the current user.
@@ -55,6 +61,12 @@ public class SecurityUtils {
         } else {
             throw new NotFoundException("You Should Login First");
         }
+    }
+
+    public Long getCurrentCompanyId() throws NotFoundException {
+        Long userId = getCurrentUserId();
+        CompanyMemberEntity companyMemberDTO = companyMemberRepository.findByUser_Id(userId);
+        return companyMemberDTO.getCompany().getId();
     }
 
     /**

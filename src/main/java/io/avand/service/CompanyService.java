@@ -15,10 +15,6 @@ public interface CompanyService {
 
     CompanyDTO findBySubDomain(String subDomain) throws NotFoundException;
 
-    Page<CompanyDTO> findAll(Pageable pageable) throws NotFoundException;
-
-    List<CompanyDTO> findAll() throws NotFoundException;
-
     void delete(Long id) throws NotFoundException;
 
 }

@@ -28,20 +28,17 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
     private final Logger log = LoggerFactory.getLogger(CandidateScheduleServiceImpl.class);
     private final CandidateScheduleRepository candidateScheduleRepository;
     private final CandidateScheduleMapper candidateScheduleMapper;
-    private final UserRepository userRepository;
     private final SecurityUtils securityUtils;
     private final CandidateRepository candidateRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public CandidateScheduleServiceImpl(CandidateScheduleRepository candidateScheduleRepository,
                                         CandidateScheduleMapper candidateScheduleMapper,
-                                        UserRepository userRepository,
                                         SecurityUtils securityUtils,
                                         CandidateRepository candidateRepository,
                                         ApplicationEventPublisher eventPublisher) {
         this.candidateScheduleRepository = candidateScheduleRepository;
         this.candidateScheduleMapper = candidateScheduleMapper;
-        this.userRepository = userRepository;
         this.securityUtils = securityUtils;
         this.candidateRepository = candidateRepository;
         this.eventPublisher = eventPublisher;
@@ -50,30 +47,24 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
     @Override
     public CandidateScheduleDTO save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException {
         log.debug("Request to save schedule for candidate : {}", candidateScheduleDTO);
-        UserEntity ownerEntity = userRepository.findOne(candidateScheduleDTO.getOwner());
-        if (ownerEntity != null) {
-            CandidateEntity candidateEntity = candidateRepository.findOne(candidateScheduleDTO.getCandidateId());
-            if (candidateEntity != null) {
-                CandidateScheduleEntity candidateScheduleEntity = candidateScheduleMapper.toEntity(candidateScheduleDTO);
-                candidateScheduleEntity.setCandidate(candidateEntity);
-                candidateScheduleEntity = candidateScheduleRepository.save(candidateScheduleEntity);
+        CandidateEntity candidateEntity = candidateRepository.findOne(candidateScheduleDTO.getCandidateId());
+        if (candidateEntity != null) {
+            CandidateScheduleEntity candidateScheduleEntity = candidateScheduleMapper.toEntity(candidateScheduleDTO);
+            candidateScheduleEntity.setCandidate(candidateEntity);
+            candidateScheduleEntity = candidateScheduleRepository.save(candidateScheduleEntity);
 
-                String name = candidateEntity.getFirstName() + " " + candidateEntity.getLastName();
+            String name = candidateEntity.getFirstName() + " " + candidateEntity.getLastName();
 
-                CustomEvent customEvent = new CustomEvent(this);
-                customEvent.setTitle(name);
-                customEvent.setDescription("۱ رویداد زمان‌بندی شده");
-                customEvent.setType(EventType.SCHEDULE);
-                customEvent.setExtra(candidateScheduleEntity.getId().toString());
-                customEvent.setOwner(ownerEntity.getId());
-                eventPublisher.publishEvent(customEvent);
+            CustomEvent customEvent = new CustomEvent(this);
+            customEvent.setTitle(name);
+            customEvent.setDescription("۱ رویداد زمان‌بندی شده");
+            customEvent.setType(EventType.SCHEDULE);
+            customEvent.setExtra(candidateScheduleEntity.getId().toString());
+            eventPublisher.publishEvent(customEvent);
 
-                return candidateScheduleMapper.toDto(candidateScheduleEntity);
-            } else {
-                throw new NotFoundException("Candidate not Found");
-            }
+            return candidateScheduleMapper.toDto(candidateScheduleEntity);
         } else {
-            throw new NotFoundException("Owner Not Found");
+            throw new NotFoundException("Candidate not Found");
         }
     }
 
@@ -82,37 +73,37 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
         log.debug("Request to find schedule of candidate by id : {}", id);
         CandidateScheduleEntity candidateScheduleEntity = candidateScheduleRepository.findOne(id);
         if (candidateScheduleEntity != null) {
-            if (candidateScheduleEntity.getOwner().equals(securityUtils.getCurrentUserId())) {
-                return candidateScheduleMapper.toDto(candidateScheduleEntity);
-            } else {
-                throw new SecurityException("You Don't Have Access To Get This Info");
-            }
+            return candidateScheduleMapper.toDto(candidateScheduleEntity);
         } else {
             throw new NotFoundException("Schedule Not Found");
         }
     }
 
     @Override
-    public Page<CandidateScheduleDTO> findByOwnerId(Pageable pageable) throws NotFoundException {
+    public Page<CandidateScheduleDTO> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find schedules of candidates by owner");
         return candidateScheduleRepository
-            .findAllByOwner(securityUtils.getCurrentUserId(), pageable)
+            .findAllByCandidate_Job_Company_Id(securityUtils.getCurrentCompanyId(), pageable)
             .map(candidateScheduleMapper::toDto);
     }
 
     @Override
-    public Page<CandidateScheduleDTO> findByOwnerIdAndDateBetween(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable) throws NotFoundException {
+    public Page<CandidateScheduleDTO> findByDate(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable)
+        throws NotFoundException {
         log.debug("Request to find schedule of candidate by ownerId and dates : {}, {}", startDate, endDate);
         return candidateScheduleRepository
-            .findAllByOwnerAndScheduleDateAfterAndScheduleDateBefore(securityUtils.getCurrentUserId(), startDate, endDate, pageable)
+            .findAllByCandidate_Job_Company_IdAndScheduleDateAfterAndScheduleDateBefore
+                (securityUtils.getCurrentCompanyId(), startDate, endDate, pageable)
             .map(candidateScheduleMapper::toDto);
     }
 
     @Override
-    public Page<CandidateScheduleDTO> findByCandidateId(Long candidateId, Pageable pageable) {
+    public Page<CandidateScheduleDTO> findByCandidateId(Long candidateId, Pageable pageable)
+        throws NotFoundException {
         log.debug("Request to find schedules of candidate : {}", candidateId);
         return candidateScheduleRepository
-            .findAllByCandidate_Id(candidateId, pageable)
+            .findAllByCandidate_IdAndCandidate_Job_Company_Id
+                (candidateId, securityUtils.getCurrentCompanyId(), pageable)
             .map(candidateScheduleMapper::toDto);
     }
 
@@ -121,11 +112,7 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
         log.debug("Request to delete schedule of candidate");
         CandidateScheduleEntity candidateScheduleEntity = candidateScheduleRepository.findOne(id);
         if (candidateScheduleEntity != null) {
-            if (candidateScheduleEntity.getOwner().equals(securityUtils.getCurrentUserId())) {
-                candidateScheduleRepository.delete(candidateScheduleEntity);
-            } else {
-                throw new SecurityException("You Don't Have Access to remove this schedule");
-            }
+            candidateScheduleRepository.delete(candidateScheduleEntity);
         } else {
             throw new NotFoundException("Schedule Not Found");
         }

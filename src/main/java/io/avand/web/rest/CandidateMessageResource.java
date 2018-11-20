@@ -37,6 +37,7 @@ public class CandidateMessageResource {
     private final CandidateMessageService candidateMessageService;
     private final CandidateMessageComponent candidateMessageComponent;
 
+
     public CandidateMessageResource(CandidateMessageService candidateMessageService,
                                     CandidateMessageComponent candidateMessageComponent) {
         this.candidateMessageService = candidateMessageService;
@@ -45,7 +46,9 @@ public class CandidateMessageResource {
 
     @PostMapping
     @Timed
-    public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateMessage(@Valid @RequestBody CandidateMessageDTO candidateMessageDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateMessage
+        (@Valid @RequestBody CandidateMessageDTO candidateMessageDTO)
+        throws URISyntaxException {
         log.debug("REST request to save candidateMessage : {}", candidateMessageDTO);
         if (candidateMessageDTO.getId() != null) {
             throw new BadRequestAlertException("A new candidateEntity cannot already have an ID", ENTITY_NAME, "idexists");
@@ -62,7 +65,9 @@ public class CandidateMessageResource {
 
     @PutMapping
     @Timed
-    public ResponseEntity<ResponseVM<CandidateMessageDTO>> updateCandidateMessage(@Valid @RequestBody CandidateMessageDTO candidateMessageDTO) throws URISyntaxException {
+    public ResponseEntity<ResponseVM<CandidateMessageDTO>> updateCandidateMessage
+        (@Valid @RequestBody CandidateMessageDTO candidateMessageDTO)
+        throws URISyntaxException {
         log.debug("REST request to update candidateMessageDTO : {}", candidateMessageDTO);
         if (candidateMessageDTO.getId() == null) {
             return createCandidateMessage(candidateMessageDTO);
@@ -79,10 +84,12 @@ public class CandidateMessageResource {
 
     @GetMapping("/candidate/{candidateId}")
     @Timed
-    public ResponseEntity<Page<ResponseVM<CandidateMessageDTO>>> getAllCandidateByCandidateId(@PathVariable("candidateId") Long candidateId, @ApiParam Pageable page) {
-        log.debug("REST request to get all CandidateMessageDtos by candidate id : {}", candidateId);
+    public ResponseEntity<Page<ResponseVM<CandidateMessageDTO>>> getAllCandidateByCandidateId
+        (@PathVariable("candidateId") Long candidateId, @ApiParam Pageable page) {
+        log.debug("REST request to get all CandidateMessageDTOs by candidate id : {}", candidateId);
         try {
-            Page<ResponseVM<CandidateMessageDTO>> candidateDTOS = candidateMessageComponent.findByCandidateId(candidateId, page);
+            Page<ResponseVM<CandidateMessageDTO>> candidateDTOS =
+                candidateMessageComponent.findByCandidateId(candidateId, page);
             return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

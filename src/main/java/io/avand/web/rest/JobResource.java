@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 
 import io.avand.domain.enumeration.JobStatus;
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.SecurityUtils;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
 import io.avand.service.util.RandomUtil;
@@ -46,13 +47,15 @@ public class JobResource {
     private final JobService jobService;
 
     private final JobComponent jobComponent;
+    private final SecurityUtils securityUtils;
 
     public JobResource(JobService jobService,
-                       JobComponent jobComponent) {
+                       JobComponent jobComponent,
+                       SecurityUtils securityUtils) {
         this.jobService = jobService;
         this.jobComponent = jobComponent;
+        this.securityUtils = securityUtils;
     }
-
 
     /**
      * POST  /job : Create a new jobEntity.
@@ -63,15 +66,13 @@ public class JobResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity<ResponseVM<JobDTO>> createJob(@Valid @RequestBody JobDTO jobDTO,
-                                                        @RequestAttribute("companyId") Long companyId)
+    public ResponseEntity<ResponseVM<JobDTO>> createJob(@Valid @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
         log.debug("REST request to save Job : {}", jobDTO);
         if (jobDTO.getId() != null) {
             throw new BadRequestAlertException("A new jobEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            jobDTO.setCompanyId(companyId);
             jobDTO.setUniqueId(RandomUtil.getUniqueId());
             jobDTO.setStatus(JobStatus.OPEN);
             ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
@@ -94,37 +95,18 @@ public class JobResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity<ResponseVM<JobDTO>> updateJob(@Valid @RequestBody JobDTO jobDTO,
-                                                        @RequestAttribute("companyId") Long companyId)
+    public ResponseEntity<ResponseVM<JobDTO>> updateJob(@Valid @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
         log.debug("REST request to update Job : {}", jobDTO);
         if (jobDTO.getId() == null) {
-            return createJob(jobDTO, companyId);
+            return createJob(jobDTO);
         }
         try {
-            jobDTO.setCompanyId(companyId);
             ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, jobDTO.getId().toString()))
                 .body(result);
         } catch (NotFoundException | SecurityException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
-    /**
-     * GET  /job : get all the jobEntities.
-     *
-     * @return the ResponseEntity with status 200 (OK) and the list of jobEntities in body
-     */
-    @GetMapping
-    @Timed
-    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJob(@ApiParam Pageable pageable) {
-        log.debug("REST request to get all Job");
-        try {
-            Page<ResponseVM<JobDTO>> jobDTOS = jobComponent.findAll(pageable);
-            return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -148,6 +130,24 @@ public class JobResource {
     }
 
     /**
+     * GET  /job/company-list/{id} : get all the jobEntities by company id.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of jobEntities in body
+     */
+    @GetMapping
+    @Timed
+    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJob(@ApiParam Pageable pageable,
+                                                              JobFilterVM filterVM) {
+        log.debug("REST request to get all Job");
+        try {
+            Page<ResponseVM<JobDTO>> jobDTOs = jobComponent.findAllByFilter(filterVM, pageable);
+            return new ResponseEntity<>(jobDTOs, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    /**
      * DELETE  /job/:id : delete the "id" jobEntity.
      *
      * @param id the id of the jobEntity to delete
@@ -164,26 +164,4 @@ public class JobResource {
             throw new ServerErrorException(e.getMessage());
         }
     }
-
-
-    /**
-     * GET  /job/company-list/{id} : get all the jobEntities by company id.
-     *
-     * @return the ResponseEntity with status 200 (OK) and the list of jobEntities in body
-     */
-    @GetMapping("/company-list")
-    @Timed
-    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJobByCompany(@ApiParam Pageable pageable,
-                                                                       @RequestAttribute("companyId") Long companyId,
-                                                                       JobFilterVM filterVM) {
-        log.debug("REST request to get all Job");
-        try {
-            filterVM.setCompany(companyId);
-            Page<ResponseVM<JobDTO>> jobDTOS = jobComponent.findAllByCompany(filterVM, pageable);
-            return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
 }

@@ -63,31 +63,17 @@ public class JobComponentImpl implements JobComponent {
     }
 
     @Override
-    public Page<ResponseVM<JobDTO>> findAll(Pageable pageable) throws NotFoundException {
-        log.debug("Request to findAll jobDTO via component");
-        Page<JobDTO> jobDTOS = jobService.findAll(pageable);
+    public Page<ResponseVM<JobDTO>> findAllByFilter(JobFilterVM filterVM, Pageable pageable) throws NotFoundException {
+        log.debug("Request to findAll jobDTO by filter via component : {}", filterVM);
+        Page<JobDTO> jobDTOs = jobService.findAllByFilter(pageable, filterVM);
         List<ResponseVM<JobDTO>> responseVMS = new ArrayList<>();
-        for (JobDTO jobDTO : jobDTOS) {
+        for (JobDTO jobDTO : jobDTOs) {
             ResponseVM<JobDTO> responseVM = new ResponseVM<>();
             responseVM.setData(jobDTO);
             responseVM.setInclude(this.createIncluded(jobDTO));
             responseVMS.add(responseVM);
         }
-        return new PageMaker<>(responseVMS, jobDTOS);
-    }
-
-    @Override
-    public Page<ResponseVM<JobDTO>> findAllByCompany(JobFilterVM filterVM, Pageable pageable) throws NotFoundException {
-        log.debug("Request to findAll jobDTO by companyId via component : {}", filterVM.getCompany());
-        Page<JobDTO> jobDTOS = jobService.findAllByCompanyId(pageable, filterVM);
-        List<ResponseVM<JobDTO>> responseVMS = new ArrayList<>();
-        for (JobDTO jobDTO : jobDTOS) {
-            ResponseVM<JobDTO> responseVM = new ResponseVM<>();
-            responseVM.setData(jobDTO);
-            responseVM.setInclude(this.createIncluded(jobDTO));
-            responseVMS.add(responseVM);
-        }
-        return new PageMaker<>(responseVMS, jobDTOS);
+        return new PageMaker<>(responseVMS, jobDTOs);
     }
 
     private Map<String, Object> createIncluded(JobDTO jobDTO) throws NotFoundException {

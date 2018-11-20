@@ -3,7 +3,7 @@ package io.avand.web.rest.vm;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class CandidateScheduleOwnerDateVM implements Serializable {
+public class CandidateScheduleDateVM implements Serializable {
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
 
@@ -25,7 +25,7 @@ public class CandidateScheduleOwnerDateVM implements Serializable {
 
     @Override
     public String toString() {
-        return "CandidateScheduleOwnerDateVM{" +
+        return "CandidateScheduleDateVM{" +
             "startDate=" + startDate +
             ", endDate=" + endDate +
             '}';

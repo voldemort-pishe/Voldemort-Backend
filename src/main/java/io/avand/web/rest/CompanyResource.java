@@ -3,6 +3,7 @@ package io.avand.web.rest;
 import com.codahale.metrics.annotation.Timed;
 
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.SecurityUtils;
 import io.avand.service.CloudflareService;
 import io.avand.service.CompanyService;
 import io.avand.service.dto.CloudflareRequestDTO;
@@ -38,17 +39,19 @@ public class CompanyResource {
 
     private final CompanyService companyService;
     private final CloudflareService cloudflareService;
+    private final SecurityUtils securityUtils;
 
     private final CompanyComponent companyComponent;
 
     public CompanyResource(CompanyService companyService,
                            CloudflareService cloudflareService,
+                           SecurityUtils securityUtils,
                            CompanyComponent companyComponent) {
         this.companyService = companyService;
         this.cloudflareService = cloudflareService;
+        this.securityUtils = securityUtils;
         this.companyComponent = companyComponent;
     }
-
 
     /**
      * POST  /company : Create a new companyEntity.
@@ -115,15 +118,14 @@ public class CompanyResource {
     /**
      * GET  /company/:id : get the "id" companyEntity.
      *
-     * @param id the id of the companyEntity to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the companyEntity, or with status 404 (Not Found)
      */
     @GetMapping
     @Timed
-    public ResponseEntity<ResponseVM<CompanyDTO>> getCompany(@RequestAttribute("companyId") Long id) {
-        log.debug("REST request to get CompanyEntity : {}", id);
+    public ResponseEntity<ResponseVM<CompanyDTO>> getCompany() {
+        log.debug("REST request to get CompanyEntity");
         try {
-            ResponseVM<CompanyDTO> companyDTO = companyComponent.findById(id);
+            ResponseVM<CompanyDTO> companyDTO = companyComponent.findById(securityUtils.getCurrentCompanyId());
             return new ResponseEntity<>(companyDTO, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
@@ -138,7 +140,7 @@ public class CompanyResource {
      */
     @DeleteMapping("/{id}")
     @Timed
-    public ResponseEntity<Void> deleteCompanyEntity(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
         log.debug("REST request to delete CompanyEntity : {}", id);
         try {
             companyService.delete(id);

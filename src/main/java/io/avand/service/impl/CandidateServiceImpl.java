@@ -8,7 +8,6 @@ import io.avand.domain.enumeration.CandidateType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.JobRepository;
-import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
@@ -30,25 +29,21 @@ public class CandidateServiceImpl implements CandidateService {
     private final JobRepository jobRepository;
     private final FileRepository fileRepository;
     private final CandidateMapper candidateMapper;
-    private final SecurityUtils securityUtils;
-    private final UserRepository userRepository;
     private final CandidateSpecification specification;
+    private final SecurityUtils securityUtils;
 
     public CandidateServiceImpl(CandidateRepository candidateRepository,
                                 JobRepository jobRepository,
                                 FileRepository fileRepository,
                                 CandidateMapper candidateMapper,
-                                SecurityUtils securityUtils,
-                                UserRepository userRepository,
-                                CandidateSpecification specification) {
+                                CandidateSpecification specification,
+                                SecurityUtils securityUtils) {
         this.candidateRepository = candidateRepository;
         this.jobRepository = jobRepository;
         this.fileRepository = fileRepository;
         this.candidateMapper = candidateMapper;
-        this.securityUtils = securityUtils;
-
-        this.userRepository = userRepository;
         this.specification = specification;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -101,7 +96,8 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public CandidateDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find candidate by id : {}", id);
-        CandidateEntity candidateEntity = candidateRepository.findOne(id);
+        CandidateEntity candidateEntity =
+            candidateRepository.findByIdAndJob_Company_Id(id, securityUtils.getCurrentCompanyId());
         if (candidateEntity != null) {
             return candidateMapper.toDto(candidateEntity);
         } else {
@@ -110,21 +106,12 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public Page<CandidateDTO> findAll(Pageable pageable) {
-        log.debug("Request to find all candidate");
-        return candidateRepository.findAll(pageable)
-            .map(candidateMapper::toDto);
-    }
-
-    @Override
-    public Page<CandidateDTO> findByJobId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException {
-        return candidateRepository
-            .findAll(specification.getFilter(filterVM), pageable)
-            .map(candidateMapper::toDto);
-    }
-
-    @Override
-    public Page<CandidateDTO> findByCompanyId(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException {
+    public Page<CandidateDTO> findByFilter(CandidateFilterVM filterVM, Pageable pageable)
+        throws NotFoundException {
+        if (filterVM == null) {
+            filterVM = new CandidateFilterVM();
+        }
+        filterVM.setCompany(securityUtils.getCurrentCompanyId());
         return candidateRepository
             .findAll(specification.getFilter(filterVM), pageable)
             .map(candidateMapper::toDto);

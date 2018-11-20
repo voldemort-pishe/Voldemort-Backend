@@ -55,9 +55,11 @@ public class CandidateMessageComponentImpl implements CandidateMessageComponent 
     }
 
     @Override
-    public Page<ResponseVM<CandidateMessageDTO>> findByCandidateId(Long candidateId, Pageable pageable) throws NotFoundException {
+    public Page<ResponseVM<CandidateMessageDTO>> findByCandidateId(Long candidateId, Pageable pageable)
+        throws NotFoundException {
         log.debug("Request to find candidateMessageDTO by candidateId via component : {}", candidateId);
-        Page<CandidateMessageDTO> candidateMessageDTOS = candidateMessageService.findByCandidateId(candidateId, pageable);
+        Page<CandidateMessageDTO> candidateMessageDTOS =
+            candidateMessageService.findByCandidateId(candidateId, pageable);
         List<ResponseVM<CandidateMessageDTO>> responseVMS = new ArrayList<>();
         for (CandidateMessageDTO candidateMessageDTO : candidateMessageDTOS) {
             ResponseVM<CandidateMessageDTO> responseVM = new ResponseVM<>();

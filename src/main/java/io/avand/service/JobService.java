@@ -18,9 +18,7 @@ public interface JobService {
 
     JobDTO findByJobUniqueIdAndCompanySubDomain(String uniqueId,String subDomain) throws NotFoundException;
 
-    Page<JobDTO> findAll(Pageable pageable) throws NotFoundException;
-
-    Page<JobDTO> findAllByCompanyId(Pageable pageable, JobFilterVM filterVM) throws NotFoundException;
+    Page<JobDTO> findAllByFilter(Pageable pageable, JobFilterVM filterVM) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;
 }

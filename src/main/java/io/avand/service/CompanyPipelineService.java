@@ -11,7 +11,7 @@ public interface CompanyPipelineService {
 
     CompanyPipelineDTO save(CompanyPipelineDTO companyPipelineDTO) throws NotFoundException;
 
-    Page<CompanyPipelineDTO> getAllByCompanyId(Long companyId, Pageable pageable) throws NotFoundException;
+    Page<CompanyPipelineDTO> findAll(Pageable pageable) throws NotFoundException;
 
     CompanyPipelineDTO findOne(Long id) throws NotFoundException;
 

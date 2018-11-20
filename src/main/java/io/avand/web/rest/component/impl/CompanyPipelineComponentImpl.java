@@ -56,8 +56,8 @@ public class CompanyPipelineComponentImpl implements CompanyPipelineComponent {
     }
 
     @Override
-    public Page<ResponseVM<CompanyPipelineDTO>> findAllByCompany(Long companyId, Pageable pageable) throws NotFoundException {
-        Page<CompanyPipelineDTO> companyPipelineDTOS = companyPipelineService.getAllByCompanyId(companyId, pageable);
+    public Page<ResponseVM<CompanyPipelineDTO>> findAll(Pageable pageable) throws NotFoundException {
+        Page<CompanyPipelineDTO> companyPipelineDTOS = companyPipelineService.findAll(pageable);
         List<ResponseVM<CompanyPipelineDTO>> responseVMS = new ArrayList<>();
         for (CompanyPipelineDTO companyPipelineDTO : companyPipelineDTOS) {
             ResponseVM<CompanyPipelineDTO> responseVM = new ResponseVM<>();

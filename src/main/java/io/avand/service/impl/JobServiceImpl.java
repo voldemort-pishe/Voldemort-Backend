@@ -51,27 +51,23 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobDTO save(JobDTO jobDTO) throws NotFoundException {
         log.debug("Request to save job : {}", jobDTO);
-        CompanyEntity companyEntity = companyRepository.findOne(jobDTO.getCompanyId());
+        CompanyEntity companyEntity = companyRepository.findOne(securityUtils.getCurrentCompanyId());
         if (companyEntity != null) {
-            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                Optional<UserEntity> hiredManager = userRepository.findById(jobDTO.getHiredManagerId());
-                if (hiredManager.isPresent()) {
-                    Optional<UserEntity> hiredExpert = userRepository.findById(jobDTO.getHiredExpertId());
-                    if (hiredExpert.isPresent()) {
-                        JobEntity jobEntity = jobMapper.toEntity(jobDTO);
-                        jobEntity.setCompany(companyEntity);
-                        jobEntity.setHiredManager(hiredManager.get());
-                        jobEntity.setHiredExpert(hiredExpert.get());
-                        jobEntity = jobRepository.save(jobEntity);
-                        return jobMapper.toDto(jobEntity);
-                    } else {
-                        throw new NotFoundException("Expert Manager Not Available");
-                    }
+            Optional<UserEntity> hiredManager = userRepository.findById(jobDTO.getHiredManagerId());
+            if (hiredManager.isPresent()) {
+                Optional<UserEntity> hiredExpert = userRepository.findById(jobDTO.getHiredExpertId());
+                if (hiredExpert.isPresent()) {
+                    JobEntity jobEntity = jobMapper.toEntity(jobDTO);
+                    jobEntity.setCompany(companyEntity);
+                    jobEntity.setHiredManager(hiredManager.get());
+                    jobEntity.setHiredExpert(hiredExpert.get());
+                    jobEntity = jobRepository.save(jobEntity);
+                    return jobMapper.toDto(jobEntity);
                 } else {
-                    throw new NotFoundException("Hired Manager Not Available");
+                    throw new NotFoundException("Expert Manager Not Available");
                 }
             } else {
-                throw new SecurityException("You Don't Have Access To Create Job For This Company");
+                throw new NotFoundException("Hired Manager Not Available");
             }
         } else {
             throw new NotFoundException("Company Not Available");
@@ -81,19 +77,14 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find job by id : {}", id);
-        JobEntity jobEntity = jobRepository.findOne(id);
+        JobEntity jobEntity = jobRepository.findByIdAndCompany_Id(id, securityUtils.getCurrentCompanyId());
         if (jobEntity != null) {
-            if (jobEntity.getCompany().getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                return jobMapper.toDto(jobEntity);
-            } else {
-                throw new SecurityException("You Don't Have Access To Find This Job");
-            }
+            return jobMapper.toDto(jobEntity);
         } else {
             throw new NotFoundException("Job Not Available");
         }
     }
 
-    //TODO fix this
     @Override
     public JobDTO findByJobUniqueIdAndCompanySubDomain(String uniqueId, String subDomain) throws NotFoundException {
         log.debug("Request to find job by id and company subDomain");
@@ -115,15 +106,11 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Page<JobDTO> findAll(Pageable pageable) throws NotFoundException {
-        log.debug("Request to find all job");
-        return jobRepository.findAllByCompany_User_Id(securityUtils.getCurrentUserId(), pageable)
-            .map(jobMapper::toDto);
-    }
-
-    @Override
-    public Page<JobDTO> findAllByCompanyId(Pageable pageable, JobFilterVM filterVM) {
-        log.debug("Request to find all job");
+    public Page<JobDTO> findAllByFilter(Pageable pageable, JobFilterVM filterVM) throws NotFoundException {
+        log.debug("Request to find all job by filter : {}", filterVM);
+        if (filterVM == null)
+            filterVM = new JobFilterVM();
+        filterVM.setCompany(securityUtils.getCurrentCompanyId());
         return jobRepository.findAll(jobSpecification.getFilter(filterVM), pageable)
             .map(jobMapper::toDto);
     }
@@ -133,11 +120,7 @@ public class JobServiceImpl implements JobService {
         log.debug("Request to delete job by id : {}", id);
         JobEntity jobEntity = jobRepository.findOne(id);
         if (jobEntity != null) {
-            if (jobEntity.getCompany().getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                jobRepository.delete(jobEntity);
-            } else {
-                throw new SecurityException("You Don't Have Access To Delete This Job");
-            }
+            jobRepository.delete(jobEntity);
         } else {
             throw new NotFoundException("Job Not Available");
         }

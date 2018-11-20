@@ -12,12 +12,9 @@ import io.avand.service.mapper.CompanyMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -61,18 +58,13 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find company by id : {}", id);
-        CompanyEntity companyEntity = companyRepository.findOne(id);
-        if (companyEntity != null) {
-            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                return companyMapper.toDto(companyEntity);
-            } else {
-                throw new SecurityException("You Don't have access to find this company");
-            }
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(id);
+        if (companyEntity.isPresent()) {
+            return companyMapper.toDto(companyEntity.get());
         } else {
             throw new NotFoundException("Company Not Found By Id");
         }
     }
-
 
     @Override
     public CompanyDTO findBySubDomain(String subDomain) throws NotFoundException {
@@ -86,31 +78,10 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Page<CompanyDTO> findAll(Pageable pageable) throws NotFoundException {
-        log.debug("Request to find all company");
-        return companyRepository.findAllByUser_Id(securityUtils.getCurrentUserId(), pageable)
-            .map(companyMapper::toDto);
-    }
-
-    @Override
-    public List<CompanyDTO> findAll() throws NotFoundException {
-        log.debug("Request to find all company");
-        return companyRepository.findAllByUser_Id(securityUtils.getCurrentUserId())
-            .stream()
-            .map(companyMapper::toDto)
-            .collect(Collectors.toList());
-    }
-
-    @Override
     public void delete(Long id) throws NotFoundException {
-        Long userId = securityUtils.getCurrentUserId();
         CompanyEntity companyEntity = companyRepository.findOne(id);
         if (companyEntity != null) {
-            if (companyEntity.getUser().getId().equals(userId)) {
-                companyRepository.delete(companyEntity);
-            } else {
-                throw new SecurityException("You Don't have access to delete this company");
-            }
+            companyRepository.delete(companyEntity);
         } else {
             throw new NotFoundException("Company Not Found By Id");
         }

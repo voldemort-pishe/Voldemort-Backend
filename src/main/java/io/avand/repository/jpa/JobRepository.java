@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface JobRepository extends JpaRepository<JobEntity, Long>, JpaSpecificationExecutor<JobEntity> {
 
-    Page<JobEntity> findAllByCompany_User_Id(Long id, Pageable pageable);
+    JobEntity findByIdAndCompany_Id(Long id, Long companyId);
 
     Page<JobEntity> findAllByCompany_Id(Pageable pageable, Long id);
 

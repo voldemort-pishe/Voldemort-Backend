@@ -25,9 +25,9 @@ public interface CandidateScheduleComponent {
 
     ResponseVM<CandidateScheduleDTO> findById(Long id) throws NotFoundException;
 
-    Page<ResponseVM<CandidateScheduleDTO>> findByOwner(Pageable pageable) throws NotFoundException;
+    Page<ResponseVM<CandidateScheduleDTO>> findAll(Pageable pageable) throws NotFoundException;
 
-    Page<ResponseVM<CandidateScheduleDTO>> findByOwnerAndDate(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable) throws NotFoundException;
+    Page<ResponseVM<CandidateScheduleDTO>> findByDate(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable) throws NotFoundException;
 
     Page<ResponseVM<CandidateScheduleDTO>> findByCandidate(Long candidateId, Pageable pageable) throws NotFoundException;
 }

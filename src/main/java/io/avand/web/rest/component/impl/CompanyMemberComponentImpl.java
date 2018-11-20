@@ -42,9 +42,9 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
     }
 
     @Override
-    public List<ResponseVM<CompanyMemberDTO>> save(List<String> emails, Long companyId) throws NotFoundException {
+    public List<ResponseVM<CompanyMemberDTO>> save(List<String> emails) throws NotFoundException {
         log.debug("Request to save companyMemberDTO via component");
-        List<CompanyMemberDTO> companyMemberDTOS = companyMemberService.save(emails, companyId);
+        List<CompanyMemberDTO> companyMemberDTOS = companyMemberService.save(emails);
         List<ResponseVM<CompanyMemberDTO>> responseVMS = new ArrayList<>();
         for (CompanyMemberDTO companyMemberDTO : companyMemberDTOS) {
             ResponseVM<CompanyMemberDTO> responseVM = new ResponseVM<>();
@@ -65,8 +65,8 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
     }
 
     @Override
-    public Page<ResponseVM<CompanyMemberDTO>> findAll(Long companyId, Pageable pageable) throws NotFoundException {
-        Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAll(companyId, pageable);
+    public Page<ResponseVM<CompanyMemberDTO>> findAll(Pageable pageable) throws NotFoundException {
+        Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAll(pageable);
         List<ResponseVM<CompanyMemberDTO>> responseVMS = new ArrayList<>();
         for (CompanyMemberDTO companyMemberDTO : companyMemberDTOS) {
             ResponseVM<CompanyMemberDTO> responseVM = new ResponseVM<>();
@@ -77,10 +77,9 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
         return new PageMaker<>(responseVMS, companyMemberDTOS);
     }
 
-
     @Override
-    public Page<ResponseVM<CompanyMemberDTO>> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException {
-        Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAllActiveMember(companyId, pageable);
+    public Page<ResponseVM<CompanyMemberDTO>> findAllActiveMember(Pageable pageable) throws NotFoundException {
+        Page<CompanyMemberDTO> companyMemberDTOS = companyMemberService.findAllActiveMember(pageable);
         List<ResponseVM<CompanyMemberDTO>> responseVMS = new ArrayList<>();
         for (CompanyMemberDTO companyMemberDTO : companyMemberDTOS) {
             ResponseVM<CompanyMemberDTO> responseVM = new ResponseVM<>();

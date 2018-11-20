@@ -17,14 +17,14 @@ public class CompanyInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        List<CompanyDTO> companyDTOS = companyService.findAll();
-        if (!companyDTOS.isEmpty()) {
-            httpServletRequest.setAttribute("companyId", companyDTOS.get(0).getId());
+//        List<CompanyDTO> companyDTOS = companyService.findAll();
+//        if (!companyDTOS.isEmpty()) {
+            httpServletRequest.setAttribute("companyId",1);
             return true;
-        } else {
-            httpServletResponse.sendError(400, "You Should Create Company First");
-            return false;
-        }
+//        } else {
+//            httpServletResponse.sendError(400, "You Should Create Company First");
+//            return false;
+//        }
     }
 
     @Override

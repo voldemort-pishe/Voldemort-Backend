@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CompanyMemberServiceImpl implements CompanyMemberService {
@@ -50,40 +49,35 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
-    public List<CompanyMemberDTO> save(List<String> emails, Long companyId) throws NotFoundException {
-        log.debug("Request to save company member : {}", companyId);
-        CompanyEntity companyEntity = companyRepository.findOne(companyId);
+    public List<CompanyMemberDTO> save(List<String> emails) throws NotFoundException {
+        log.debug("Request to save company member : {}");
+        CompanyEntity companyEntity = companyRepository.findOne(securityUtils.getCurrentCompanyId());
         if (companyEntity != null) {
+            List<CompanyMemberEntity> companyMemberEntities = new ArrayList<>();
+            for (String userEmail : emails) {
+                Optional<UserEntity> userEntityOp = userRepository.findByLogin(userEmail);
+                UserEntity userEntity;
+                if (!userEntityOp.isPresent()) {
+                    UserEntity user = new UserEntity();
+                    user.setLogin(userEmail);
+                    user.setEmail(userEmail);
+                    user.setInvitationKey(RandomUtil.generateInvitationKey());
+                    userEntity = userRepository.save(user);
 
-            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                List<CompanyMemberEntity> companyMemberEntities = new ArrayList<>();
-                for (String userEmail : emails) {
-                    Optional<UserEntity> userEntityOp = userRepository.findByLogin(userEmail);
-                    UserEntity userEntity;
-                    if (!userEntityOp.isPresent()) {
-                        UserEntity user = new UserEntity();
-                        user.setLogin(userEmail);
-                        user.setEmail(userEmail);
-                        user.setInvitationKey(RandomUtil.generateInvitationKey());
-                        userEntity = userRepository.save(user);
-
-                        mailService.sendInviationMemberEmailWithRegister(userEntity);
-                    } else {
-                        userEntity = userEntityOp.get();
-                        mailService.sendInviationMemberEmail(userEntity);
-                    }
-
-                    CompanyMemberEntity companyMemberEntity = new CompanyMemberEntity();
-                    companyMemberEntity.setUser(userEntity);
-                    companyMemberEntity.setCompany(companyEntity);
-
-                    companyMemberEntity = companyMemberRepository.save(companyMemberEntity);
-                    companyMemberEntities.add(companyMemberEntity);
+                    mailService.sendInviationMemberEmailWithRegister(userEntity);
+                } else {
+                    userEntity = userEntityOp.get();
+                    mailService.sendInviationMemberEmail(userEntity);
                 }
-                return companyMemberMapper.toDto(companyMemberEntities);
-            } else {
-                throw new SecurityException("You Don't Have Access To Add Member to this Company");
+
+                CompanyMemberEntity companyMemberEntity = new CompanyMemberEntity();
+                companyMemberEntity.setUser(userEntity);
+                companyMemberEntity.setCompany(companyEntity);
+
+                companyMemberEntity = companyMemberRepository.save(companyMemberEntity);
+                companyMemberEntities.add(companyMemberEntity);
             }
+            return companyMemberMapper.toDto(companyMemberEntities);
         } else {
             throw new NotFoundException("Company Not Available");
         }
@@ -92,31 +86,39 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     @Override
     public CompanyMemberDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find company member by id");
-        CompanyMemberEntity companyMemberEntity = companyMemberRepository.findOne(id);
+        CompanyMemberEntity companyMemberEntity = companyMemberRepository
+            .findByIdAndCompany_Id(id, securityUtils.getCurrentCompanyId());
         if (companyMemberEntity != null) {
-            if (companyMemberEntity.getCompany().getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                return companyMemberMapper.toDto(companyMemberEntity);
-            } else {
-                throw new SecurityException("You Don't Have Access to find this company Member");
-            }
+            return companyMemberMapper.toDto(companyMemberEntity);
         } else {
             throw new NotFoundException("Company Member not Available");
         }
     }
 
     @Override
-    public Page<CompanyMemberDTO> findAll(Long companyId, Pageable pageable) throws NotFoundException {
-        log.debug("Request to find all company member by id : {}", companyId);
+    public CompanyMemberDTO findByUserId(Long userId) throws NotFoundException {
+        log.debug("Request to find companyMember by userId : {}", userId);
+        CompanyMemberEntity companyMemberEntity = companyMemberRepository.findByUser_Id(userId);
+        if (companyMemberEntity != null) {
+            return companyMemberMapper.toDto(companyMemberEntity);
+        } else {
+            throw new NotFoundException("Company Member Not Found");
+        }
+    }
+
+    @Override
+    public Page<CompanyMemberDTO> findAll(Pageable pageable) throws NotFoundException {
+        log.debug("Request to find all company member");
         return companyMemberRepository
-            .findAllByCompany_User_IdAndCompany_Id(securityUtils.getCurrentUserId(), companyId, pageable)
+            .findAllByCompany_Id(securityUtils.getCurrentCompanyId(), pageable)
             .map(companyMemberMapper::toDto);
     }
 
     @Override
-    public Page<CompanyMemberDTO> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException {
-        log.debug("Request to find all active company member by id : {}", companyId);
+    public Page<CompanyMemberDTO> findAllActiveMember(Pageable pageable) throws NotFoundException {
+        log.debug("Request to find all active company member");
         return companyMemberRepository
-            .findAllByCompany_User_IdAndUser_ActivatedAndCompany_Id(securityUtils.getCurrentUserId(), true, companyId, pageable)
+            .findAllByUser_ActivatedAndCompany_Id(true, securityUtils.getCurrentCompanyId(), pageable)
             .map(companyMemberMapper::toDto);
     }
 
@@ -125,11 +127,7 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
         log.debug("Request to delete company member by id : {}", id);
         CompanyMemberEntity companyMemberEntity = companyMemberRepository.findOne(id);
         if (companyMemberEntity != null) {
-            if (companyMemberEntity.getCompany().getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                companyMemberRepository.delete(companyMemberEntity);
-            } else {
-                throw new SecurityException("You Don't Have Access To Delete this company Member");
-            }
+            companyMemberRepository.delete(companyMemberEntity);
         } else {
             throw new NotFoundException("Company Member Not Available");
         }

@@ -3,19 +3,14 @@ package io.avand.web.rest;
 import com.codahale.metrics.annotation.Timed;
 
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.SecurityUtils;
 import io.avand.service.CommentService;
-import io.avand.service.dto.CandidateDTO;
 import io.avand.service.dto.CommentDTO;
-import io.avand.service.dto.UserDTO;
 import io.avand.web.rest.component.CommentComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
-import io.avand.web.rest.vm.CommentCandidateVM;
-import io.avand.web.rest.vm.CommentUserVM;
-import io.avand.web.rest.vm.CommentVM;
 import io.avand.web.rest.vm.response.ResponseVM;
-import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -29,10 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * REST controller for managing CommentEntity.
@@ -49,6 +40,7 @@ public class CommentResource {
     private final CommentService commentService;
 
     private final CommentComponent commentComponent;
+
 
     public CommentResource(CommentService commentService,
                            CommentComponent commentComponent) {
@@ -108,23 +100,6 @@ public class CommentResource {
     }
 
     /**
-     * GET  /comment : get all the commentEntities.
-     *
-     * @return the ResponseEntity with status 200 (OK) and the list of commentEntities in body
-     */
-    @GetMapping
-    @Timed
-    public ResponseEntity<Page<ResponseVM<CommentDTO>>> getAllCommentEntities(@ApiParam Pageable pageable) {
-        log.debug("REST request to get all Comment");
-        try {
-            Page<ResponseVM<CommentDTO>> commentDTOS = commentComponent.findAll(pageable);
-            return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
-    /**
      * GET  /comment/:id : get the "id" commentEntity.
      *
      * @param id the id of the commentEntity to retrieve
@@ -142,6 +117,26 @@ public class CommentResource {
         }
     }
 
+
+    /**
+     * GET  /candidate-comment/:id : get the "id" candidate.
+     *
+     * @param id the id of the canidate to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the commentEntity, or with status 404 (Not Found)
+     */
+    @GetMapping("/candidate/{id}")
+    @Timed
+    public ResponseEntity<Page<ResponseVM<CommentDTO>>> getCandidateComment(@PathVariable Long id, @ApiParam Pageable pageable) {
+        log.debug("REST request to get all Comment");
+        try {
+            Page<ResponseVM<CommentDTO>> commentDTOS =
+                commentComponent.findByCandidateId(id, pageable);
+            return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
     /**
      * DELETE  /comment/:id : delete the "id" commentEntity.
      *
@@ -154,23 +149,5 @@ public class CommentResource {
         log.debug("REST request to delete Comment : {}", id);
         commentService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-    }
-
-    /**
-     * GET  /candidate-comment/:id : get the "id" candidate.
-     *
-     * @param id the id of the canidate to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the commentEntity, or with status 404 (Not Found)
-     */
-    @GetMapping("/candidate-comment/{id}")
-    @Timed
-    public ResponseEntity<Page<ResponseVM<CommentDTO>>> getCandidateComment(@PathVariable Long id, @ApiParam Pageable pageable) {
-        log.debug("REST request to get all Comment");
-        try {
-            Page<ResponseVM<CommentDTO>> commentDTOS = commentComponent.findByCandidateId(id, pageable);
-            return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
     }
 }

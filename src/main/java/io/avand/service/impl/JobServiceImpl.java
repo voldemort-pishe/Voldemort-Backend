@@ -31,20 +31,17 @@ public class JobServiceImpl implements JobService {
     private final CompanyRepository companyRepository;
     private final JobMapper jobMapper;
     private final SecurityUtils securityUtils;
-    private final UserRepository userRepository;
     private final JobSpecification jobSpecification;
 
     public JobServiceImpl(JobRepository jobRepository,
                           CompanyRepository companyRepository,
                           JobMapper jobMapper,
                           SecurityUtils securityUtils,
-                          UserRepository userRepository,
                           JobSpecification jobSpecification) {
         this.jobRepository = jobRepository;
         this.companyRepository = companyRepository;
         this.jobMapper = jobMapper;
         this.securityUtils = securityUtils;
-        this.userRepository = userRepository;
         this.jobSpecification = jobSpecification;
     }
 
@@ -53,22 +50,10 @@ public class JobServiceImpl implements JobService {
         log.debug("Request to save job : {}", jobDTO);
         CompanyEntity companyEntity = companyRepository.findOne(securityUtils.getCurrentCompanyId());
         if (companyEntity != null) {
-            Optional<UserEntity> hiredManager = userRepository.findById(jobDTO.getHiredManagerId());
-            if (hiredManager.isPresent()) {
-                Optional<UserEntity> hiredExpert = userRepository.findById(jobDTO.getHiredExpertId());
-                if (hiredExpert.isPresent()) {
-                    JobEntity jobEntity = jobMapper.toEntity(jobDTO);
-                    jobEntity.setCompany(companyEntity);
-                    jobEntity.setHiredManager(hiredManager.get());
-                    jobEntity.setHiredExpert(hiredExpert.get());
-                    jobEntity = jobRepository.save(jobEntity);
-                    return jobMapper.toDto(jobEntity);
-                } else {
-                    throw new NotFoundException("Expert Manager Not Available");
-                }
-            } else {
-                throw new NotFoundException("Hired Manager Not Available");
-            }
+            JobEntity jobEntity = jobMapper.toEntity(jobDTO);
+            jobEntity.setCompany(companyEntity);
+            jobEntity = jobRepository.save(jobEntity);
+            return jobMapper.toDto(jobEntity);
         } else {
             throw new NotFoundException("Company Not Available");
         }

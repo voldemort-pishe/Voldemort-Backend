@@ -65,13 +65,10 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private JobStatus status;
 
-    @OneToOne
-    @JoinColumn
-    private UserEntity hiredManager;
-
-    @OneToOne
-    @JoinColumn
-    private UserEntity hiredExpert;
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
+    private Set<JobHireTeamEntity> jobHireTeam = new HashSet<>();
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -163,20 +160,12 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
         this.status = status;
     }
 
-    public UserEntity getHiredManager() {
-        return hiredManager;
+    public Set<JobHireTeamEntity> getJobHireTeam() {
+        return jobHireTeam;
     }
 
-    public void setHiredManager(UserEntity hiredManager) {
-        this.hiredManager = hiredManager;
-    }
-
-    public UserEntity getHiredExpert() {
-        return hiredExpert;
-    }
-
-    public void setHiredExpert(UserEntity hiredExpert) {
-        this.hiredExpert = hiredExpert;
+    public void setJobHireTeam(Set<JobHireTeamEntity> jobHireTeam) {
+        this.jobHireTeam = jobHireTeam;
     }
 
     public String getLocation() {

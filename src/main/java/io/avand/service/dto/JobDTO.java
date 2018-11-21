@@ -22,11 +22,8 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
     private String location;
     private String department;
     private JobStatus status;
-    @NotNull
-    private Long hiredManagerId;
-    @NotNull
-    private Long hiredExpertId;
-
+    @JsonIgnore
+    private Set<JobHireTeamDTO> jobHireTeam = new HashSet<>();
     @JsonIgnore
     private Set<CandidateDTO> candidate = new HashSet<>();
 
@@ -112,20 +109,12 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
         this.status = status;
     }
 
-    public Long getHiredManagerId() {
-        return hiredManagerId;
+    public Set<JobHireTeamDTO> getJobHireTeam() {
+        return jobHireTeam;
     }
 
-    public void setHiredManagerId(Long hiredManagerId) {
-        this.hiredManagerId = hiredManagerId;
-    }
-
-    public Long getHiredExpertId() {
-        return hiredExpertId;
-    }
-
-    public void setHiredExpertId(Long hiredExpertId) {
-        this.hiredExpertId = hiredExpertId;
+    public void setJobHireTeam(Set<JobHireTeamDTO> jobHireTeam) {
+        this.jobHireTeam = jobHireTeam;
     }
 
     public Set<CandidateDTO> getCandidate() {
@@ -157,8 +146,6 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
             ", location='" + location + '\'' +
             ", department='" + department + '\'' +
             ", status=" + status +
-            ", hiredManagerId=" + hiredManagerId +
-            ", hiredExpertId=" + hiredExpertId +
             ", companyId=" + companyId +
             '}';
     }

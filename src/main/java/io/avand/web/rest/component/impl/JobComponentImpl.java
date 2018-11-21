@@ -25,20 +25,14 @@ public class JobComponentImpl implements JobComponent {
 
     private final Logger log = LoggerFactory.getLogger(JobComponentImpl.class);
     private final JobService jobService;
-    private final UserService userService;
     private final CompanyService companyService;
-    private final UserMapper userMapper;
     private final CompanyMapper companyMapper;
 
     public JobComponentImpl(JobService jobService,
-                            UserService userService,
                             CompanyService companyService,
-                            UserMapper userMapper,
                             CompanyMapper companyMapper) {
         this.jobService = jobService;
-        this.userService = userService;
         this.companyService = companyService;
-        this.userMapper = userMapper;
         this.companyMapper = companyMapper;
     }
 
@@ -78,12 +72,6 @@ public class JobComponentImpl implements JobComponent {
 
     private Map<String, Object> createIncluded(JobDTO jobDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
-
-        Optional<UserDTO> hiredManager = userService.findById(jobDTO.getHiredManagerId());
-        hiredManager.ifPresent(userDTO -> included.put("hiredManager", userMapper.dtoToVm(userDTO)));
-
-        Optional<UserDTO> hiredExpert = userService.findById(jobDTO.getHiredExpertId());
-        hiredExpert.ifPresent(userDTO -> included.put("hiredExpert", userMapper.dtoToVm(userDTO)));
 
         included.put("company", companyMapper.dtoToVm(companyService.findById(jobDTO.getCompanyId())));
 

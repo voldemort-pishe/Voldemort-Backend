@@ -95,6 +95,8 @@ public class JobServiceImpl implements JobService {
         log.debug("Request to find all job by filter : {}", filterVM);
         if (filterVM == null)
             filterVM = new JobFilterVM();
+        if (filterVM.getHireTeam() != null && filterVM.getHireTeam())
+            filterVM.setManager(securityUtils.getCurrentUserId());
         filterVM.setCompany(securityUtils.getCurrentCompanyId());
         return jobRepository.findAll(jobSpecification.getFilter(filterVM), pageable)
             .map(jobMapper::toDto);

@@ -8,6 +8,8 @@ import java.io.Serializable;
 public class JobFilterVM implements Serializable {
 
     private JobStatus status;
+    private Boolean hireTeam;
+    @JsonIgnore
     private Long manager;
     @JsonIgnore
     private Long company;
@@ -18,6 +20,14 @@ public class JobFilterVM implements Serializable {
 
     public void setStatus(JobStatus status) {
         this.status = status;
+    }
+
+    public Boolean getHireTeam() {
+        return hireTeam;
+    }
+
+    public void setHireTeam(Boolean hireTeam) {
+        this.hireTeam = hireTeam;
     }
 
     public Long getManager() {
@@ -40,7 +50,7 @@ public class JobFilterVM implements Serializable {
     public String toString() {
         return "JobFilterVM{" +
             "status=" + status +
-            ", manager=" + manager +
+            ", hireTeam=" + hireTeam +
             ", company=" + company +
             '}';
     }

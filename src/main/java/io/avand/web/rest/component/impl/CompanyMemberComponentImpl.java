@@ -45,7 +45,7 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
     @Override
     public List<ResponseVM<CompanyMemberDTO>> save(List<String> emails) throws NotFoundException {
         log.debug("Request to save companyMemberDTO via component");
-        List<CompanyMemberDTO> companyMemberDTOS = companyMemberService.save(emails);
+        List<CompanyMemberDTO> companyMemberDTOS = companyMemberService.saveAll(emails);
         List<ResponseVM<CompanyMemberDTO>> responseVMS = new ArrayList<>();
         for (CompanyMemberDTO companyMemberDTO : companyMemberDTOS) {
             ResponseVM<CompanyMemberDTO> responseVM = new ResponseVM<>();
@@ -95,7 +95,7 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
     private Map<String, Object> createIncluded(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
 
-        Optional<UserDTO> userDTOOptional = userService.findById(companyMemberDTO.getUserId());
+        Optional<UserDTO> userDTOOptional = userService.findByLogin(companyMemberDTO.getUserEmail());
         userDTOOptional.ifPresent(userDTO -> included.put("user", userMapper.dtoToVm(userDTO)));
 
         included.put("company", companyMapper.dtoToVm(companyService.findById(companyMemberDTO.getCompanyId())));

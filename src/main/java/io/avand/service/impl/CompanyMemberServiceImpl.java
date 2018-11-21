@@ -54,7 +54,39 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
-    public List<CompanyMemberDTO> save(List<String> emails) throws NotFoundException {
+    public CompanyMemberDTO save(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
+        log.debug("Request to save company member : {}", companyMemberDTO);
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyMemberDTO.getCompanyId());
+        if (companyEntity.isPresent()) {
+            Optional<UserEntity> userEntityOp = userRepository.findByLogin(companyMemberDTO.getUserEmail());
+            UserEntity userEntity;
+            if (!userEntityOp.isPresent()) {
+                UserEntity user = new UserEntity();
+                user.setLogin(companyMemberDTO.getUserEmail());
+                user.setEmail(companyMemberDTO.getUserEmail());
+                user.setInvitationKey(RandomUtil.generateInvitationKey());
+                userEntity = userRepository.save(user);
+
+                mailService.sendInviationMemberEmailWithRegister(userEntity);
+            } else {
+                userEntity = userEntityOp.get();
+                mailService.sendInviationMemberEmail(userEntity);
+            }
+
+            CompanyMemberEntity companyMemberEntity = companyMemberMapper.toEntity(companyMemberDTO);
+            companyMemberEntity.setUser(userEntity);
+            companyMemberEntity.setCompany(companyEntity.get());
+
+            companyMemberEntity = companyMemberRepository.save(companyMemberEntity);
+
+            return companyMemberMapper.toDto(companyMemberEntity);
+        } else {
+            throw new NotFoundException("Company Not Available");
+        }
+    }
+
+    @Override
+    public List<CompanyMemberDTO> saveAll(List<String> emails) throws NotFoundException {
         log.debug("Request to save company member : {}");
         CompanyEntity companyEntity = companyRepository.findOne(securityUtils.getCurrentCompanyId());
         if (companyEntity != null) {

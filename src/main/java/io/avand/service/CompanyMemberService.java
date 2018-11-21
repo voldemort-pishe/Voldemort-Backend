@@ -10,7 +10,9 @@ import java.util.List;
 
 public interface CompanyMemberService {
 
-    List<CompanyMemberDTO> save(List<String> emails) throws NotFoundException;
+    CompanyMemberDTO save(CompanyMemberDTO companyMemberDTO) throws NotFoundException;
+
+    List<CompanyMemberDTO> saveAll(List<String> emails) throws NotFoundException;
 
     CompanyMemberDTO findById(Long id) throws NotFoundException;
 

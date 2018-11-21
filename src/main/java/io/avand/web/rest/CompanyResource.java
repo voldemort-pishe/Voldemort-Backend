@@ -73,7 +73,7 @@ public class CompanyResource {
             requestDTO.setType("CNAME");
             requestDTO.setName(companyDTO.getSubDomain() + ".avand.hr");
             requestDTO.setContent("avand.hr");
-            requestDTO.setProxied(true);
+            requestDTO.setProxied(false);
             if (cloudflareService.createDNSRecord(requestDTO)) {
                 ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
                 return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))

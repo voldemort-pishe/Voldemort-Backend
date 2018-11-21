@@ -9,7 +9,7 @@ public class CompanyMemberDTO implements Serializable {
 
     private String department;
 
-    private Long userId;
+    private String userEmail;
 
     private String position;
 
@@ -31,12 +31,12 @@ public class CompanyMemberDTO implements Serializable {
         this.department = department;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public String getPosition() {
@@ -60,7 +60,7 @@ public class CompanyMemberDTO implements Serializable {
         return "CompanyMemberDTO{" +
             "id=" + id +
             ", department='" + department + '\'' +
-            ", userId=" + userId +
+            ", userEmail='" + userEmail + '\'' +
             ", position='" + position + '\'' +
             ", companyId=" + companyId +
             '}';

@@ -1,8 +1,10 @@
 package io.avand.service.impl;
 
+import io.avand.domain.entity.jpa.CompanyContactEntity;
 import io.avand.domain.entity.jpa.CompanyEntity;
 import io.avand.domain.entity.jpa.FileEntity;
 import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.repository.jpa.CompanyContactRepository;
 import io.avand.repository.jpa.CompanyRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
@@ -30,19 +32,22 @@ public class CompanyServiceImpl implements CompanyService {
     private final SecurityUtils securityUtils;
     private final FileRepository fileRepository;
     private final CompanyMemberService companyMemberService;
+    private final CompanyContactRepository companyContactRepository;
 
     public CompanyServiceImpl(CompanyRepository companyRepository,
                               CompanyMapper companyMapper,
                               UserRepository userRepository,
                               SecurityUtils securityUtils,
                               FileRepository fileRepository,
-                              CompanyMemberService companyMemberService) {
+                              CompanyMemberService companyMemberService,
+                              CompanyContactRepository companyContactRepository) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.userRepository = userRepository;
         this.securityUtils = securityUtils;
         this.fileRepository = fileRepository;
         this.companyMemberService = companyMemberService;
+        this.companyContactRepository = companyContactRepository;
     }
 
     @Override
@@ -54,7 +59,12 @@ public class CompanyServiceImpl implements CompanyService {
         companyEntity.setUser(userEntity);
         FileEntity fileEntity = fileRepository.getOne(companyDTO.getFileId());
         if (fileEntity != null) {
+
+            CompanyContactEntity companyContactEntity = companyEntity.getContact();
+            companyContactEntity = companyContactRepository.save(companyContactEntity);
+
             companyEntity.setFile(fileEntity);
+            companyEntity.setContact(companyContactEntity);
             companyEntity = companyRepository.save(companyEntity);
 
             if (companyDTO.getId() == null) {

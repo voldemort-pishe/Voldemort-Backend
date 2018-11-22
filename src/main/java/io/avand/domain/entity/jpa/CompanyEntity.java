@@ -47,22 +47,26 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     @JoinColumn(unique = true)
     private FileEntity file;
 
-    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(optional = false)
+    @JoinColumn(unique = true)
+    private CompanyContactEntity contact;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<JobEntity> jobs = new HashSet<>();
 
-    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<EvaluationCriteriaEntity> evaluationCriteria = new HashSet<>();
 
-    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyPipelineEntity> companyPipelines = new HashSet<>();
 
-    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyMemberEntity> companyMembers = new HashSet<>();
@@ -133,6 +137,14 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
 
     public void setFile(FileEntity file) {
         this.file = file;
+    }
+
+    public CompanyContactEntity getContact() {
+        return contact;
+    }
+
+    public void setContact(CompanyContactEntity contact) {
+        this.contact = contact;
     }
 
     public Set<JobEntity> getJobs() {

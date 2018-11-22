@@ -57,6 +57,8 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181121183837_added_entity_JobHireTeamEntity.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181122132304_added_entity_CompanyContactEntity.xml"
+             relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20180619154433_added_entity_constraints_UserEntity.xml"
              relativeToChangelogFile="false"/>
@@ -124,6 +126,8 @@
     <include file="config/liquibase/changelog/20181120172605_changelog.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181121184705_changelog.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181122132305_changelog.xml"
              relativeToChangelogFile="false"/>
 
 

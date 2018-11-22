@@ -69,8 +69,13 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
 
                 mailService.sendInviationMemberEmailWithRegister(userEntity);
             } else {
-                userEntity = userEntityOp.get();
-                mailService.sendInviationMemberEmail(userEntity);
+                CompanyMemberEntity companyMemberEntity = companyMemberRepository.findByUser_Id(userEntityOp.get().getId());
+                if (companyMemberEntity == null) {
+                    userEntity = userEntityOp.get();
+                    mailService.sendInviationMemberEmail(userEntity);
+                } else {
+                    throw new NotFoundException("User Is Available in another company");
+                }
             }
 
             CompanyMemberEntity companyMemberEntity = companyMemberMapper.toEntity(companyMemberDTO);

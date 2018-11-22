@@ -23,6 +23,9 @@ public class CompanyContactEntity extends AbstractAuditingEntity implements Seri
     @Column(name = "phone")
     private String phone;
 
+    @Column(name = "email")
+    private String email;
+
     public Long getId() {
         return id;
     }
@@ -63,6 +66,14 @@ public class CompanyContactEntity extends AbstractAuditingEntity implements Seri
         this.phone = phone;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "CompanyContactEntity{" +
@@ -71,6 +82,7 @@ public class CompanyContactEntity extends AbstractAuditingEntity implements Seri
             ", latitude=" + latitude +
             ", longitude=" + longitude +
             ", phone='" + phone + '\'' +
+            ", email='" + email + '\'' +
             '}';
     }
 }

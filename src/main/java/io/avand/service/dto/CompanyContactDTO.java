@@ -7,6 +7,7 @@ public class CompanyContactDTO extends AbstractAuditingDTO implements Serializab
     private Double latitude;
     private Double longitude;
     private String phone;
+    private String email;
 
     public String getAddress() {
         return address;
@@ -40,6 +41,14 @@ public class CompanyContactDTO extends AbstractAuditingDTO implements Serializab
         this.phone = phone;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "CompanyContactDTO{" +
@@ -47,6 +56,7 @@ public class CompanyContactDTO extends AbstractAuditingDTO implements Serializab
             ", latitude=" + latitude +
             ", longitude=" + longitude +
             ", phone='" + phone + '\'' +
+            ", email='" + email + '\'' +
             '}';
     }
 }

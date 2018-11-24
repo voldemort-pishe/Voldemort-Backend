@@ -2,8 +2,9 @@ package io.avand.service.dto;
 
 import java.io.Serializable;
 
-public class CalendarICSAttendeeDTO implements Serializable {
+public class CalendarICSCompanyDTO implements Serializable {
     private String name;
+    private String address;
     private String email;
 
     public String getName() {
@@ -12,6 +13,14 @@ public class CalendarICSAttendeeDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getEmail() {
@@ -24,8 +33,9 @@ public class CalendarICSAttendeeDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "CalendarICSAttendeeDTO{" +
+        return "CalendarICSCompanyDTO{" +
             "name='" + name + '\'' +
+            ", address='" + address + '\'' +
             ", email='" + email + '\'' +
             '}';
     }

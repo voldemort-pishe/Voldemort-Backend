@@ -44,17 +44,13 @@ public class CalendarServiceImpl implements CalendarService {
 
         VEvent meeting = new VEvent(start, end, calendarICSDTO.getSummery());
 
-//        DateTime meetingDate = new DateTime(calendarICSDTO.getMeetingDate().toEpochSecond());
-//        meeting.getProperties().add(new DtStamp(meetingDate));
+        meeting.getProperties().add(new Location(calendarICSDTO.getCompany().getAddress()));
 
-        meeting.getProperties().add(new Location("Tivan"));
-
-        Organizer organizer = new Organizer("mailto:admin@avand.com");
-        organizer.getParameters().add(new Cn("Avnad"));
+        Organizer organizer = new Organizer("mailto:" + calendarICSDTO.getCompany().getEmail());
+        organizer.getParameters().add(new Cn(calendarICSDTO.getCompany().getName()));
         meeting.getProperties().add(organizer);
 
-//        meeting.getProperties().add(tz.getTimeZoneId());
-
+        meeting.getProperties().add(tz.getTimeZoneId());
         UidGenerator ug = new RandomUidGenerator();
         Uid uid = ug.generateUid();
         meeting.getProperties().add(uid);
@@ -79,11 +75,10 @@ public class CalendarServiceImpl implements CalendarService {
 
         System.out.println(icsCalendar);
 
-        FileOutputStream fileOutputStream = new FileOutputStream("mycalendar.ics");
-
+        FileOutputStream fileOutputStream = new FileOutputStream(String.valueOf(calendarICSDTO.getStartDate().toEpochSecond()) + ".ics");
         CalendarOutputter calendarOutputter = new CalendarOutputter();
         calendarOutputter.output(icsCalendar, fileOutputStream);
 
-        return null;
+        return String.valueOf(calendarICSDTO.getStartDate().toEpochSecond()) + ".ics";
     }
 }

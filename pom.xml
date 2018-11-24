@@ -334,7 +334,7 @@
         <dependency>
             <groupId>io.avand</groupId>
             <artifactId>mailgun</artifactId>
-            <version>0.0.3-RELEASE</version>
+            <version>0.0.4-RELEASE</version>
         </dependency>
 
         <dependency>

@@ -14,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,6 +60,16 @@ public class CandidateScheduleMemberServiceImpl implements CandidateScheduleMemb
         } else {
             throw new NotFoundException("Candidate Schedule Not Found");
         }
+    }
+
+    @Override
+    public Set<CandidateScheduleMemberDTO> saveAll(Set<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS) throws NotFoundException {
+        log.debug("Request to save candidateScheduleMembers");
+        Set<CandidateScheduleMemberDTO> results = new HashSet<>();
+        for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {
+            results.add(this.save(candidateScheduleMemberDTO));
+        }
+        return results;
     }
 
     @Override

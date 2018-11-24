@@ -24,7 +24,7 @@ public class CandidateScheduleDTO implements Serializable {
 
     private String description;
 
-    private Set<CandidateScheduleMemberEntity> member = new HashSet<>();
+    private Set<CandidateScheduleMemberDTO> member = new HashSet<>();
 
     @NotNull
     private Long candidateId;
@@ -77,11 +77,11 @@ public class CandidateScheduleDTO implements Serializable {
         this.description = description;
     }
 
-    public Set<CandidateScheduleMemberEntity> getMember() {
+    public Set<CandidateScheduleMemberDTO> getMember() {
         return member;
     }
 
-    public void setMember(Set<CandidateScheduleMemberEntity> member) {
+    public void setMember(Set<CandidateScheduleMemberDTO> member) {
         this.member = member;
     }
 

@@ -11,11 +11,9 @@ import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.CandidateScheduleRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CalendarService;
+import io.avand.service.CandidateScheduleMemberService;
 import io.avand.service.CandidateScheduleService;
-import io.avand.service.dto.CalendarICSAttendeeDTO;
-import io.avand.service.dto.CalendarICSCompanyDTO;
-import io.avand.service.dto.CalendarICSDTO;
-import io.avand.service.dto.CandidateScheduleDTO;
+import io.avand.service.dto.*;
 import io.avand.service.mapper.CandidateScheduleMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -24,6 +22,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +30,7 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CandidateScheduleServiceImpl implements CandidateScheduleService {
@@ -61,6 +61,7 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
     }
 
     @Override
+    @Transactional
     public CandidateScheduleDTO save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException, IOException, URISyntaxException {
         log.debug("Request to save schedule for candidate : {}", candidateScheduleDTO);
         CandidateEntity candidateEntity = candidateRepository.findOne(candidateScheduleDTO.getCandidateId());

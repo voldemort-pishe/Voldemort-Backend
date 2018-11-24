@@ -5,12 +5,16 @@ import javassist.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface CandidateScheduleService {
 
-    CandidateScheduleDTO save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException;
+    CandidateScheduleDTO save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException, IOException, URISyntaxException;
+
+    CandidateScheduleDTO update(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException;
 
     CandidateScheduleDTO findById(Long id) throws NotFoundException;
 

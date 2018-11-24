@@ -2,10 +2,8 @@ package io.avand.web.rest.component.impl;
 
 import io.avand.service.CandidateScheduleService;
 import io.avand.service.CandidateService;
-import io.avand.service.UserService;
 import io.avand.service.dto.CandidateScheduleDTO;
 import io.avand.service.mapper.CandidateMapper;
-import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.CandidateScheduleComponent;
 import io.avand.web.rest.util.PageMaker;
 import io.avand.web.rest.vm.response.ResponseVM;
@@ -16,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -37,7 +37,7 @@ public class CandidateScheduleComponentImpl implements CandidateScheduleComponen
     }
 
     @Override
-    public ResponseVM<CandidateScheduleDTO> save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException {
+    public ResponseVM<CandidateScheduleDTO> save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException, IOException, URISyntaxException {
         log.debug("Request to save candidateScheduleDTO via component : {}", candidateScheduleDTO);
         candidateScheduleDTO = candidateScheduleService.save(candidateScheduleDTO);
         ResponseVM<CandidateScheduleDTO> responseVM = new ResponseVM<>();

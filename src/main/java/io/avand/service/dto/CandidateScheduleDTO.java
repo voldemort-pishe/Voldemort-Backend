@@ -1,21 +1,30 @@
 package io.avand.service.dto;
 
+import io.avand.domain.entity.jpa.CandidateScheduleMemberEntity;
 import io.avand.domain.enumeration.ScheduleStatus;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CandidateScheduleDTO implements Serializable {
 
     @NotNull
     private Long id;
 
-    private ZonedDateTime scheduleDate;
+    private ZonedDateTime startDate;
+
+    private ZonedDateTime endDate;
+
+    private String location;
 
     private ScheduleStatus status;
 
     private String description;
+
+    private Set<CandidateScheduleMemberEntity> member = new HashSet<>();
 
     @NotNull
     private Long candidateId;
@@ -28,12 +37,28 @@ public class CandidateScheduleDTO implements Serializable {
         this.id = id;
     }
 
-    public ZonedDateTime getScheduleDate() {
-        return scheduleDate;
+    public ZonedDateTime getStartDate() {
+        return startDate;
     }
 
-    public void setScheduleDate(ZonedDateTime scheduleDate) {
-        this.scheduleDate = scheduleDate;
+    public void setStartDate(ZonedDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public ZonedDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(ZonedDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public ScheduleStatus getStatus() {
@@ -52,6 +77,14 @@ public class CandidateScheduleDTO implements Serializable {
         this.description = description;
     }
 
+    public Set<CandidateScheduleMemberEntity> getMember() {
+        return member;
+    }
+
+    public void setMember(Set<CandidateScheduleMemberEntity> member) {
+        this.member = member;
+    }
+
     public Long getCandidateId() {
         return candidateId;
     }
@@ -64,7 +97,9 @@ public class CandidateScheduleDTO implements Serializable {
     public String toString() {
         return "CandidateScheduleDTO{" +
             "id=" + id +
-            ", scheduleDate=" + scheduleDate +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", location='" + location + '\'' +
             ", status=" + status +
             ", description='" + description + '\'' +
             ", candidateId=" + candidateId +

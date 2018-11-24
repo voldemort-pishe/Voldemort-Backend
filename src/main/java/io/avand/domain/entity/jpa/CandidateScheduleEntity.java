@@ -1,5 +1,6 @@
 package io.avand.domain.entity.jpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.ScheduleStatus;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -8,7 +9,9 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A CandidateScheduleEntity.
@@ -24,8 +27,14 @@ public class CandidateScheduleEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "schedule_date")
-    private ZonedDateTime scheduleDate;
+    @Column(name = "start_date")
+    private ZonedDateTime startDate;
+
+    @Column(name = "end_date")
+    private ZonedDateTime endDate;
+
+    @Column(name = "location")
+    private String location;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -33,6 +42,11 @@ public class CandidateScheduleEntity implements Serializable {
 
     @Column(name = "description")
     private String description;
+
+    @OneToMany(mappedBy = "candidateSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
+    private Set<CandidateScheduleMemberEntity> member = new HashSet<>();
 
     @ManyToOne
     private CandidateEntity candidate;
@@ -46,17 +60,28 @@ public class CandidateScheduleEntity implements Serializable {
         this.id = id;
     }
 
-    public ZonedDateTime getScheduleDate() {
-        return scheduleDate;
+    public ZonedDateTime getStartDate() {
+        return startDate;
     }
 
-    public CandidateScheduleEntity scheduleDate(ZonedDateTime scheduleDate) {
-        this.scheduleDate = scheduleDate;
-        return this;
+    public void setStartDate(ZonedDateTime startDate) {
+        this.startDate = startDate;
     }
 
-    public void setScheduleDate(ZonedDateTime scheduleDate) {
-        this.scheduleDate = scheduleDate;
+    public ZonedDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(ZonedDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public ScheduleStatus getStatus() {
@@ -73,6 +98,14 @@ public class CandidateScheduleEntity implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<CandidateScheduleMemberEntity> getMember() {
+        return member;
+    }
+
+    public void setMember(Set<CandidateScheduleMemberEntity> member) {
+        this.member = member;
     }
 
     public CandidateEntity getCandidate() {
@@ -113,9 +146,12 @@ public class CandidateScheduleEntity implements Serializable {
     public String toString() {
         return "CandidateScheduleEntity{" +
             "id=" + id +
-            ", scheduleDate=" + scheduleDate +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", location='" + location + '\'' +
             ", status=" + status +
             ", description='" + description + '\'' +
+            ", candidate=" + candidate +
             '}';
     }
 }

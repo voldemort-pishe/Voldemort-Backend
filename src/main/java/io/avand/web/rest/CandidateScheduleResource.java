@@ -24,6 +24,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -71,7 +72,7 @@ public class CandidateScheduleResource {
             return ResponseEntity.created(new URI("/api/candidate-schedule-entities/" + result.getData().getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
                 .body(result);
-        } catch (NotFoundException | ServerErrorException e) {
+        } catch (NotFoundException | IOException | ServerErrorException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -99,7 +100,7 @@ public class CandidateScheduleResource {
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, CandidateScheduleDTO.getId().toString()))
                 .body(result);
-        } catch (NotFoundException | SecurityException e) {
+        } catch (NotFoundException | IOException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }

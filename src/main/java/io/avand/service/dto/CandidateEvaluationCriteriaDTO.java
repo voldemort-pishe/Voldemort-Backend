@@ -1,19 +1,17 @@
 package io.avand.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class CandidateEvaluationCriteriaDTO implements Serializable {
 
-    @NotNull
     private Long id;
 
     private Long userId;
 
     private String userComment;
 
+    @NotNull
     private Long evaluationCriteriaId;
 
     @NotNull

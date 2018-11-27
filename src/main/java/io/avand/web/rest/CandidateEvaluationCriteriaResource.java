@@ -1,119 +1,148 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.domain.entity.jpa.CandidateEvaluationCriteriaEntity;
 
-import io.avand.repository.jpa.CandidateEvaluationCriteriaRepository;
+import io.avand.service.CandidateEvaluationCriteriaService;
+import io.avand.service.dto.CandidateEvaluationCriteriaDTO;
+import io.avand.web.rest.component.CandidateEvaluationCriteriaComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
+import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import io.avand.web.rest.vm.response.ResponseVM;
+import io.swagger.annotations.ApiParam;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Optional;
 
 /**
- * REST controller for managing CandidateEvaluationCriteriaEntity.
+ * REST controller for managing CandidateEvaluationCriteriaDTO.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/candidate-evaluation-criteria")
 public class CandidateEvaluationCriteriaResource {
 
     private final Logger log = LoggerFactory.getLogger(CandidateEvaluationCriteriaResource.class);
 
-    private static final String ENTITY_NAME = "candidateEvaluationCriteriaEntity";
+    private static final String ENTITY_NAME = "candidateEvaluationCriteriaDTO";
 
-    private final CandidateEvaluationCriteriaRepository candidateEvaluationCriteriaRepository;
+    private final CandidateEvaluationCriteriaService candidateEvaluationCriteriaService;
+    private final CandidateEvaluationCriteriaComponent candidateEvaluationCriteriaComponent;
 
-    public CandidateEvaluationCriteriaResource(CandidateEvaluationCriteriaRepository candidateEvaluationCriteriaRepository) {
-        this.candidateEvaluationCriteriaRepository = candidateEvaluationCriteriaRepository;
+    public CandidateEvaluationCriteriaResource(CandidateEvaluationCriteriaService candidateEvaluationCriteriaService,
+                                               CandidateEvaluationCriteriaComponent candidateEvaluationCriteriaComponent) {
+        this.candidateEvaluationCriteriaService = candidateEvaluationCriteriaService;
+        this.candidateEvaluationCriteriaComponent = candidateEvaluationCriteriaComponent;
     }
 
     /**
-     * POST  /candidate-evaluation-criteria-entities : Create a new candidateEvaluationCriteriaEntity.
+     * POST  /candidate-evaluation-criteria : Create a new candidateEvaluationCriteriaDTO.
      *
-     * @param candidateEvaluationCriteriaEntity the candidateEvaluationCriteriaEntity to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new candidateEvaluationCriteriaEntity, or with status 400 (Bad Request) if the candidateEvaluationCriteriaEntity has already an ID
+     * @param candidateEvaluationCriteriaDTO the candidateEvaluationCriteriaDTO to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new candidateEvaluationCriteriaDTO, or with status 400 (Bad Request) if the candidateEvaluationCriteriaDTO has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PostMapping("/candidate-evaluation-criteria-entities")
+    @PostMapping
     @Timed
-    public ResponseEntity<CandidateEvaluationCriteriaEntity> createCandidateEvaluationCriteriaEntity(@RequestBody CandidateEvaluationCriteriaEntity candidateEvaluationCriteriaEntity) throws URISyntaxException {
-        log.debug("REST request to save CandidateEvaluationCriteriaEntity : {}", candidateEvaluationCriteriaEntity);
-        if (candidateEvaluationCriteriaEntity.getId() != null) {
-            throw new BadRequestAlertException("A new candidateEvaluationCriteriaEntity cannot already have an ID", ENTITY_NAME, "idexists");
+    public ResponseEntity<ResponseVM<CandidateEvaluationCriteriaDTO>> create(@RequestBody CandidateEvaluationCriteriaDTO candidateEvaluationCriteriaDTO) throws URISyntaxException {
+        log.debug("REST request to save CandidateEvaluationCriteriaDTO : {}", candidateEvaluationCriteriaDTO);
+        if (candidateEvaluationCriteriaDTO.getId() != null) {
+            throw new BadRequestAlertException("A new candidateEvaluationCriteriaDTO cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        CandidateEvaluationCriteriaEntity result = candidateEvaluationCriteriaRepository.save(candidateEvaluationCriteriaEntity);
-        return ResponseEntity.created(new URI("/api/candidate-evaluation-criteria-entities/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        try {
+            ResponseVM<CandidateEvaluationCriteriaDTO> result = candidateEvaluationCriteriaComponent.save(candidateEvaluationCriteriaDTO);
+            return ResponseEntity.created(new URI("/api/candidate-evaluation-criteria/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
+                .body(result);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     /**
-     * PUT  /candidate-evaluation-criteria-entities : Updates an existing candidateEvaluationCriteriaEntity.
+     * PUT  /candidate-evaluation-criteria : Updates an existing candidateEvaluationCriteriaDTO.
      *
-     * @param candidateEvaluationCriteriaEntity the candidateEvaluationCriteriaEntity to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated candidateEvaluationCriteriaEntity,
-     * or with status 400 (Bad Request) if the candidateEvaluationCriteriaEntity is not valid,
-     * or with status 500 (Internal Server Error) if the candidateEvaluationCriteriaEntity couldn't be updated
+     * @param candidateEvaluationCriteriaDTO the candidateEvaluationCriteriaDTO to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated candidateEvaluationCriteriaDTO,
+     * or with status 400 (Bad Request) if the candidateEvaluationCriteriaDTO is not valid,
+     * or with status 500 (Internal Server Error) if the candidateEvaluationCriteriaDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/candidate-evaluation-criteria-entities")
+    @PutMapping
     @Timed
-    public ResponseEntity<CandidateEvaluationCriteriaEntity> updateCandidateEvaluationCriteriaEntity(@RequestBody CandidateEvaluationCriteriaEntity candidateEvaluationCriteriaEntity) throws URISyntaxException {
-        log.debug("REST request to update CandidateEvaluationCriteriaEntity : {}", candidateEvaluationCriteriaEntity);
-        if (candidateEvaluationCriteriaEntity.getId() == null) {
-            return createCandidateEvaluationCriteriaEntity(candidateEvaluationCriteriaEntity);
+    public ResponseEntity<ResponseVM<CandidateEvaluationCriteriaDTO>> update(@RequestBody CandidateEvaluationCriteriaDTO candidateEvaluationCriteriaDTO) throws URISyntaxException {
+        log.debug("REST request to update CandidateEvaluationCriteriaDTO : {}", candidateEvaluationCriteriaDTO);
+        if (candidateEvaluationCriteriaDTO.getId() == null) {
+            return create(candidateEvaluationCriteriaDTO);
         }
-        CandidateEvaluationCriteriaEntity result = candidateEvaluationCriteriaRepository.save(candidateEvaluationCriteriaEntity);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, candidateEvaluationCriteriaEntity.getId().toString()))
-            .body(result);
+        try {
+            ResponseVM<CandidateEvaluationCriteriaDTO> result = candidateEvaluationCriteriaComponent.save(candidateEvaluationCriteriaDTO);
+            return ResponseEntity.ok()
+                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, candidateEvaluationCriteriaDTO.getId().toString()))
+                .body(result);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     /**
-     * GET  /candidate-evaluation-criteria-entities : get all the candidateEvaluationCriteriaEntities.
+     * GET  /candidate-evaluation-criteria : get all the candidateEvaluationCriteriaEntities.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of candidateEvaluationCriteriaEntities in body
      */
-    @GetMapping("/candidate-evaluation-criteria-entities")
+    @GetMapping("/candidate/{id}")
     @Timed
-    public List<CandidateEvaluationCriteriaEntity> getAllCandidateEvaluationCriteriaEntities() {
+    public ResponseEntity<Page<ResponseVM<CandidateEvaluationCriteriaDTO>>> getAllByCandidateId(@PathVariable("id") Long candidateId, @ApiParam Pageable pageable) {
         log.debug("REST request to get all CandidateEvaluationCriteriaEntities");
-        return candidateEvaluationCriteriaRepository.findAll();
+        try {
+            Page<ResponseVM<CandidateEvaluationCriteriaDTO>> responseVMS = candidateEvaluationCriteriaComponent.findAllByCandidateId(candidateId, pageable);
+            return new ResponseEntity<>(responseVMS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
         }
-
-    /**
-     * GET  /candidate-evaluation-criteria-entities/:id : get the "id" candidateEvaluationCriteriaEntity.
-     *
-     * @param id the id of the candidateEvaluationCriteriaEntity to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the candidateEvaluationCriteriaEntity, or with status 404 (Not Found)
-     */
-    @GetMapping("/candidate-evaluation-criteria-entities/{id}")
-    @Timed
-    public ResponseEntity<CandidateEvaluationCriteriaEntity> getCandidateEvaluationCriteriaEntity(@PathVariable Long id) {
-        log.debug("REST request to get CandidateEvaluationCriteriaEntity : {}", id);
-        CandidateEvaluationCriteriaEntity candidateEvaluationCriteriaEntity = candidateEvaluationCriteriaRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(candidateEvaluationCriteriaEntity));
     }
 
     /**
-     * DELETE  /candidate-evaluation-criteria-entities/:id : delete the "id" candidateEvaluationCriteriaEntity.
+     * GET  /candidate-evaluation-criteria/:id : get the "id" candidateEvaluationCriteriaDTO.
      *
-     * @param id the id of the candidateEvaluationCriteriaEntity to delete
+     * @param id the id of the candidateEvaluationCriteriaDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the candidateEvaluationCriteriaDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/{id}")
+    @Timed
+    public ResponseEntity<ResponseVM<CandidateEvaluationCriteriaDTO>> getById(@PathVariable Long id) {
+        log.debug("REST request to get CandidateEvaluationCriteriaDTO : {}", id);
+        try {
+            ResponseVM<CandidateEvaluationCriteriaDTO> candidateEvaluationCriteriaDTO = candidateEvaluationCriteriaComponent.findById(id);
+            return new ResponseEntity<>(candidateEvaluationCriteriaDTO, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * DELETE  /candidate-evaluation-criteria/:id : delete the "id" candidateEvaluationCriteriaDTO.
+     *
+     * @param id the id of the candidateEvaluationCriteriaDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
-    @DeleteMapping("/candidate-evaluation-criteria-entities/{id}")
+    @DeleteMapping("/{id}")
     @Timed
-    public ResponseEntity<Void> deleteCandidateEvaluationCriteriaEntity(@PathVariable Long id) {
-        log.debug("REST request to delete CandidateEvaluationCriteriaEntity : {}", id);
-        candidateEvaluationCriteriaRepository.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.debug("REST request to delete CandidateEvaluationCriteriaDTO : {}", id);
+        try {
+            candidateEvaluationCriteriaService.delete(id);
+            return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 }

@@ -7,11 +7,8 @@ import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.security.AuthoritiesConstants;
 import io.avand.security.SecurityUtils;
-import io.avand.service.MailService;
-import io.avand.service.TokenService;
-import io.avand.service.UserService;
-import io.avand.service.dto.TokenDTO;
-import io.avand.service.dto.UserDTO;
+import io.avand.service.*;
+import io.avand.service.dto.*;
 import io.avand.service.mapper.UserMapper;
 import io.avand.service.util.RandomUtil;
 import io.avand.web.rest.errors.ServerErrorException;
@@ -46,13 +43,24 @@ public class UserServiceImpl implements UserService {
 
     private final FileRepository fileRepository;
 
+    private final PlanService planService;
+    private final UserPlanService userPlanService;
+    private final InvoiceService invoiceService;
+    private final SubscriptionService subscriptionService;
+    private final UserAuthorityService userAuthorityService;
+
     public UserServiceImpl(UserRepository userRepository,
                            AuthorityRepository authorityRepository,
                            UserMapper userMapper,
                            PasswordEncoder passwordEncoder,
                            MailService mailService,
                            TokenService tokenService,
-                           FileRepository fileRepository) {
+                           FileRepository fileRepository,
+                           PlanService planService,
+                           UserPlanService userPlanService,
+                           InvoiceService invoiceService,
+                           SubscriptionService subscriptionService,
+                           UserAuthorityService userAuthorityService) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.userMapper = userMapper;
@@ -60,6 +68,11 @@ public class UserServiceImpl implements UserService {
         this.mailService = mailService;
         this.tokenService = tokenService;
         this.fileRepository = fileRepository;
+        this.planService = planService;
+        this.userPlanService = userPlanService;
+        this.invoiceService = invoiceService;
+        this.subscriptionService = subscriptionService;
+        this.userAuthorityService = userAuthorityService;
     }
 
     @Override
@@ -103,6 +116,11 @@ public class UserServiceImpl implements UserService {
 
         userEntity = userRepository.save(userEntity);
 
+        try {
+            this.addSubscription(userEntity);
+        } catch (NotFoundException ignore) {
+        }
+
         mailService.sendActivationEmail(userEntity);
 
         return userMapper.toDto(userEntity);
@@ -141,6 +159,11 @@ public class UserServiceImpl implements UserService {
         userEntity.setUserAuthorities(userAuthorityEntities);
 
         userEntity = userRepository.save(userEntity);
+
+        try {
+            this.addSubscription(userEntity);
+        } catch (NotFoundException ignore) {
+        }
 
         return userMapper.toDto(userEntity);
     }
@@ -315,5 +338,23 @@ public class UserServiceImpl implements UserService {
         return SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneWithAuthoritiesByLogin)
             .map(userMapper::toDto);
+    }
+
+    private void addSubscription(UserEntity userEntity) throws NotFoundException {
+        Optional<PlanDTO> planDTO = planService.findFreePlan();
+        if (planDTO.isPresent()) {
+            InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planDTO.get().getId(),userEntity.getId());
+
+            UserPlanDTO userPlanDTO = userPlanService.save(planDTO.get().getId(), invoiceDTO.getId(),userEntity.getId());
+
+            SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
+            subscriptionDTO.setPlanId(userPlanDTO.getId());
+            subscriptionDTO.setUserId(userEntity.getId());
+            subscriptionDTO.setStartDate(ZonedDateTime.now());
+            subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(planDTO.get().getLength()));
+            subscriptionService.save(subscriptionDTO);
+
+            userAuthorityService.grantAuthority(AuthoritiesConstants.SUBSCRIPTION, userEntity.getId());
+        }
     }
 }

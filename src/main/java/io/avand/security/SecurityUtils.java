@@ -1,9 +1,9 @@
 package io.avand.security;
 
 import io.avand.domain.entity.jpa.CompanyMemberEntity;
+import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.repository.jpa.CompanyMemberRepository;
-import io.avand.service.UserService;
-import io.avand.service.dto.CompanyMemberDTO;
+import io.avand.repository.jpa.UserRepository;
 import io.avand.service.dto.UserDTO;
 import javassist.NotFoundException;
 import org.springframework.security.core.context.SecurityContext;
@@ -20,12 +20,13 @@ import java.util.Optional;
 public class SecurityUtils {
 
 
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final CompanyMemberRepository companyMemberRepository;
 
-    public SecurityUtils(UserService userService,
-                         CompanyMemberRepository companyMemberRepository) {
-        this.userService = userService;
+    public SecurityUtils(
+        UserRepository userRepository,
+        CompanyMemberRepository companyMemberRepository) {
+        this.userRepository = userRepository;
         this.companyMemberRepository = companyMemberRepository;
     }
 
@@ -52,7 +53,7 @@ public class SecurityUtils {
     public Long getCurrentUserId() throws NotFoundException {
         Optional<String> currentUserLogin = getCurrentUserLogin();
         if (currentUserLogin.isPresent()) {
-            Optional<UserDTO> userDTO = userService.findByLogin(currentUserLogin.get());
+            Optional<UserEntity> userDTO = userRepository.findByLogin(currentUserLogin.get());
             if (userDTO.isPresent()) {
                 return userDTO.get().getId();
             } else {

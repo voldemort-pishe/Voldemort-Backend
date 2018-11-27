@@ -1,6 +1,7 @@
 package io.avand.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.PlanType;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -21,6 +22,8 @@ public class PlanDTO implements Serializable {
     private Long length;
 
     private Boolean active;
+
+    private PlanType type;
 
     @JsonIgnore
     private Set<PlanConfigDTO> planConfig = new HashSet<>();
@@ -73,6 +76,14 @@ public class PlanDTO implements Serializable {
         this.active = activation;
     }
 
+    public PlanType getType() {
+        return type;
+    }
+
+    public void setType(PlanType type) {
+        this.type = type;
+    }
+
     public Set<PlanConfigDTO> getPlanConfig() {
         return planConfig;
     }
@@ -90,6 +101,7 @@ public class PlanDTO implements Serializable {
             ", amount=" + amount +
             ", length=" + length +
             ", active=" + active +
+            ", type=" + type +
             '}';
     }
 }

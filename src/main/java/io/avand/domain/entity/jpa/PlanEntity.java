@@ -1,6 +1,7 @@
 package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.PlanType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -39,6 +40,10 @@ public class PlanEntity implements Serializable {
 
     @Column(name = "active")
     private Boolean active;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private PlanType type;
 
     @OneToMany(mappedBy = "plan")
     @JsonIgnore
@@ -113,6 +118,14 @@ public class PlanEntity implements Serializable {
         this.active = activation;
     }
 
+    public PlanType getType() {
+        return type;
+    }
+
+    public void setType(PlanType type) {
+        this.type = type;
+    }
+
     public Set<PlanConfigEntity> getPlanConfig() {
         return planConfig;
     }
@@ -145,6 +158,7 @@ public class PlanEntity implements Serializable {
             ", amount=" + amount +
             ", length=" + length +
             ", active=" + active +
+            ", type=" + type +
             '}';
     }
 }

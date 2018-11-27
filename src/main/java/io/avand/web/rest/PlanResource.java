@@ -3,6 +3,7 @@ package io.avand.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.avand.domain.entity.jpa.PlanEntity;
 
+import io.avand.domain.enumeration.PlanType;
 import io.avand.repository.jpa.PlanRepository;
 import io.avand.service.PlanService;
 import io.avand.service.dto.PlanDTO;
@@ -92,7 +93,7 @@ public class PlanResource {
     @Timed
     public ResponseEntity getAllPlans(@ApiParam Pageable pageable) {
         log.debug("REST request to get all PlanEntities");
-        return new ResponseEntity<>(planService.findAll(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(planService.findAllByType(pageable, PlanType.MONEY), HttpStatus.OK);
     }
 
     /**
@@ -113,7 +114,7 @@ public class PlanResource {
     @Timed
     public ResponseEntity getActivePlans(@ApiParam Pageable pageable) {
         log.debug("REST request to get active plans");
-        Page<PlanDTO> planDTOS = planService.getActivePlans(pageable);
+        Page<PlanDTO> planDTOS = planService.findActiveByType(pageable, PlanType.MONEY);
         return new ResponseEntity<>(planDTOS, HttpStatus.OK);
     }
 

@@ -66,7 +66,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDTO saveByPlanId(Long planId) throws NotFoundException {
+    public InvoiceDTO saveByPlanId(Long planId,Long userId) throws NotFoundException {
         logger.debug("Request to save invoice by planId : {}", planId);
         Optional<PlanDTO> planDTOOptional = planService.findOneById(planId);
         if (planDTOOptional.isPresent()) {
@@ -88,7 +88,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceEntity.setTax((planDTOOptional.get().getAmount() * 9) / 100);
             invoiceEntity.setTotal(invoiceEntity.getAmount() + invoiceEntity.getTax() - invoiceEntity.getDiscount());
 
-            Optional<UserEntity> userEntityOptional = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
+            Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
             if (userEntityOptional.isPresent()) {
                 invoiceEntity.setUser(userEntityOptional.get());
                 invoiceEntity = invoiceRepository.save(invoiceEntity);

@@ -12,7 +12,7 @@ public interface UserPlanService {
 
     UserPlanDTO save(UserPlanDTO planDTO);
 
-    UserPlanDTO save(Long planId, Long invoiceId) throws NotFoundException;
+    UserPlanDTO save(Long planId, Long invoiceId,Long userId) throws NotFoundException;
 
     Optional<UserPlanDTO> findById(Long planId);
 

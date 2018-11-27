@@ -12,7 +12,7 @@ public interface InvoiceService {
 
     InvoiceDTO save(InvoiceDTO invoiceDTO) throws NotFoundException;
 
-    InvoiceDTO saveByPlanId(Long planId) throws NotFoundException;
+    InvoiceDTO saveByPlanId(Long planId,Long userId) throws NotFoundException;
 
     Optional<InvoiceDTO> findOneById(Long id) throws NotFoundException;
 

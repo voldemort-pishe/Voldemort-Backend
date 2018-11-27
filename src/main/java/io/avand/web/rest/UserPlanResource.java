@@ -2,9 +2,9 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.avand.config.ApplicationProperties;
+import io.avand.security.SecurityUtils;
 import io.avand.service.*;
 import io.avand.service.dto.InvoiceDTO;
-import io.avand.web.rest.component.InvoiceComponent;
 import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -31,12 +31,16 @@ public class UserPlanResource {
 
     private final ApplicationProperties applicationProperties;
 
+    private final SecurityUtils securityUtils;
+
     public UserPlanResource(UserPlanService userPlanService,
                             InvoiceService invoiceService,
-                            ApplicationProperties applicationProperties) {
+                            ApplicationProperties applicationProperties,
+                            SecurityUtils securityUtils) {
         this.userPlanService = userPlanService;
         this.invoiceService = invoiceService;
         this.applicationProperties = applicationProperties;
+        this.securityUtils = securityUtils;
     }
 
     @PostMapping("{planId}")
@@ -44,8 +48,8 @@ public class UserPlanResource {
     public ResponseEntity<InvoiceDTO> saveUserPlan(@PathVariable Long planId, HttpServletResponse response) throws IOException {
         logger.debug("REST request to save a plan for a user : {}", planId);
         try {
-            InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planId);
-            userPlanService.save(planId, invoiceDTO.getId());
+            InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planId,securityUtils.getCurrentUserId());
+            userPlanService.save(planId, invoiceDTO.getId(),securityUtils.getCurrentUserId());
             return new ResponseEntity<>(invoiceDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

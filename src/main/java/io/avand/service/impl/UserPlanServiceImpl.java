@@ -48,11 +48,11 @@ public class UserPlanServiceImpl implements UserPlanService {
     }
 
     @Override
-    public UserPlanDTO save(Long planId, Long invoiceId) throws NotFoundException {
+    public UserPlanDTO save(Long planId, Long invoiceId,Long userId) throws NotFoundException {
         log.debug("Request to save userPlan by planId and invoiceId : {}, {}", planId, invoiceId);
         PlanEntity planEntity = planRepository.findOne(planId);
         if (planEntity != null) {
-            Optional<UserEntity> userEntityOptional = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
+            Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
             if (userEntityOptional.isPresent()) {
                 Optional<UserPlanEntity> userPlanEntityOptional = userPlanRepository.findByUser_Id(userEntityOptional.get().getId());
                 UserPlanEntity userPlanEntity;

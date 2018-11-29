@@ -12,7 +12,9 @@ import java.util.List;
 
 public interface CompanyMemberComponent {
 
-    List<ResponseVM<CompanyMemberDTO>> save(List<String> emails) throws NotFoundException;
+    ResponseVM<CompanyMemberDTO> save(CompanyMemberDTO companyMemberDTO) throws NotFoundException;
+
+    List<ResponseVM<CompanyMemberDTO>> saveAll(List<String> emails) throws NotFoundException;
 
     ResponseVM<CompanyMemberDTO> findById(Long id) throws NotFoundException;
 

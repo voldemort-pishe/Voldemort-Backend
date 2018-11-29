@@ -1,5 +1,7 @@
 package io.avand.service;
 
+import io.avand.config.ApplicationProperties;
+import io.avand.domain.entity.jpa.CompanyMemberEntity;
 import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.mailgun.service.MailGunMessageService;
 import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
@@ -24,27 +26,35 @@ public class MailService {
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
+    private static final String COMPANY_MEMBER = "companyMember";
+    private static final String PANEL_URL = "panelUrl";
     private final Locale locale = Locale.forLanguageTag("fa");
+    private final ApplicationProperties applicationProperties;
 
     private final SpringTemplateEngine templateEngine;
     private final MailGunMessageService mailGunMessageService;
 
-    public MailService(SpringTemplateEngine templateEngine,
+    public MailService(ApplicationProperties applicationProperties,
+                       SpringTemplateEngine templateEngine,
                        MailGunMessageService mailGunMessageService) {
+        this.applicationProperties = applicationProperties;
         this.templateEngine = templateEngine;
         this.mailGunMessageService = mailGunMessageService;
     }
 
 
     @Async
-    public void sendEmail(MailGunSendMessageRequestDTO requestDTO) throws MailGunException {
+    public void sendEmail(MailGunSendMessageRequestDTO requestDTO) {
         log.debug("Request to send email : {}", requestDTO);
-
-        mailGunMessageService.sendMessage(requestDTO);
+        try {
+            mailGunMessageService.sendMessage(requestDTO);
+        } catch (MailGunException e) {
+            e.printStackTrace();
+        }
     }
 
     @Async
-    public void sendActivationEmail(UserEntity user) throws MailGunException {
+    public void sendActivationEmail(UserEntity user) {
         log.debug("Sending activation email to '{}'", user.getEmail());
         Context context = new Context(locale);
         context.setVariable(USER, user);
@@ -59,7 +69,7 @@ public class MailService {
     }
 
     @Async
-    public void sendPasswordResetMail(UserEntity user) throws MailGunException {
+    public void sendPasswordResetMail(UserEntity user) {
         log.debug("Sending password reset email to '{}'", user.getEmail());
         Context context = new Context(locale);
         context.setVariable(USER, user);
@@ -74,22 +84,41 @@ public class MailService {
     }
 
     @Async
+    public void sendInvitationMemberEmail(CompanyMemberEntity companyMemberEntity) {
+        log.debug("Sending activation email to '{}'", companyMemberEntity);
+        Context context = new Context(locale);
+        context.setVariable(COMPANY_MEMBER, companyMemberEntity);
+        String content = templateEngine.process("invitationMemberEmail", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(companyMemberEntity.getUser().getEmail());
+        sendMessageRequestDTO.setFromName(companyMemberEntity.getCompany().getNameFa());
+        sendMessageRequestDTO.setSubject("همکاران");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        this.sendEmail(sendMessageRequestDTO);
+    }
+
+    @Async
+    public void sendInvitationMemberEmailWithRegister(CompanyMemberEntity companyMemberEntity) {
+        log.debug("Sending activation email to '{}'", companyMemberEntity);
+        Context context = new Context(locale);
+        context.setVariable(COMPANY_MEMBER, companyMemberEntity);
+        String content = templateEngine.process("invitationMemberEmailWithRegister", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(companyMemberEntity.getUser().getEmail());
+        sendMessageRequestDTO.setFromName(companyMemberEntity.getCompany().getNameFa());
+        sendMessageRequestDTO.setSubject("همکاران");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        this.sendEmail(sendMessageRequestDTO);
+    }
+
+    @Async
     public void sendInviationEmail(UserEntity user) {
         log.debug("Sending activation email to '{}'", user.getEmail());
 //        sendEmailFromTemplate(user, "invitationEmail", "email.activation.title");
     }
 
-    @Async
-    public void sendInviationMemberEmail(UserEntity user) {
-        log.debug("Sending activation email to '{}'", user.getEmail());
-//        sendEmailFromTemplate(user, "invitationMemberEmail", "email.activation.title");
-    }
-
-    @Async
-    public void sendInviationMemberEmailWithRegister(UserEntity user) {
-        log.debug("Sending activation email to '{}'", user.getEmail());
-//        sendEmailFromTemplate(user, "invitationMemberEmailWithRegister", "email.activation.title");
-    }
 
     @Async
     public void sendCreationEmail(UserEntity user) {

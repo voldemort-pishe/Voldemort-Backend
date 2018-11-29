@@ -42,8 +42,19 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
         this.companyMapper = companyMapper;
     }
 
+
     @Override
-    public List<ResponseVM<CompanyMemberDTO>> save(List<String> emails) throws NotFoundException {
+    public ResponseVM<CompanyMemberDTO> save(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
+        log.debug("Request to save companyMemberDTO via component");
+        companyMemberDTO = companyMemberService.save(companyMemberDTO);
+        ResponseVM<CompanyMemberDTO> responseVM = new ResponseVM<>();
+        responseVM.setData(companyMemberDTO);
+        responseVM.setInclude(this.createIncluded(companyMemberDTO));
+        return responseVM;
+    }
+
+    @Override
+    public List<ResponseVM<CompanyMemberDTO>> saveAll(List<String> emails) throws NotFoundException {
         log.debug("Request to save companyMemberDTO via component");
         List<CompanyMemberDTO> companyMemberDTOS = companyMemberService.saveAll(emails);
         List<ResponseVM<CompanyMemberDTO>> responseVMS = new ArrayList<>();

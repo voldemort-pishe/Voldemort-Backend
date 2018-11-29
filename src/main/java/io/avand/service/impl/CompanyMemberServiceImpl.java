@@ -56,23 +56,23 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     @Override
     public CompanyMemberDTO save(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
         log.debug("Request to save company member : {}", companyMemberDTO);
-        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyMemberDTO.getCompanyId());
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(securityUtils.getCurrentCompanyId());
         if (companyEntity.isPresent()) {
             Optional<UserEntity> userEntityOp = userRepository.findByLogin(companyMemberDTO.getUserEmail());
             UserEntity userEntity;
+            boolean register;
             if (!userEntityOp.isPresent()) {
                 UserEntity user = new UserEntity();
                 user.setLogin(companyMemberDTO.getUserEmail());
                 user.setEmail(companyMemberDTO.getUserEmail());
                 user.setInvitationKey(RandomUtil.generateInvitationKey());
                 userEntity = userRepository.save(user);
-
-                mailService.sendInviationMemberEmailWithRegister(userEntity);
+                register = true;
             } else {
                 CompanyMemberEntity companyMemberEntity = companyMemberRepository.findByUser_Id(userEntityOp.get().getId());
                 if (companyMemberEntity == null) {
                     userEntity = userEntityOp.get();
-                    mailService.sendInviationMemberEmail(userEntity);
+                    register = false;
                 } else {
                     throw new NotFoundException("User Is Available in another company");
                 }
@@ -83,6 +83,12 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
             companyMemberEntity.setCompany(companyEntity.get());
 
             companyMemberEntity = companyMemberRepository.save(companyMemberEntity);
+
+            if (register) {
+                mailService.sendInvitationMemberEmailWithRegister(companyMemberEntity);
+            } else {
+                mailService.sendInvitationMemberEmail(companyMemberEntity);
+            }
 
             return companyMemberMapper.toDto(companyMemberEntity);
         } else {
@@ -99,17 +105,17 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
             for (String userEmail : emails) {
                 Optional<UserEntity> userEntityOp = userRepository.findByLogin(userEmail);
                 UserEntity userEntity;
+                boolean register;
                 if (!userEntityOp.isPresent()) {
                     UserEntity user = new UserEntity();
                     user.setLogin(userEmail);
                     user.setEmail(userEmail);
                     user.setInvitationKey(RandomUtil.generateInvitationKey());
                     userEntity = userRepository.save(user);
-
-                    mailService.sendInviationMemberEmailWithRegister(userEntity);
+                    register = true;
                 } else {
                     userEntity = userEntityOp.get();
-                    mailService.sendInviationMemberEmail(userEntity);
+                    register = false;
                 }
 
                 CompanyMemberEntity companyMemberEntity = new CompanyMemberEntity();
@@ -117,6 +123,13 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
                 companyMemberEntity.setCompany(companyEntity);
 
                 companyMemberEntity = companyMemberRepository.save(companyMemberEntity);
+
+                if (register) {
+                    mailService.sendInvitationMemberEmailWithRegister(companyMemberEntity);
+                } else {
+                    mailService.sendInvitationMemberEmail(companyMemberEntity);
+                }
+
                 companyMemberEntities.add(companyMemberEntity);
             }
             return companyMemberMapper.toDto(companyMemberEntities);

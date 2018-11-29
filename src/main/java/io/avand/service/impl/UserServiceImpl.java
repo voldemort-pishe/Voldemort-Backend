@@ -122,11 +122,7 @@ public class UserServiceImpl implements UserService {
             this.addSubscription(userEntity);
         } catch (NotFoundException ignore) {
         }
-        try {
-            mailService.sendActivationEmail(userEntity);
-        } catch (MailGunException ignore) {
-        }
-
+        mailService.sendActivationEmail(userEntity);
         return userMapper.toDto(userEntity);
     }
 
@@ -247,10 +243,8 @@ public class UserServiceImpl implements UserService {
                 user.setActivationKey(RandomUtil.generateActivationKey());
                 user = userRepository.save(user);
 
-                try {
-                    mailService.sendActivationEmail(user);
-                } catch (MailGunException ignore) {
-                }
+                mailService.sendActivationEmail(user);
+
             } else {
                 throw new IllegalStateException("User Is Active");
             }
@@ -269,10 +263,7 @@ public class UserServiceImpl implements UserService {
                 user.setResetKey(RandomUtil.generateResetKey());
                 user.setResetDate(ZonedDateTime.now());
                 userRepository.save(user);
-                try {
-                    mailService.sendPasswordResetMail(user);
-                } catch (MailGunException ignore) {
-                }
+                mailService.sendPasswordResetMail(user);
             } else {
                 throw new IllegalStateException("User Isn't Active");
             }

@@ -1,6 +1,7 @@
 package io.avand.web.rest;
 
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.SecurityUtils;
 import io.avand.service.CompanyMemberService;
 import io.avand.service.dto.CompanyMemberDTO;
 import io.avand.web.rest.component.CompanyMemberComponent;
@@ -41,12 +42,27 @@ public class CompanyMemberResource {
     }
 
     @PostMapping
-    public ResponseEntity<List<ResponseVM<CompanyMemberDTO>>> save(@RequestBody @Valid CompanyMemberVM companyMemberVM)
+    public ResponseEntity<ResponseVM<CompanyMemberDTO>> save(@RequestBody @Valid CompanyMemberDTO companyMemberDTO)
+        throws URISyntaxException {
+        log.debug("REST Request to save company member : {}", companyMemberDTO);
+
+        try {
+            ResponseVM<CompanyMemberDTO> result = companyMemberComponent.save(companyMemberDTO);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (DataIntegrityViolationException e) {
+            throw new ServerErrorException("شماه قبلا عضو شده‌اید");
+        } catch (NotFoundException | SecurityException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    @PostMapping("/all")
+    public ResponseEntity<List<ResponseVM<CompanyMemberDTO>>> saveAll(@RequestBody @Valid CompanyMemberVM companyMemberVM)
         throws URISyntaxException {
         log.debug("REST Request to save company member : {}", companyMemberVM);
 
         try {
-            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.save(companyMemberVM.getEmails());
+            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.saveAll(companyMemberVM.getEmails());
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             throw new ServerErrorException("شماه قبلا عضو شده‌اید");
@@ -71,7 +87,7 @@ public class CompanyMemberResource {
         (@ApiParam Pageable pageable, CompanyMemberFilterVM filterVM) {
         log.debug("Request to find all company member");
         try {
-            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllByFilter(filterVM,pageable);
+            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllByFilter(filterVM, pageable);
             return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

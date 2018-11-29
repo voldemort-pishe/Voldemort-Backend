@@ -4,15 +4,15 @@ import io.avand.aop.event.CustomEvent;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CandidateScheduleEntity;
 import io.avand.domain.entity.jpa.JobHireTeamEntity;
+import io.avand.domain.enumeration.AttendeeRoleType;
 import io.avand.domain.enumeration.EventType;
-import io.avand.mailgun.repository.impl.MailGunMessageRepositoryImpl;
-import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.CandidateScheduleRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CalendarService;
 import io.avand.service.CandidateScheduleMemberService;
 import io.avand.service.CandidateScheduleService;
+import io.avand.service.MailService;
 import io.avand.service.dto.*;
 import io.avand.service.mapper.CandidateScheduleMapper;
 import javassist.NotFoundException;
@@ -38,25 +38,28 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
     private final Logger log = LoggerFactory.getLogger(CandidateScheduleServiceImpl.class);
     private final CandidateScheduleRepository candidateScheduleRepository;
     private final CandidateScheduleMapper candidateScheduleMapper;
+    private final CandidateScheduleMemberService candidateScheduleMemberService;
     private final SecurityUtils securityUtils;
     private final CandidateRepository candidateRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final MailGunMessageRepositoryImpl mailGunMessageRepository;
+    private final MailService mailService;
     private final CalendarService calendarService;
 
     public CandidateScheduleServiceImpl(CandidateScheduleRepository candidateScheduleRepository,
                                         CandidateScheduleMapper candidateScheduleMapper,
+                                        CandidateScheduleMemberService candidateScheduleMemberService,
                                         SecurityUtils securityUtils,
                                         CandidateRepository candidateRepository,
                                         ApplicationEventPublisher eventPublisher,
-                                        MailGunMessageRepositoryImpl mailGunMessageRepository,
+                                        MailService mailService,
                                         CalendarService calendarService) {
         this.candidateScheduleRepository = candidateScheduleRepository;
         this.candidateScheduleMapper = candidateScheduleMapper;
+        this.candidateScheduleMemberService = candidateScheduleMemberService;
         this.securityUtils = securityUtils;
         this.candidateRepository = candidateRepository;
         this.eventPublisher = eventPublisher;
-        this.mailGunMessageRepository = mailGunMessageRepository;
+        this.mailService = mailService;
         this.calendarService = calendarService;
     }
 
@@ -66,9 +69,18 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
         log.debug("Request to save schedule for candidate : {}", candidateScheduleDTO);
         CandidateEntity candidateEntity = candidateRepository.findOne(candidateScheduleDTO.getCandidateId());
         if (candidateEntity != null) {
+
+            Set<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS = candidateScheduleDTO.getMember();
+            candidateScheduleDTO.setMember(null);
+
             CandidateScheduleEntity candidateScheduleEntity = candidateScheduleMapper.toEntity(candidateScheduleDTO);
             candidateScheduleEntity.setCandidate(candidateEntity);
             candidateScheduleEntity = candidateScheduleRepository.save(candidateScheduleEntity);
+
+            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {
+                candidateScheduleMemberDTO.setCandidateScheduleId(candidateScheduleEntity.getId());
+            }
+            candidateScheduleMemberService.saveAll(candidateScheduleMemberDTOS);
 
             String name = candidateEntity.getFirstName() + " " + candidateEntity.getLastName();
 
@@ -95,18 +107,28 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
                 CalendarICSAttendeeDTO calendarICSAttendeeDTO = new CalendarICSAttendeeDTO();
                 calendarICSAttendeeDTO.setName(jobHireTeamEntity.getUser().getFirstName() + " " + jobHireTeamEntity.getUser().getLastName());
                 calendarICSAttendeeDTO.setEmail(jobHireTeamEntity.getUser().getEmail());
+                calendarICSAttendeeDTO.setRole(AttendeeRoleType.HIRE_TEAM);
                 calendarICSAttendeeDTOS.add(calendarICSAttendeeDTO);
             }
+
+            CalendarICSAttendeeDTO calendarICSAttendeeDTO = new CalendarICSAttendeeDTO();
+            calendarICSAttendeeDTO.setName(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+            calendarICSAttendeeDTO.setEmail(candidateEntity.getEmail());
+            calendarICSAttendeeDTO.setRole(AttendeeRoleType.CANDIDATE);
+            calendarICSAttendeeDTOS.add(calendarICSAttendeeDTO);
+
             calendarICSDTO.setAttendeeDTOList(calendarICSAttendeeDTOS);
             String fileName = calendarService.createICSFile(calendarICSDTO);
 
-            MailGunSendMessageRequestDTO mailGunSendMessageRequestDTO = new MailGunSendMessageRequestDTO();
-            mailGunSendMessageRequestDTO.setFromName(candidateEntity.getJob().getCompany().getNameFa());
-            mailGunSendMessageRequestDTO.setTo(candidateEntity.getEmail());
-            mailGunSendMessageRequestDTO.setSubject("وقت مصاحبه");
-            mailGunSendMessageRequestDTO.setText("با سلام برای شما در شرکت وقت مصاحبه تنطیم شده است");
-            mailGunSendMessageRequestDTO.setAttachment(new File("/Users/pouya/Project/Avand/voldemort-backend/" + fileName));
-            mailGunMessageRepository.send(mailGunSendMessageRequestDTO);
+            File attachment = new File("/Users/pouya/Project/Avand/voldemort-backend/" + fileName);
+
+            for (CalendarICSAttendeeDTO icsAttendeeDTO : calendarICSAttendeeDTOS) {
+                if (icsAttendeeDTO.getRole() == AttendeeRoleType.CANDIDATE) {
+                    mailService.sendScheduleCandidate(candidateScheduleEntity, icsAttendeeDTO.getName(), icsAttendeeDTO.getEmail(), attachment);
+                } else {
+                    mailService.sendScheduleTeam(candidateScheduleEntity, icsAttendeeDTO.getName(), icsAttendeeDTO.getEmail(), attachment);
+                }
+            }
 
             return candidateScheduleMapper.toDto(candidateScheduleEntity);
         } else {

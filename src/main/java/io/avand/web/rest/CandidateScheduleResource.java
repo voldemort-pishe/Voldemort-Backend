@@ -2,6 +2,7 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.avand.domain.enumeration.ScheduleStatus;
 import io.avand.security.AuthoritiesConstants;
 import io.avand.service.CandidateScheduleService;
 import io.avand.service.dto.CandidateScheduleDTO;
@@ -54,21 +55,22 @@ public class CandidateScheduleResource {
     /**
      * POST  /candidate-schedule : Create a new candidateSchedule.
      *
-     * @param CandidateScheduleDTO the CandidateScheduleDTO to create
+     * @param candidateScheduleDTO the CandidateScheduleDTO to create
      * @return the ResponseEntity with status 201 (Created) and with body the new CandidateScheduleDTO, or with status 400 (Bad Request) if the CandidateScheduleDTO has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping
     @Timed
     public ResponseEntity<ResponseVM<CandidateScheduleDTO>> create
-    (@RequestBody CandidateScheduleDTO CandidateScheduleDTO)
+    (@RequestBody CandidateScheduleDTO candidateScheduleDTO)
         throws URISyntaxException {
-        log.debug("REST request to save CandidateScheduleDTO : {}", CandidateScheduleDTO);
-        if (CandidateScheduleDTO.getId() != null) {
+        log.debug("REST request to save CandidateScheduleDTO : {}", candidateScheduleDTO);
+        if (candidateScheduleDTO.getId() != null) {
             throw new BadRequestAlertException("A new CandidateScheduleDTO cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            ResponseVM<CandidateScheduleDTO> result = candidateScheduleComponent.save(CandidateScheduleDTO);
+            candidateScheduleDTO.setStatus(ScheduleStatus.SCHEDULED);
+            ResponseVM<CandidateScheduleDTO> result = candidateScheduleComponent.save(candidateScheduleDTO);
             return ResponseEntity.created(new URI("/api/candidate-schedule-entities/" + result.getData().getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
                 .body(result);
@@ -80,7 +82,7 @@ public class CandidateScheduleResource {
     /**
      * PUT  /candidate-schedule-entities : Updates an existing CandidateScheduleDTO.
      *
-     * @param CandidateScheduleDTO the CandidateScheduleDTO to update
+     * @param candidateScheduleDTO the CandidateScheduleDTO to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated CandidateScheduleDTO,
      * or with status 400 (Bad Request) if the CandidateScheduleDTO is not valid,
      * or with status 500 (Internal Server Error) if the CandidateScheduleDTO couldn't be updated
@@ -89,16 +91,16 @@ public class CandidateScheduleResource {
     @PutMapping
     @Timed
     public ResponseEntity<ResponseVM<CandidateScheduleDTO>> update
-    (@RequestBody CandidateScheduleDTO CandidateScheduleDTO)
+    (@RequestBody CandidateScheduleDTO candidateScheduleDTO)
         throws URISyntaxException {
-        log.debug("REST request to update CandidateScheduleDTO : {}", CandidateScheduleDTO);
-        if (CandidateScheduleDTO.getId() == null) {
-            return create(CandidateScheduleDTO);
+        log.debug("REST request to update CandidateScheduleDTO : {}", candidateScheduleDTO);
+        if (candidateScheduleDTO.getId() == null) {
+            return create(candidateScheduleDTO);
         }
         try {
-            ResponseVM<CandidateScheduleDTO> result = candidateScheduleComponent.save(CandidateScheduleDTO);
+            ResponseVM<CandidateScheduleDTO> result = candidateScheduleComponent.save(candidateScheduleDTO);
             return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, CandidateScheduleDTO.getId().toString()))
+                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, candidateScheduleDTO.getId().toString()))
                 .body(result);
         } catch (NotFoundException | IOException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
@@ -116,8 +118,8 @@ public class CandidateScheduleResource {
     public ResponseEntity<ResponseVM<CandidateScheduleDTO>> getById(@PathVariable Long id) {
         log.debug("REST request to get CandidateScheduleDTO : {}", id);
         try {
-            ResponseVM<CandidateScheduleDTO> CandidateScheduleDTO = candidateScheduleComponent.findById(id);
-            return ResponseUtil.wrapOrNotFound(Optional.ofNullable(CandidateScheduleDTO));
+            ResponseVM<CandidateScheduleDTO> candidateScheduleDTO = candidateScheduleComponent.findById(id);
+            return ResponseUtil.wrapOrNotFound(Optional.ofNullable(candidateScheduleDTO));
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }

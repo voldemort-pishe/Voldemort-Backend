@@ -1,10 +1,13 @@
 package io.avand.service.dto;
 
+import io.avand.domain.enumeration.AttendeeRoleType;
+
 import java.io.Serializable;
 
 public class CalendarICSAttendeeDTO implements Serializable {
     private String name;
     private String email;
+    private AttendeeRoleType role;
 
     public String getName() {
         return name;
@@ -20,6 +23,14 @@ public class CalendarICSAttendeeDTO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public AttendeeRoleType getRole() {
+        return role;
+    }
+
+    public void setRole(AttendeeRoleType role) {
+        this.role = role;
     }
 
     @Override

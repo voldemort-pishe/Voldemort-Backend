@@ -1,11 +1,13 @@
 package io.avand.service;
 
 import io.avand.config.ApplicationProperties;
+import io.avand.domain.entity.jpa.CandidateScheduleEntity;
 import io.avand.domain.entity.jpa.CompanyMemberEntity;
 import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.mailgun.service.MailGunMessageService;
 import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
 import io.avand.mailgun.service.error.MailGunException;
+import io.avand.service.util.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
+import java.io.File;
 import java.util.Locale;
 
 /**
@@ -26,7 +29,10 @@ public class MailService {
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
+    private static final String NAME = "name";
+    private static final String DATE = "date";
     private static final String COMPANY_MEMBER = "companyMember";
+    private static final String CANDIDATE_SCHEDULE = "candidateSchedule";
     private static final String PANEL_URL = "panelUrl";
     private final Locale locale = Locale.forLanguageTag("fa");
     private final ApplicationProperties applicationProperties;
@@ -114,16 +120,39 @@ public class MailService {
     }
 
     @Async
-    public void sendInviationEmail(UserEntity user) {
-        log.debug("Sending activation email to '{}'", user.getEmail());
-//        sendEmailFromTemplate(user, "invitationEmail", "email.activation.title");
+    public void sendScheduleCandidate(CandidateScheduleEntity candidateScheduleEntity, String name, String email, File attachment) {
+        log.debug("Sending Schedule email to : {}", candidateScheduleEntity);
+        Context context = new Context(locale);
+        context.setVariable(CANDIDATE_SCHEDULE, candidateScheduleEntity);
+        context.setVariable(DATE, DateUtil.gToPersianWithTime(DateUtil.toDate(candidateScheduleEntity.getStartDate())));
+        context.setVariable(NAME, name);
+        String content = templateEngine.process("scheduleCandidateEmail", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(email);
+        sendMessageRequestDTO.setFromName(candidateScheduleEntity.getCandidate().getJob().getCompany().getNameFa());
+        sendMessageRequestDTO.setSubject("جلسه مصاحبه");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        sendMessageRequestDTO.setAttachment(attachment);
+        this.sendEmail(sendMessageRequestDTO);
     }
 
-
     @Async
-    public void sendCreationEmail(UserEntity user) {
-        log.debug("Sending creation email to '{}'", user.getEmail());
-//        sendEmailFromTemplate(user, "creationEmail", "email.activation.title");
+    public void sendScheduleTeam(CandidateScheduleEntity candidateScheduleEntity, String name, String email, File attachment) {
+        log.debug("Sending Schedule email to : {}", candidateScheduleEntity);
+        Context context = new Context(locale);
+        context.setVariable(CANDIDATE_SCHEDULE, candidateScheduleEntity);
+        context.setVariable(DATE, DateUtil.gToPersianWithTime(DateUtil.toDate(candidateScheduleEntity.getStartDate())));
+        context.setVariable(NAME, name);
+        String content = templateEngine.process("scheduleTeamEmail", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(email);
+        sendMessageRequestDTO.setFromName(candidateScheduleEntity.getCandidate().getJob().getCompany().getNameFa());
+        sendMessageRequestDTO.setSubject("جلسه مصاحبه");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        sendMessageRequestDTO.setAttachment(attachment);
+        this.sendEmail(sendMessageRequestDTO);
     }
 
 }

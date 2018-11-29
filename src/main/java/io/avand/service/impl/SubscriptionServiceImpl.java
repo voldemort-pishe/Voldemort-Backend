@@ -57,8 +57,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             }
         }
 
-        UserPlanEntity userPlanEntity = userPlanRepository.findOne(subscriptionDTO.getPlanId());
-        subscriptionEntity.setPlan(userPlanEntity);
+        UserPlanEntity userPlanEntity = userPlanRepository.findOne(subscriptionDTO.getUserPlanId());
+        subscriptionEntity.setUserPlan(userPlanEntity);
 
         subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
 

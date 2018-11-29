@@ -22,7 +22,7 @@ public class SubscriptionEntity implements Serializable {
 
     @OneToOne
     @JoinColumn(unique = true)
-    private UserPlanEntity plan;
+    private UserPlanEntity userPlan;
 
     @Column(name = "start_date")
     private ZonedDateTime startDate;
@@ -46,12 +46,12 @@ public class SubscriptionEntity implements Serializable {
         this.user = user;
     }
 
-    public UserPlanEntity getPlan() {
-        return plan;
+    public UserPlanEntity getUserPlan() {
+        return userPlan;
     }
 
-    public void setPlan(UserPlanEntity plan) {
-        this.plan = plan;
+    public void setUserPlan(UserPlanEntity userPlan) {
+        this.userPlan = userPlan;
     }
 
     public ZonedDateTime getStartDate() {

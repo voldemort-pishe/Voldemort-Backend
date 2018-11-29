@@ -10,7 +10,7 @@ public class SubscriptionDTO implements Serializable {
 
     private Long userId;
 
-    private Long planId;
+    private Long userPlanId;
 
     private ZonedDateTime startDate;
 
@@ -32,12 +32,12 @@ public class SubscriptionDTO implements Serializable {
         this.userId = userId;
     }
 
-    public Long getPlanId() {
-        return planId;
+    public Long getUserPlanId() {
+        return userPlanId;
     }
 
-    public void setPlanId(Long planId) {
-        this.planId = planId;
+    public void setUserPlanId(Long userPlanId) {
+        this.userPlanId = userPlanId;
     }
 
     public ZonedDateTime getStartDate() {
@@ -61,7 +61,7 @@ public class SubscriptionDTO implements Serializable {
         return "SubscriptionDTO{" +
             "id=" + id +
             ", userId=" + userId +
-            ", planId=" + planId +
+            ", userPlanId=" + userPlanId +
             ", startDate=" + startDate +
             ", endDate=" + endDate +
             '}';

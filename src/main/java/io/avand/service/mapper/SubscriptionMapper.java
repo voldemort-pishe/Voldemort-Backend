@@ -10,6 +10,6 @@ public interface SubscriptionMapper extends EntityMapper<SubscriptionDTO, Subscr
 
     @Override
     @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "plan.id", target = "planId")
+    @Mapping(source = "userPlan.id", target = "userPlanId")
     SubscriptionDTO toDto(SubscriptionEntity entity);
 }

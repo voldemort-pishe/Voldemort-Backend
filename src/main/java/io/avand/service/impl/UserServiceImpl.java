@@ -2,6 +2,7 @@ package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.*;
 import io.avand.domain.enumeration.PermissionAction;
+import io.avand.mailgun.service.error.MailGunException;
 import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDTO save(String login, String firstName, String lastName, String email, String password) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
@@ -120,13 +122,16 @@ public class UserServiceImpl implements UserService {
             this.addSubscription(userEntity);
         } catch (NotFoundException ignore) {
         }
-
-        mailService.sendActivationEmail(userEntity);
+        try {
+            mailService.sendActivationEmail(userEntity);
+        } catch (MailGunException ignore) {
+        }
 
         return userMapper.toDto(userEntity);
     }
 
     @Override
+    @Transactional
     public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, Boolean active) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
@@ -242,7 +247,10 @@ public class UserServiceImpl implements UserService {
                 user.setActivationKey(RandomUtil.generateActivationKey());
                 user = userRepository.save(user);
 
-                mailService.sendActivationEmail(user);
+                try {
+                    mailService.sendActivationEmail(user);
+                } catch (MailGunException ignore) {
+                }
             } else {
                 throw new IllegalStateException("User Is Active");
             }
@@ -261,7 +269,10 @@ public class UserServiceImpl implements UserService {
                 user.setResetKey(RandomUtil.generateResetKey());
                 user.setResetDate(ZonedDateTime.now());
                 userRepository.save(user);
-                mailService.sendPasswordResetMail(user);
+                try {
+                    mailService.sendPasswordResetMail(user);
+                } catch (MailGunException ignore) {
+                }
             } else {
                 throw new IllegalStateException("User Isn't Active");
             }
@@ -343,12 +354,12 @@ public class UserServiceImpl implements UserService {
     private void addSubscription(UserEntity userEntity) throws NotFoundException {
         Optional<PlanDTO> planDTO = planService.findFreePlan();
         if (planDTO.isPresent()) {
-            InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planDTO.get().getId(),userEntity.getId());
+            InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planDTO.get().getId(), userEntity.getId());
 
-            UserPlanDTO userPlanDTO = userPlanService.save(planDTO.get().getId(), invoiceDTO.getId(),userEntity.getId());
+            UserPlanDTO userPlanDTO = userPlanService.save(planDTO.get().getId(), invoiceDTO.getId(), userEntity.getId());
 
             SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
-            subscriptionDTO.setPlanId(userPlanDTO.getId());
+            subscriptionDTO.setUserPlanId(userPlanDTO.getId());
             subscriptionDTO.setUserId(userEntity.getId());
             subscriptionDTO.setStartDate(ZonedDateTime.now());
             subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(planDTO.get().getLength()));

@@ -121,7 +121,7 @@ public class PaymentResource {
                     Optional<UserPlanDTO> userPlanDTO = userPlanService.findByInvoiceId(foundInvoice.getId());
 
                     SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
-                    subscriptionDTO.setPlanId(userPlanDTO.get().getId());
+                    subscriptionDTO.setUserPlanId(userPlanDTO.get().getId());
                     subscriptionDTO.setUserId(foundInvoice.getUserId());
                     subscriptionDTO.setStartDate(ZonedDateTime.now());
                     subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(userPlanDTO.get().getLength()));

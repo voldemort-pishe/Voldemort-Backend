@@ -41,6 +41,9 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "cellphone")
+    private String cellphone;
+
     @Column(name = "activated")
     private Boolean activated;
 
@@ -157,6 +160,14 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
     }
 
     public Boolean isActivated() {
@@ -366,6 +377,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
+            ", cellphone='" + cellphone + '\'' +
             ", activated=" + activated +
             ", activationKey='" + activationKey + '\'' +
             ", invitationKey='" + invitationKey + '\'' +

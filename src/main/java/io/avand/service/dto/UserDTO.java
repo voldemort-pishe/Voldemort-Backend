@@ -21,6 +21,8 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     private String email;
 
+    private String cellphone;
+
     @JsonIgnore
     private Boolean activated;
 
@@ -87,6 +89,14 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
     }
 
     public Boolean getActivated() {
@@ -177,6 +187,7 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
+            ", cellphone='" + cellphone + '\'' +
             ", activated=" + activated +
             ", activationKey='" + activationKey + '\'' +
             ", invitationKey='" + invitationKey + '\'' +

@@ -2,7 +2,6 @@ package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.*;
 import io.avand.domain.enumeration.PermissionAction;
-import io.avand.mailgun.service.error.MailGunException;
 import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
@@ -21,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
     private final InvoiceService invoiceService;
     private final SubscriptionService subscriptionService;
     private final UserAuthorityService userAuthorityService;
+    private final SmsService smsService;
 
     public UserServiceImpl(UserRepository userRepository,
                            AuthorityRepository authorityRepository,
@@ -61,7 +62,8 @@ public class UserServiceImpl implements UserService {
                            UserPlanService userPlanService,
                            InvoiceService invoiceService,
                            SubscriptionService subscriptionService,
-                           UserAuthorityService userAuthorityService) {
+                           UserAuthorityService userAuthorityService,
+                           SmsService smsService) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.userMapper = userMapper;
@@ -74,6 +76,7 @@ public class UserServiceImpl implements UserService {
         this.invoiceService = invoiceService;
         this.subscriptionService = subscriptionService;
         this.userAuthorityService = userAuthorityService;
+        this.smsService = smsService;
     }
 
     @Override
@@ -122,7 +125,21 @@ public class UserServiceImpl implements UserService {
             this.addSubscription(userEntity);
         } catch (NotFoundException ignore) {
         }
-        mailService.sendActivationEmail(userEntity);
+
+        SmsSendRequestDTO smsSendRequestDTO = new SmsSendRequestDTO();
+        smsSendRequestDTO.setReceptor(userEntity.getCellphone());
+        smsSendRequestDTO.setToken(userEntity.getActivationKey());
+
+        boolean bool;
+        try {
+            bool = smsService.send(smsSendRequestDTO);
+        } catch (HttpClientErrorException e) {
+            bool = false;
+        }
+        if (!bool){
+            mailService.sendActivationEmail(userEntity);
+        }
+
         return userMapper.toDto(userEntity);
     }
 
@@ -243,7 +260,19 @@ public class UserServiceImpl implements UserService {
                 user.setActivationKey(RandomUtil.generateActivationKey());
                 user = userRepository.save(user);
 
-                mailService.sendActivationEmail(user);
+                SmsSendRequestDTO smsSendRequestDTO = new SmsSendRequestDTO();
+                smsSendRequestDTO.setReceptor(user.getCellphone());
+                smsSendRequestDTO.setToken(user.getActivationKey());
+
+                boolean bool;
+                try {
+                    bool = smsService.send(smsSendRequestDTO);
+                } catch (HttpClientErrorException e) {
+                    bool = false;
+                }
+                if (!bool){
+                    mailService.sendActivationEmail(user);
+                }
 
             } else {
                 throw new IllegalStateException("User Is Active");

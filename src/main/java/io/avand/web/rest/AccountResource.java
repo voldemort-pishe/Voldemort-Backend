@@ -59,7 +59,7 @@ public class AccountResource {
                 );
 
             ServerMessage serverMessage = new ServerMessage();
-            serverMessage.setMessage("حساب کاربری شما با موفقیت ایجاد شد، جهت تایید حساب کاربری به پست الکترونیکی خودمراجعه کنید.");
+            serverMessage.setMessage("حساب کاربری شما با موفقیت ایجاد شد، کد تایید برای شما ارسال شد.");
             return new ResponseEntity<>(serverMessage, HttpStatus.OK);
         }
     }
@@ -109,7 +109,7 @@ public class AccountResource {
         try {
             userService.requestToResendActivationEmail(activationVM.getEmail());
             ServerMessage serverMessage = new ServerMessage();
-            serverMessage.setMessage("پیام فعال سازی حساب به ایمیل شما ارسال گردید.");
+            serverMessage.setMessage("پیام فعال سازی حساب برای شما ارسال گردید.");
             return new ResponseEntity<>(serverMessage, HttpStatus.OK);
         } catch (NotFoundException | IllegalStateException e) {
             throw new ServerErrorException(e.getMessage());

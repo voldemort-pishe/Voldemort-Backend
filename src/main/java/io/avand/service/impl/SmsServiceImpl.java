@@ -20,7 +20,7 @@ public class SmsServiceImpl implements SmsService {
     private final Logger log = LoggerFactory.getLogger(SmsServiceImpl.class);
     private final RestTemplate restTemplate;
 
-    private final String API_KEY = "";
+    private final String API_KEY = "4F426F766F584A2F4155385A6D7177713345414230436E3465447749472F4D79";
     private final String BASE_URL = "https://api.kavenegar.com/v1/" + API_KEY;
 
     public SmsServiceImpl(RestTemplate restTemplate) {
@@ -30,6 +30,7 @@ public class SmsServiceImpl implements SmsService {
     @Override
     public Boolean send(SmsSendRequestDTO requestDTO) {
         log.debug("Request to send sms : {}", requestDTO);
+        requestDTO.setTemplate("AvandVerify");
         HttpEntity<SmsSendRequestDTO> httpEntity = new HttpEntity<>(requestDTO);
         ResponseEntity<SmsSendResponseDTO> responseEntity = restTemplate
             .exchange(

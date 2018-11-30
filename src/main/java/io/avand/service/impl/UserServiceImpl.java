@@ -126,20 +126,10 @@ public class UserServiceImpl implements UserService {
         } catch (NotFoundException ignore) {
         }
 
-        SmsSendRequestDTO smsSendRequestDTO = new SmsSendRequestDTO();
-        smsSendRequestDTO.setReceptor(userEntity.getCellphone());
-        smsSendRequestDTO.setToken(userEntity.getActivationKey());
-
-        boolean bool;
-        try {
-            bool = smsService.send(smsSendRequestDTO);
-        } catch (HttpClientErrorException e) {
-            bool = false;
-        }
-        if (!bool){
+        boolean bool = smsService.send(userEntity.getCellphone(), userEntity.getActivationKey());
+        if (!bool) {
             mailService.sendActivationEmail(userEntity);
         }
-
         return userMapper.toDto(userEntity);
     }
 
@@ -260,17 +250,8 @@ public class UserServiceImpl implements UserService {
                 user.setActivationKey(RandomUtil.generateActivationKey());
                 user = userRepository.save(user);
 
-                SmsSendRequestDTO smsSendRequestDTO = new SmsSendRequestDTO();
-                smsSendRequestDTO.setReceptor(user.getCellphone());
-                smsSendRequestDTO.setToken(user.getActivationKey());
-
-                boolean bool;
-                try {
-                    bool = smsService.send(smsSendRequestDTO);
-                } catch (HttpClientErrorException e) {
-                    bool = false;
-                }
-                if (!bool){
+                boolean bool = smsService.send(user.getCellphone(), user.getActivationKey());
+                if (!bool) {
                     mailService.sendActivationEmail(user);
                 }
 
@@ -280,6 +261,7 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new NotFoundException("User Not Available");
         }
+
     }
 
     @Override

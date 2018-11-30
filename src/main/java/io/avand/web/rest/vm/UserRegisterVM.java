@@ -17,6 +17,8 @@ public class UserRegisterVM implements Serializable {
     @NotNull
     @Pattern(regexp = Constants.EMAIL_REGEX)
     private String email;
+    @NotNull
+    private String cellphone;
 
     public String getFirstName() {
         return firstName;
@@ -48,5 +50,13 @@ public class UserRegisterVM implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
     }
 }

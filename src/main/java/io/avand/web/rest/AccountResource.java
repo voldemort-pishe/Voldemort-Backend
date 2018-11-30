@@ -31,15 +31,9 @@ public class AccountResource {
 
     private final Logger log = LoggerFactory.getLogger(AccountResource.class);
     private final UserService userService;
-    private final SecurityUtils securityUtils;
-    private final ApplicationProperties applicationProperties;
 
-    public AccountResource(UserService userService,
-                           SecurityUtils securityUtils,
-                           ApplicationProperties applicationProperties) {
+    public AccountResource(UserService userService) {
         this.userService = userService;
-        this.securityUtils = securityUtils;
-        this.applicationProperties = applicationProperties;
     }
 
     @PostMapping("/register")
@@ -55,7 +49,8 @@ public class AccountResource {
                     userRegisterVM.getFirstName(),
                     userRegisterVM.getLastName(),
                     userRegisterVM.getEmail(),
-                    userRegisterVM.getPassword()
+                    userRegisterVM.getPassword(),
+                    userRegisterVM.getCellphone()
                 );
 
             ServerMessage serverMessage = new ServerMessage();
@@ -78,6 +73,7 @@ public class AccountResource {
                     userRegisterInviteVM.getLastName(),
                     userFound.get().getEmail(),
                     userRegisterInviteVM.getPassword(),
+                    userRegisterInviteVM.getCellphone(),
                     true
                 );
             ServerMessage serverMessage = new ServerMessage();
@@ -187,7 +183,7 @@ public class AccountResource {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity logout()  {
+    public ResponseEntity logout() {
         return new ResponseEntity(HttpStatus.OK);
     }
 }

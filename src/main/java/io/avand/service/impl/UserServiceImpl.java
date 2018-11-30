@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO save(String login, String firstName, String lastName, String email, String password) {
+    public UserDTO save(String login, String firstName, String lastName, String email, String password,String cellphone) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
         UserEntity userEntity;
@@ -90,6 +90,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setFirstName(firstName);
             userEntity.setLastName(lastName);
             userEntity.setEmail(email);
+            userEntity.setCellphone(cellphone);
         } else {
             userEntity = new UserEntity();
             userEntity.setLogin(login);
@@ -97,6 +98,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setFirstName(firstName);
             userEntity.setLastName(lastName);
             userEntity.setEmail(email);
+            userEntity.setCellphone(cellphone);
             userEntity.setActivationKey(RandomUtil.generateActivationKey());
             userEntity.setActivated(false);
 
@@ -135,7 +137,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, Boolean active) {
+    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password,String cellphone, Boolean active) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
 
@@ -145,6 +147,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setFirstName(firstName);
         userEntity.setLastName(lastName);
         userEntity.setEmail(email);
+        userEntity.setCellphone(cellphone);
         userEntity.setActivated(active);
         userEntity.setInvitationKey(null);
 

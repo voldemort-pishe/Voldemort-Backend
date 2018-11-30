@@ -18,6 +18,8 @@ public class UserRegisterInviteVM implements Serializable {
     private String password;
     @NotNull
     private String invitationKey;
+    @NotNull
+    private String cellphone;
 
     public String getFirstName() {
         return firstName;
@@ -49,5 +51,13 @@ public class UserRegisterInviteVM implements Serializable {
 
     public void setInvitationKey(String invitationKey) {
         this.invitationKey = invitationKey;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
     }
 }

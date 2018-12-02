@@ -4,13 +4,14 @@ import io.avand.domain.enumeration.PermissionAccess;
 import io.avand.domain.enumeration.PermissionType;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public class PermissionDTO implements Serializable {
 
     private Long id;
     private PermissionType type;
     private PermissionAccess access;
-    private Long authorityId;
+    private Set<AuthorityDTO> authorities;
 
     public Long getId() {
         return id;
@@ -36,12 +37,12 @@ public class PermissionDTO implements Serializable {
         this.access = access;
     }
 
-    public Long getAuthorityId() {
-        return authorityId;
+    public Set<AuthorityDTO> getAuthorities() {
+        return authorities;
     }
 
-    public void setAuthorityId(Long authorityId) {
-        this.authorityId = authorityId;
+    public void setAuthorities(Set<AuthorityDTO> authorities) {
+        this.authorities = authorities;
     }
 
     @Override
@@ -50,7 +51,6 @@ public class PermissionDTO implements Serializable {
             "id=" + id +
             ", type=" + type +
             ", access=" + access +
-            ", authorityId=" + authorityId +
             '}';
     }
 }

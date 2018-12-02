@@ -5,6 +5,8 @@ import io.avand.domain.enumeration.PermissionType;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "permission_entity")
@@ -24,8 +26,8 @@ public class PermissionEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private PermissionAccess access;
 
-    @ManyToOne
-    private AuthorityEntity authority;
+    @ManyToMany(mappedBy = "permissions")
+    private Set<AuthorityEntity> authorities = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -51,12 +53,12 @@ public class PermissionEntity implements Serializable {
         this.access = access;
     }
 
-    public AuthorityEntity getAuthority() {
-        return authority;
+    public Set<AuthorityEntity> getAuthorities() {
+        return authorities;
     }
 
-    public void setAuthority(AuthorityEntity authority) {
-        this.authority = authority;
+    public void setAuthorities(Set<AuthorityEntity> authorities) {
+        this.authorities = authorities;
     }
 
     @Override

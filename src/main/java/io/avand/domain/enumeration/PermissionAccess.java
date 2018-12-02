@@ -1,4 +1,22 @@
 package io.avand.domain.enumeration;
 
 public enum PermissionAccess {
+    CREATE_CANDIDATE,
+    VIEW_CANDIDATE,
+    EDIT_CANDIDATE,
+    CREATE_JOB,
+    VIEW_JOBS,
+    EDIT_JOBS,
+    CONFIGURE_COMPANY_SETTING,
+    ASSIGN_ANY_CANDIDATE_TO_JOB,
+    CREATE_REPORT,
+    RUN_REPORT,
+    ADD_FEEDBACK,
+    SEE_FEEDBACK,
+    ADD_COMMENT,
+    SEE_COMMENTS,
+    SEE_INTERVIEW,
+    VIEW_JOB_DETAILS,
+    EDIT_JOB_DETAILS,
+    DELETE_JOB
 }

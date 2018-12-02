@@ -62,7 +62,6 @@ public class CacheConfiguration {
             cm.createCache(FileEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CommentEntity.class.getName(), jcacheConfiguration);
             cm.createCache(FeedbackEntity.class.getName(), jcacheConfiguration);
-            cm.createCache(UserPermissionEntity.class.getName(), jcacheConfiguration);
             cm.createCache(CandidateScheduleEntity.class.getName(), jcacheConfiguration);
             cm.createCache(TalentPoolEntity.class.getName(), jcacheConfiguration);
             cm.createCache(EvaluationCriteriaEntity.class.getName(), jcacheConfiguration);

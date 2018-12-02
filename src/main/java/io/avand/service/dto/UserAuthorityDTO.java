@@ -14,9 +14,6 @@ public class UserAuthorityDTO implements Serializable {
 
     private String authorityName;
 
-    @JsonIgnore
-    private Set<UserPermissionDTO> userPermissions = new HashSet<>();
-
     @NotNull
     private Long userId;
 
@@ -36,14 +33,6 @@ public class UserAuthorityDTO implements Serializable {
         this.authorityName = authorityName;
     }
 
-    public Set<UserPermissionDTO> getUserPermissions() {
-        return userPermissions;
-    }
-
-    public void setUserPermissions(Set<UserPermissionDTO> userPermissions) {
-        this.userPermissions = userPermissions;
-    }
-
     public Long getUserId() {
         return userId;
     }
@@ -57,7 +46,6 @@ public class UserAuthorityDTO implements Serializable {
         return "UserAuthorityDTO{" +
             "id=" + id +
             ", authorityName='" + authorityName + '\'' +
-            ", userPermissions=" + userPermissions +
             '}';
     }
 }

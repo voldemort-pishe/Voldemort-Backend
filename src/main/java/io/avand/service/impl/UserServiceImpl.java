@@ -1,7 +1,6 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.*;
-import io.avand.domain.enumeration.PermissionAction;
 import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -81,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO save(String login, String firstName, String lastName, String email, String password,String cellphone) {
+    public UserDTO save(String login, String firstName, String lastName, String email, String password, String cellphone) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
         UserEntity userEntity;
@@ -103,16 +101,9 @@ public class UserServiceImpl implements UserService {
             userEntity.setActivated(false);
 
             UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-            UserPermissionEntity userPermissionEntity = new UserPermissionEntity();
-            userPermissionEntity.setAction(PermissionAction.FULL);
-            userPermissionEntity.setUserAuthority(userAuthorityEntity);
-
-            Set<UserPermissionEntity> userPermissionEntities = new HashSet<>();
-            userPermissionEntities.add(userPermissionEntity);
             AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
             userAuthorityEntity.setAuthorityName(authorityEntity.getName());
-            userAuthorityEntity.setUserPermissions(userPermissionEntities);
             userAuthorityEntity.setUser(userEntity);
 
             Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
@@ -137,7 +128,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password,String cellphone, Boolean active) {
+    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, String cellphone, Boolean active) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
 
@@ -152,16 +143,9 @@ public class UserServiceImpl implements UserService {
         userEntity.setInvitationKey(null);
 
         UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-        UserPermissionEntity userPermissionEntity = new UserPermissionEntity();
-        userPermissionEntity.setAction(PermissionAction.FULL);
-        userPermissionEntity.setUserAuthority(userAuthorityEntity);
-
-        Set<UserPermissionEntity> userPermissionEntities = new HashSet<>();
-        userPermissionEntities.add(userPermissionEntity);
         AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
         userAuthorityEntity.setAuthorityName(authorityEntity.getName());
-        userAuthorityEntity.setUserPermissions(userPermissionEntities);
         userAuthorityEntity.setUser(userEntity);
 
         Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();

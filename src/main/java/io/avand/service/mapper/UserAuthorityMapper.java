@@ -5,7 +5,7 @@ import io.avand.service.dto.UserAuthorityDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring",uses = {UserPermissionMapper.class})
+@Mapper(componentModel = "spring")
 public interface UserAuthorityMapper extends EntityMapper<UserAuthorityDTO, UserAuthorityEntity> {
 
     @Override

@@ -28,11 +28,6 @@ public class UserAuthorityEntity implements Serializable {
     @Column(name = "authority_name")
     private String authorityName;
 
-    @OneToMany(mappedBy = "userAuthority", cascade = CascadeType.ALL)
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONE)
-    private Set<UserPermissionEntity> userPermissions = new HashSet<>();
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
@@ -57,31 +52,6 @@ public class UserAuthorityEntity implements Serializable {
 
     public void setAuthorityName(String authorityName) {
         this.authorityName = authorityName;
-    }
-
-    public Set<UserPermissionEntity> getUserPermissions() {
-        return userPermissions;
-    }
-
-    public UserAuthorityEntity userPermissions(Set<UserPermissionEntity> userPermissionEntities) {
-        this.userPermissions = userPermissionEntities;
-        return this;
-    }
-
-    public UserAuthorityEntity addUserPermission(UserPermissionEntity userPermissionEntity) {
-        this.userPermissions.add(userPermissionEntity);
-        userPermissionEntity.setUserAuthority(this);
-        return this;
-    }
-
-    public UserAuthorityEntity removeUserPermission(UserPermissionEntity userPermissionEntity) {
-        this.userPermissions.remove(userPermissionEntity);
-        userPermissionEntity.setUserAuthority(null);
-        return this;
-    }
-
-    public void setUserPermissions(Set<UserPermissionEntity> userPermissionEntities) {
-        this.userPermissions = userPermissionEntities;
     }
 
     public UserEntity getUser() {

@@ -1,8 +1,9 @@
 package io.avand.service.impl;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
+import io.avand.domain.entity.jpa.AuthorityEntity;
 import io.avand.domain.entity.jpa.UserAuthorityEntity;
 import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.UserAuthorityRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.service.UserAuthorityService;
@@ -20,11 +21,14 @@ public class UserAuthorityServiceImpl implements UserAuthorityService {
     private final Logger log = LoggerFactory.getLogger(UserAuthorityServiceImpl.class);
 
     private final UserAuthorityRepository userAuthorityRepository;
+    private final AuthorityRepository authorityRepository;
     private final UserRepository userRepository;
 
     public UserAuthorityServiceImpl(UserAuthorityRepository userAuthorityRepository,
+                                    AuthorityRepository authorityRepository,
                                     UserRepository userRepository) {
         this.userAuthorityRepository = userAuthorityRepository;
+        this.authorityRepository = authorityRepository;
         this.userRepository = userRepository;
     }
 
@@ -32,14 +36,17 @@ public class UserAuthorityServiceImpl implements UserAuthorityService {
     public void grantAuthority(String authority, Long userId) throws NotFoundException {
         log.debug("Request to grant authority to user : {}", userId);
         Optional<UserAuthorityEntity> userAuthorityEntityOptional =
-            userAuthorityRepository.findByAuthorityNameAndUser_Id(authority, userId);
+            userAuthorityRepository.findByAuthority_NameAndUser_Id(authority, userId);
         if (!userAuthorityEntityOptional.isPresent()) {
             Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
             if (userEntityOptional.isPresent()) {
-                UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-                userAuthorityEntity.setAuthorityName(authority);
-                userAuthorityEntity.setUser(userEntityOptional.get());
-                userAuthorityRepository.save(userAuthorityEntity);
+                AuthorityEntity authorityEntity = authorityRepository.findByName(authority);
+                if (authorityEntity != null) {
+                    UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
+                    userAuthorityEntity.setAuthority(authorityEntity);
+                    userAuthorityEntity.setUser(userEntityOptional.get());
+                    userAuthorityRepository.save(userAuthorityEntity);
+                }
             } else {
                 throw new NotFoundException("User Not Found");
             }
@@ -54,7 +61,7 @@ public class UserAuthorityServiceImpl implements UserAuthorityService {
             UserEntity userEntity = userEntityOptional.get();
             Set<UserAuthorityEntity> userAuthorityEntities = userEntity.getUserAuthorities();
             for (UserAuthorityEntity userAuthorityEntity : userAuthorityEntities) {
-                if (userAuthorityEntity.getAuthorityName().equals(authority))
+                if (userAuthorityEntity.getAuthority().getName().equals(authority))
                     userAuthorityEntities.remove(userAuthorityEntity);
             }
             userEntity.setUserAuthorities(userAuthorityEntities);

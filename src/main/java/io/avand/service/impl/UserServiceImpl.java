@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
             UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
             AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
-            userAuthorityEntity.setAuthorityName(authorityEntity.getName());
+            userAuthorityEntity.setAuthority(authorityEntity);
             userAuthorityEntity.setUser(userEntity);
 
             Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
         UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
         AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
-        userAuthorityEntity.setAuthorityName(authorityEntity.getName());
+        userAuthorityEntity.setAuthority(authorityEntity);
         userAuthorityEntity.setUser(userEntity);
 
         Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
@@ -313,7 +313,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public TokenDTO authorizeWithoutPassword(UserDTO userDTO) {
         log.debug("Request to authorize user : {}, {}, {}", userDTO.getEmail());
-        return tokenService.createAccessTokenByUserName(userDTO);
+        return tokenService.createAccessTokenByUserName(userDTO.getLogin());
     }
 
     @Override

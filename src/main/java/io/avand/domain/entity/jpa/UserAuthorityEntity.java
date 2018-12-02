@@ -5,6 +5,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -25,8 +26,9 @@ public class UserAuthorityEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "authority_name")
-    private String authorityName;
+    @OneToOne(optional = false)
+    @NotNull
+    private AuthorityEntity authority;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -41,17 +43,12 @@ public class UserAuthorityEntity implements Serializable {
         this.id = id;
     }
 
-    public String getAuthorityName() {
-        return authorityName;
+    public AuthorityEntity getAuthority() {
+        return authority;
     }
 
-    public UserAuthorityEntity authorityName(String authorityName) {
-        this.authorityName = authorityName;
-        return this;
-    }
-
-    public void setAuthorityName(String authorityName) {
-        this.authorityName = authorityName;
+    public void setAuthority(AuthorityEntity authority) {
+        this.authority = authority;
     }
 
     public UserEntity getUser() {
@@ -91,8 +88,9 @@ public class UserAuthorityEntity implements Serializable {
     @Override
     public String toString() {
         return "UserAuthorityEntity{" +
-            "id=" + getId() +
-            ", authorityName='" + getAuthorityName() + "'" +
-            "}";
+            "id=" + id +
+            ", authorityId=" + authority.getId() +
+            ", userId=" + user.getId() +
+            '}';
     }
 }

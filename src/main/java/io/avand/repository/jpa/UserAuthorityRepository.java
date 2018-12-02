@@ -15,6 +15,6 @@ import java.util.Optional;
 @Repository
 public interface UserAuthorityRepository extends JpaRepository<UserAuthorityEntity, Long> {
 
-    Optional<UserAuthorityEntity> findByAuthorityNameAndUser_Id(String authorityName, Long userId);
+    Optional<UserAuthorityEntity> findByAuthority_NameAndUser_Id(String authorityName, Long userId);
 
 }

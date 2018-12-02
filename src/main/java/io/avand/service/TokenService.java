@@ -8,5 +8,5 @@ public interface TokenService {
 
     TokenDTO createAccessTokenByUserNameAndPassword(String username,String password,Boolean rememberMe) throws NotFoundException;
 
-    TokenDTO createAccessTokenByUserName(UserDTO userDTO);
+    TokenDTO createAccessTokenByUserName(String login);
 }

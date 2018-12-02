@@ -12,7 +12,8 @@ public class UserAuthorityDTO implements Serializable {
     @NotNull
     private Long id;
 
-    private String authorityName;
+    @NotNull
+    private Long authorityId;
 
     @NotNull
     private Long userId;
@@ -25,12 +26,12 @@ public class UserAuthorityDTO implements Serializable {
         this.id = id;
     }
 
-    public String getAuthorityName() {
-        return authorityName;
+    public Long getAuthorityId() {
+        return authorityId;
     }
 
-    public void setAuthorityName(String authorityName) {
-        this.authorityName = authorityName;
+    public void setAuthorityId(Long authorityId) {
+        this.authorityId = authorityId;
     }
 
     public Long getUserId() {
@@ -45,7 +46,8 @@ public class UserAuthorityDTO implements Serializable {
     public String toString() {
         return "UserAuthorityDTO{" +
             "id=" + id +
-            ", authorityName='" + authorityName + '\'' +
+            ", authorityId=" + authorityId +
+            ", userId=" + userId +
             '}';
     }
 }

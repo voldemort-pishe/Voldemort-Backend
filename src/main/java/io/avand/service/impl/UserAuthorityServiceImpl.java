@@ -1,19 +1,26 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.AuthorityEntity;
+import io.avand.domain.entity.jpa.PermissionEntity;
 import io.avand.domain.entity.jpa.UserAuthorityEntity;
 import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.UserAuthorityRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.service.UserAuthorityService;
+import io.avand.service.dto.UserAuthorityDTO;
+import io.avand.service.mapper.UserAuthorityMapper;
+import io.avand.web.rest.vm.UserAuthorityVM;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserAuthorityServiceImpl implements UserAuthorityService {
@@ -23,13 +30,34 @@ public class UserAuthorityServiceImpl implements UserAuthorityService {
     private final UserAuthorityRepository userAuthorityRepository;
     private final AuthorityRepository authorityRepository;
     private final UserRepository userRepository;
+    private final UserAuthorityMapper userAuthorityMapper;
 
     public UserAuthorityServiceImpl(UserAuthorityRepository userAuthorityRepository,
                                     AuthorityRepository authorityRepository,
-                                    UserRepository userRepository) {
+                                    UserRepository userRepository,
+                                    UserAuthorityMapper userAuthorityMapper) {
         this.userAuthorityRepository = userAuthorityRepository;
         this.authorityRepository = authorityRepository;
         this.userRepository = userRepository;
+        this.userAuthorityMapper = userAuthorityMapper;
+    }
+
+    @Override
+    public List<UserAuthorityVM> findByUserId(Long userId) {
+        List<UserAuthorityEntity> userAuthorityEntities = userAuthorityRepository.findAllByUser_Id(userId);
+        List<UserAuthorityVM> userAuthorityVMS = new ArrayList<>();
+        for (UserAuthorityEntity userAuthorityEntity : userAuthorityEntities) {
+            UserAuthorityVM userAuthorityVM = new UserAuthorityVM();
+            userAuthorityVM.setAuthorityName(userAuthorityEntity.getAuthority().getName());
+            userAuthorityVM.setUserId(userAuthorityEntity.getUser().getId());
+            List<String> permissions = new ArrayList<>();
+            for (PermissionEntity permission : userAuthorityEntity.getAuthority().getPermissions()) {
+                permissions.add(permission.getAccess().name());
+            }
+            userAuthorityVM.setPermissions(permissions);
+            userAuthorityVMS.add(userAuthorityVM);
+        }
+        return userAuthorityVMS;
     }
 
     @Override

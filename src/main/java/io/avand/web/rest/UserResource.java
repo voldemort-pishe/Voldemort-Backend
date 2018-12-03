@@ -2,14 +2,16 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
-import io.avand.security.AuthoritiesConstants;
 import io.avand.security.SecurityUtils;
+import io.avand.service.UserAuthorityService;
 import io.avand.service.UserService;
 import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.UserComponent;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.UserAuthorityVM;
+import io.avand.web.rest.vm.UserVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.avand.web.rest.vm.response.UserIncludeVM;
 import javassist.NotFoundException;
@@ -17,10 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hibernate.id.IdentifierGenerator.ENTITY_NAME;
@@ -36,6 +38,8 @@ public class UserResource {
 
     private final UserService userService;
 
+    private final UserAuthorityService userAuthorityService;
+
     private final UserComponent userComponent;
 
     private final SecurityUtils securityUtils;
@@ -43,10 +47,12 @@ public class UserResource {
     private final UserMapper userMapper;
 
     public UserResource(UserService userService,
+                        UserAuthorityService userAuthorityService,
                         UserComponent userComponent,
                         SecurityUtils securityUtils,
                         UserMapper userMapper) {
         this.userService = userService;
+        this.userAuthorityService = userAuthorityService;
         this.userComponent = userComponent;
         this.securityUtils = securityUtils;
         this.userMapper = userMapper;
@@ -86,14 +92,31 @@ public class UserResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity<ResponseVM<UserDTO>> getUser() {
+    public ResponseEntity<UserVM> getUser() {
         log.debug("REST request to get User");
         try {
-            ResponseVM<UserDTO> userDTO = userComponent.findById(securityUtils.getCurrentUserId());
-            return new ResponseEntity<>(userDTO, HttpStatus.OK);
+            Optional<UserDTO> userDTOOptional = userService.findById(securityUtils.getCurrentUserId());
+            if (userDTOOptional.isPresent()) {
+                UserDTO userDTO = userDTOOptional.get();
+                UserVM userVM = new UserVM();
+                userVM.setId(userDTO.getId());
+                userVM.setFirstName(userDTO.getFirstName());
+                userVM.setLastName(userDTO.getLastName());
+                userVM.setEmail(userDTO.getEmail());
+                userVM.setCellphone(userDTO.getCellphone());
+                userVM.setFileId(userDTO.getFileId());
+
+                List<UserAuthorityVM> userAuthorityVMS = userAuthorityService.findByUserId(securityUtils.getCurrentUserId());
+                userVM.setAuthorities(userAuthorityVMS);
+
+                return new ResponseEntity<>(userVM, HttpStatus.OK);
+            } else {
+                throw new SecurityException("Login First");
+            }
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
+
     }
 
 }

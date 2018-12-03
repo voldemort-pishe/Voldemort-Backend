@@ -1,6 +1,7 @@
 package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.CandidateMessageOwnerType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -25,6 +26,10 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
 
     @Column(name = "message")
     private String message;
+
+    @Column(name = "owner")
+    @Enumerated(EnumType.STRING)
+    private CandidateMessageOwnerType owner;
 
     @Column(name = "from_user_id")
     private Long fromUserId;
@@ -68,6 +73,14 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public CandidateMessageOwnerType getOwner() {
+        return owner;
+    }
+
+    public void setOwner(CandidateMessageOwnerType owner) {
+        this.owner = owner;
     }
 
     public Long getFromUserId() {
@@ -124,6 +137,7 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
             "id=" + id +
             ", subject='" + subject + '\'' +
             ", message='" + message + '\'' +
+            ", owner=" + owner +
             ", fromUserId=" + fromUserId +
             ", toUserId=" + toUserId +
             ", messageId='" + messageId + '\'' +

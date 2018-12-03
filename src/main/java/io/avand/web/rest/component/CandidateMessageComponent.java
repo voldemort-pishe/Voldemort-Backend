@@ -11,6 +11,8 @@ public interface CandidateMessageComponent {
 
     ResponseVM<CandidateMessageDTO> save(CandidateMessageDTO candidateMessageDTO) throws NotFoundException;
 
+    ResponseVM<CandidateMessageDTO> save(String subject,String message,Long parentId,Long candidateId) throws NotFoundException;
+
     Page<ResponseVM<CandidateMessageDTO>> findByCandidateId(Long candidateId, Pageable pageable) throws NotFoundException;
 
     ResponseVM<CandidateMessageDTO> findById(Long id) throws NotFoundException;

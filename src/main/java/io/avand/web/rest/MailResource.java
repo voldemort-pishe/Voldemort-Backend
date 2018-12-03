@@ -2,6 +2,7 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.avand.aop.event.CustomEvent;
+import io.avand.domain.enumeration.CandidateMessageOwnerType;
 import io.avand.domain.enumeration.EventType;
 import io.avand.service.CandidateMessageService;
 import io.avand.service.UserService;
@@ -60,6 +61,7 @@ public class MailResource {
             if (candidateMessageDTO.isPresent()) {
                 CandidateMessageDTO originalMessage = candidateMessageDTO.get();
                 CandidateMessageDTO newMessage = new CandidateMessageDTO();
+                newMessage.setOwner(CandidateMessageOwnerType.CANDIDATE);
                 newMessage.setFromUserId(originalMessage.getToUserId());
                 newMessage.setToUserId(originalMessage.getFromUserId());
                 newMessage.setCandidateId(originalMessage.getCandidateId());

@@ -153,6 +153,8 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181202170305_changelog.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181203185205_changelog.xml"
+             relativeToChangelogFile="false"/>
 
 
 

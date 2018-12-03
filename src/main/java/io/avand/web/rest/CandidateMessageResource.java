@@ -65,9 +65,9 @@ public class CandidateMessageResource {
         }
     }
 
-    @PostMapping("/vm")
+    @PostMapping("/create-specific")
     @Timed
-    public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateMessageVM(
+    public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateSpecificMessage(
         @RequestBody CandidateMessageVM candidateMessageVM
     ) throws URISyntaxException {
         log.debug("REST Request to save candidateMessage : {}", candidateMessageVM);

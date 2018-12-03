@@ -12,6 +12,8 @@ public interface CandidateMessageService {
 
     CandidateMessageDTO save(CandidateMessageDTO candidateMessageDTO) throws NotFoundException;
 
+    CandidateMessageDTO save(String subject,String message,Long parent,Long candidateId) throws NotFoundException;
+
     CandidateMessageDTO saveInReply(CandidateMessageDTO candidateMessageDTO) throws NotFoundException;
 
     CandidateMessageDTO findById(Long id) throws NotFoundException;

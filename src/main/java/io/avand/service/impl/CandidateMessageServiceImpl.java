@@ -3,6 +3,7 @@ package io.avand.service.impl;
 import io.avand.config.ApplicationProperties;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CandidateMessageEntity;
+import io.avand.domain.enumeration.CandidateMessageOwnerType;
 import io.avand.mailgun.service.MailGunMessageService;
 import io.avand.mailgun.service.MailGunRouteService;
 import io.avand.mailgun.service.dto.request.MailGunCreateRouteRequestDTO;
@@ -73,34 +74,88 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
                     throw new NotFoundException("Parent Message Not Found");
                 }
             }
-
-            Optional<UserDTO> userDTO = userService.findById(candidateMessageDTO.getToUserId());
-            if (userDTO.isPresent()) {
-
-                MailGunSendMessageRequestDTO mailGunSendMessageRequestDTO = new MailGunSendMessageRequestDTO();
-                mailGunSendMessageRequestDTO.setSubject(candidateMessageDTO.getSubject());
-                mailGunSendMessageRequestDTO.setText(candidateMessageDTO.getMessage());
-                mailGunSendMessageRequestDTO.setTo(userDTO.get().getEmail());
-                try {
-                    MailGunSendMessageResponseDTO mailGunSendMessageResponseDTO =
-                        mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
-
-                    MailGunCreateRouteRequestDTO createRouteRequestDTO = new MailGunCreateRouteRequestDTO();
-                    createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
-                    createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
-                    mailGunRouteService.createRoute(createRouteRequestDTO);
-                    CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
-                    candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());
-                    candidateMessageEntity.setCandidate(candidateEntity);
-                    candidateMessageEntity.setParent(parentMessage);
-                    candidateMessageEntity.setMessageId(mailGunSendMessageResponseDTO.getId());
-                    candidateMessageEntity = candidateMessageRepository.save(candidateMessageEntity);
-                    return candidateMessageMapper.toDto(candidateMessageEntity);
-                } catch (MailGunException e) {
-                    throw new ServerErrorException(e.getMessage());
+            String toEmail;
+            if (candidateMessageDTO.getOwner() == CandidateMessageOwnerType.CANDIDATE) {
+                Optional<UserDTO> userDTO = userService.findById(candidateMessageDTO.getToUserId());
+                if (userDTO.isPresent()) {
+                    toEmail = userDTO.get().getEmail();
+                } else {
+                    throw new NotFoundException("User NotFound");
                 }
             } else {
-                throw new NotFoundException("User Not Found To Send Email");
+                toEmail = candidateEntity.getEmail();
+            }
+            MailGunSendMessageRequestDTO mailGunSendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+            mailGunSendMessageRequestDTO.setSubject(candidateMessageDTO.getSubject());
+            mailGunSendMessageRequestDTO.setFromName(candidateEntity.getJob().getCompany().getNameFa());
+            mailGunSendMessageRequestDTO.setText(candidateMessageDTO.getMessage());
+            mailGunSendMessageRequestDTO.setTo(toEmail);
+            try {
+                MailGunSendMessageResponseDTO mailGunSendMessageResponseDTO =
+                    mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
+
+                MailGunCreateRouteRequestDTO createRouteRequestDTO = new MailGunCreateRouteRequestDTO();
+                createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
+                createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
+                mailGunRouteService.createRoute(createRouteRequestDTO);
+
+                CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
+                candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());
+                candidateMessageEntity.setCandidate(candidateEntity);
+                candidateMessageEntity.setParent(parentMessage);
+                candidateMessageEntity.setMessageId(mailGunSendMessageResponseDTO.getId());
+                candidateMessageEntity = candidateMessageRepository.save(candidateMessageEntity);
+                return candidateMessageMapper.toDto(candidateMessageEntity);
+            } catch (MailGunException e) {
+                throw new ServerErrorException(e.getMessage());
+            }
+        } else {
+            throw new NotFoundException("Candidate Not Found");
+        }
+    }
+
+    @Override
+    public CandidateMessageDTO save(String subject, String message, Long parent, Long candidateId) throws NotFoundException {
+        log.debug("Request to save candidateMessage : {}, {}, {}, {}", subject, message, parent, candidateId);
+        CandidateEntity candidateEntity = candidateRepository.findOne(candidateId);
+        if (candidateEntity != null) {
+            CandidateMessageEntity parentMessage = null;
+
+            if (parent != null) {
+                parentMessage = candidateMessageRepository.findOne(parent);
+                if (parentMessage == null) {
+                    throw new NotFoundException("Parent Message Not Found");
+                }
+            }
+
+            MailGunSendMessageRequestDTO mailGunSendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+            mailGunSendMessageRequestDTO.setSubject(subject);
+            mailGunSendMessageRequestDTO.setFromName(candidateEntity.getJob().getCompany().getNameFa());
+            mailGunSendMessageRequestDTO.setText(message);
+            mailGunSendMessageRequestDTO.setTo(candidateEntity.getEmail());
+            try {
+                MailGunSendMessageResponseDTO mailGunSendMessageResponseDTO =
+                    mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
+
+                MailGunCreateRouteRequestDTO createRouteRequestDTO = new MailGunCreateRouteRequestDTO();
+                createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
+                createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
+                mailGunRouteService.createRoute(createRouteRequestDTO);
+
+                CandidateMessageEntity candidateMessageEntity = new CandidateMessageEntity();
+                candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());
+                candidateMessageEntity.setToUserId(candidateId);
+                candidateMessageEntity.setOwner(CandidateMessageOwnerType.USER);
+                candidateMessageEntity.setSubject(subject);
+                candidateMessageEntity.setMessage(message);
+                candidateMessageEntity.setCandidate(candidateEntity);
+                candidateMessageEntity.setParent(parentMessage);
+                candidateMessageEntity.setMessageId(mailGunSendMessageResponseDTO.getId());
+                candidateMessageEntity = candidateMessageRepository.save(candidateMessageEntity);
+                return candidateMessageMapper.toDto(candidateMessageEntity);
+
+            } catch (MailGunException e) {
+                throw new ServerErrorException(e.getMessage());
             }
         } else {
             throw new NotFoundException("Candidate Not Found");
@@ -123,17 +178,12 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
                 }
             }
 
-            Optional<UserDTO> userDTO = userService.findById(candidateMessageDTO.getToUserId());
-            if (userDTO.isPresent()) {
+            CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
+            candidateMessageEntity.setCandidate(candidateEntity);
+            candidateMessageEntity.setParent(parentMessage);
+            candidateMessageEntity = candidateMessageRepository.save(candidateMessageEntity);
+            return candidateMessageMapper.toDto(candidateMessageEntity);
 
-                CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
-                candidateMessageEntity.setCandidate(candidateEntity);
-                candidateMessageEntity.setParent(parentMessage);
-                candidateMessageEntity = candidateMessageRepository.save(candidateMessageEntity);
-                return candidateMessageMapper.toDto(candidateMessageEntity);
-            } else {
-                throw new NotFoundException("User Not Found To Send Email");
-            }
         } else {
             throw new NotFoundException("Candidate Not Found");
         }

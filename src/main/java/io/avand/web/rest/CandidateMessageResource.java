@@ -8,10 +8,12 @@ import io.avand.web.rest.component.CandidateMessageComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.CandidateMessageVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
+import org.checkerframework.checker.units.qual.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -55,6 +57,28 @@ public class CandidateMessageResource {
         }
         try {
             ResponseVM<CandidateMessageDTO> result = candidateMessageComponent.save(candidateMessageDTO);
+            return ResponseEntity.created(new URI("/api/candidate-message/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
+                .body(result);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    @PostMapping("/vm")
+    @Timed
+    public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateMessageVM(
+        @RequestBody CandidateMessageVM candidateMessageVM
+    ) throws URISyntaxException {
+        log.debug("REST Request to save candidateMessage : {}", candidateMessageVM);
+        try {
+            ResponseVM<CandidateMessageDTO> result = candidateMessageComponent
+                .save(
+                    candidateMessageVM.getSubject(),
+                    candidateMessageVM.getMessage(),
+                    candidateMessageVM.getParent(),
+                    candidateMessageVM.getCandidateId()
+                );
             return ResponseEntity.created(new URI("/api/candidate-message/" + result.getData().getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
                 .body(result);

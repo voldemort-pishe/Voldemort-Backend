@@ -92,31 +92,14 @@ public class UserResource {
      */
     @GetMapping
     @Timed
-    public ResponseEntity<UserVM> getUser() {
+    public ResponseEntity<ResponseVM<UserDTO>> getUser() {
         log.debug("REST request to get User");
         try {
-            Optional<UserDTO> userDTOOptional = userService.findById(securityUtils.getCurrentUserId());
-            if (userDTOOptional.isPresent()) {
-                UserDTO userDTO = userDTOOptional.get();
-                UserVM userVM = new UserVM();
-                userVM.setId(userDTO.getId());
-                userVM.setFirstName(userDTO.getFirstName());
-                userVM.setLastName(userDTO.getLastName());
-                userVM.setEmail(userDTO.getEmail());
-                userVM.setCellphone(userDTO.getCellphone());
-                userVM.setFileId(userDTO.getFileId());
-
-                List<UserAuthorityVM> userAuthorityVMS = userAuthorityService.findByUserId(securityUtils.getCurrentUserId());
-                userVM.setAuthorities(userAuthorityVMS);
-
-                return new ResponseEntity<>(userVM, HttpStatus.OK);
-            } else {
-                throw new SecurityException("Login First");
-            }
+            ResponseVM<UserDTO> userDTO = userComponent.findById(securityUtils.getCurrentUserId());
+            return new ResponseEntity<>(userDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
-
     }
 
 }

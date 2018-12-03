@@ -1,13 +1,12 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.avand.config.ApplicationProperties;
 import io.avand.security.SecurityUtils;
 import io.avand.security.jwt.JWTConfigurer;
+import io.avand.service.UserAuthorityService;
 import io.avand.service.UserService;
 import io.avand.service.dto.TokenDTO;
 import io.avand.service.dto.UserDTO;
-import io.avand.web.rest.errors.InternalServerErrorException;
 import io.avand.web.rest.errors.ServerErrorConstants;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.errors.ServerMessage;
@@ -23,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,9 +31,15 @@ public class AccountResource {
 
     private final Logger log = LoggerFactory.getLogger(AccountResource.class);
     private final UserService userService;
+    private final UserAuthorityService userAuthorityService;
+    private final SecurityUtils securityUtils;
 
-    public AccountResource(UserService userService) {
+    public AccountResource(UserService userService,
+                           UserAuthorityService userAuthorityService,
+                           SecurityUtils securityUtils) {
         this.userService = userService;
+        this.userAuthorityService = userAuthorityService;
+        this.securityUtils = securityUtils;
     }
 
     @PostMapping("/register")
@@ -135,9 +141,31 @@ public class AccountResource {
      */
     @GetMapping
     @Timed
-    public UserDTO getAccount() {
-        return userService.getUserWithAuthorities()
-            .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
+    public ResponseEntity<UserVM> getUser() {
+        log.debug("REST request to get User");
+        try {
+            Optional<UserDTO> userDTOOptional = userService.findById(securityUtils.getCurrentUserId());
+            if (userDTOOptional.isPresent()) {
+                UserDTO userDTO = userDTOOptional.get();
+                UserVM userVM = new UserVM();
+                userVM.setId(userDTO.getId());
+                userVM.setFirstName(userDTO.getFirstName());
+                userVM.setLastName(userDTO.getLastName());
+                userVM.setEmail(userDTO.getEmail());
+                userVM.setCellphone(userDTO.getCellphone());
+                userVM.setFileId(userDTO.getFileId());
+
+                List<UserAuthorityVM> userAuthorityVMS = userAuthorityService.findByUserId(securityUtils.getCurrentUserId());
+                userVM.setAuthorities(userAuthorityVMS);
+
+                return new ResponseEntity<>(userVM, HttpStatus.OK);
+            } else {
+                throw new SecurityException("Login First");
+            }
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+
     }
 
     @PostMapping("/change-password")

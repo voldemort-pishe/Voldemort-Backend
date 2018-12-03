@@ -34,6 +34,7 @@ public class AuthorityEntity implements Serializable {
         joinColumns = {@JoinColumn(name = "authority_id")},
         inverseJoinColumns = {@JoinColumn(name = "permission_id")}
     )
+    @JsonIgnore
     private Set<PermissionEntity> permissions = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

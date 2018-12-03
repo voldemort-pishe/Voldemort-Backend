@@ -1,5 +1,6 @@
 package io.avand.domain.entity.jpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.PermissionAccess;
 import io.avand.domain.enumeration.PermissionType;
 
@@ -27,6 +28,7 @@ public class PermissionEntity implements Serializable {
     private PermissionAccess access;
 
     @ManyToMany(mappedBy = "permissions")
+    @JsonIgnore
     private Set<AuthorityEntity> authorities = new HashSet<>();
 
     public Long getId() {

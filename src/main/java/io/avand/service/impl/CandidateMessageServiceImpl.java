@@ -5,10 +5,7 @@ import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CandidateMessageEntity;
 import io.avand.domain.enumeration.CandidateMessageOwnerType;
 import io.avand.mailgun.service.MailGunMessageService;
-import io.avand.mailgun.service.MailGunRouteService;
-import io.avand.mailgun.service.dto.request.MailGunCreateRouteRequestDTO;
 import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
-import io.avand.mailgun.service.dto.response.MailGunCreateRouteResponseDTO;
 import io.avand.mailgun.service.dto.response.MailGunSendMessageResponseDTO;
 import io.avand.mailgun.service.error.MailGunException;
 import io.avand.repository.jpa.CandidateMessageRepository;
@@ -38,7 +35,6 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
     private final CandidateRepository candidateRepository;
     private final SecurityUtils securityUtils;
     private final MailGunMessageService mailGunMessageService;
-    private final MailGunRouteService mailGunRouteService;
     private final UserService userService;
     private final ApplicationProperties applicationProperties;
 
@@ -47,7 +43,6 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
                                        CandidateRepository candidateRepository,
                                        SecurityUtils securityUtils,
                                        MailGunMessageService mailGunMessageService,
-                                       MailGunRouteService mailGunRouteService,
                                        UserService userService,
                                        ApplicationProperties applicationProperties) {
         this.candidateMessageRepository = candidateMessageRepository;
@@ -55,7 +50,6 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
         this.candidateRepository = candidateRepository;
         this.securityUtils = securityUtils;
         this.mailGunMessageService = mailGunMessageService;
-        this.mailGunRouteService = mailGunRouteService;
         this.userService = userService;
         this.applicationProperties = applicationProperties;
     }
@@ -94,11 +88,6 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
                 MailGunSendMessageResponseDTO mailGunSendMessageResponseDTO =
                     mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
 
-                MailGunCreateRouteRequestDTO createRouteRequestDTO = new MailGunCreateRouteRequestDTO();
-                createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
-                createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
-                mailGunRouteService.createRoute(createRouteRequestDTO);
-
                 CandidateMessageEntity candidateMessageEntity = candidateMessageMapper.toEntity(candidateMessageDTO);
                 candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());
                 candidateMessageEntity.setCandidate(candidateEntity);
@@ -136,11 +125,6 @@ public class CandidateMessageServiceImpl implements CandidateMessageService {
             try {
                 MailGunSendMessageResponseDTO mailGunSendMessageResponseDTO =
                     mailGunMessageService.sendMessage(mailGunSendMessageRequestDTO);
-
-                MailGunCreateRouteRequestDTO createRouteRequestDTO = new MailGunCreateRouteRequestDTO();
-                createRouteRequestDTO.setForwardTo(applicationProperties.getBase().getUrl() + "api/mail/income");
-                createRouteRequestDTO.setMatchRecipient("postmaster@mg.avand.io");
-                mailGunRouteService.createRoute(createRouteRequestDTO);
 
                 CandidateMessageEntity candidateMessageEntity = new CandidateMessageEntity();
                 candidateMessageEntity.setFromUserId(securityUtils.getCurrentUserId());

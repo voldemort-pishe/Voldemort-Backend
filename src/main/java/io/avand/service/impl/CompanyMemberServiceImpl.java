@@ -162,6 +162,14 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
+    public Optional<CompanyMemberDTO> findByLogin(String login) {
+        log.debug("Request to find companyMember by login : {}", login);
+        return companyMemberRepository
+            .findByUser_Login(login)
+            .map(companyMemberMapper::toDto);
+    }
+
+    @Override
     public Page<CompanyMemberDTO> findAllByFilter(CompanyMemberFilterVM filterVM, Pageable pageable)
         throws NotFoundException {
         log.debug("Request to find all company member");

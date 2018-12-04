@@ -1,5 +1,5 @@
 package io.avand.domain.enumeration;
 
 public enum JobHireTeamRole {
-    MANAGER, RECRUITER, COORDINATOR
+    ROLE_HIRING_MANAGER, ROLE_RECRUITER, ROLE_COORDINATOR
 }

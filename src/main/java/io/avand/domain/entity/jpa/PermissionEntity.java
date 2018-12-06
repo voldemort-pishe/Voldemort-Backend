@@ -2,7 +2,6 @@ package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.avand.domain.enumeration.PermissionAccess;
-import io.avand.domain.enumeration.PermissionType;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,10 +18,6 @@ public class PermissionEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type")
-    @Enumerated(EnumType.STRING)
-    private PermissionType type;
-
     @Column(name = "access")
     @Enumerated(EnumType.STRING)
     private PermissionAccess access;
@@ -37,14 +32,6 @@ public class PermissionEntity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public PermissionType getType() {
-        return type;
-    }
-
-    public void setType(PermissionType type) {
-        this.type = type;
     }
 
     public PermissionAccess getAccess() {
@@ -67,7 +54,6 @@ public class PermissionEntity implements Serializable {
     public String toString() {
         return "PermissionEntity{" +
             "id=" + id +
-            ", type=" + type +
             ", access=" + access +
             '}';
     }

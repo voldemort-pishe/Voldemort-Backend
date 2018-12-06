@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,6 +49,7 @@ public class CandidateMessageResource {
 
     @PostMapping
     @Timed
+    @PreAuthorize("isMember(#candidateMessageDTO.candidateId,'CANDIDATE','ADD_CANDIDATE_MESSAGE')")
     public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateMessage
         (@Valid @RequestBody CandidateMessageDTO candidateMessageDTO)
         throws URISyntaxException {
@@ -67,6 +69,7 @@ public class CandidateMessageResource {
 
     @PostMapping("/create-specific")
     @Timed
+    @PreAuthorize("isMember(#candidateMessageVM.candidateId,'CANDIDATE','ADD_CANDIDATE_MESSAGE')")
     public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateSpecificMessage(
         @RequestBody CandidateMessageVM candidateMessageVM
     ) throws URISyntaxException {
@@ -87,27 +90,9 @@ public class CandidateMessageResource {
         }
     }
 
-    @PutMapping
-    @Timed
-    public ResponseEntity<ResponseVM<CandidateMessageDTO>> updateCandidateMessage
-        (@Valid @RequestBody CandidateMessageDTO candidateMessageDTO)
-        throws URISyntaxException {
-        log.debug("REST request to update candidateMessageDTO : {}", candidateMessageDTO);
-        if (candidateMessageDTO.getId() == null) {
-            return createCandidateMessage(candidateMessageDTO);
-        }
-        try {
-            ResponseVM<CandidateMessageDTO> result = candidateMessageComponent.save(candidateMessageDTO);
-            return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, candidateMessageDTO.getId().toString()))
-                .body(result);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
     @GetMapping("/candidate/{candidateId}")
     @Timed
+    @PreAuthorize("isMember(#candidateId,'CANDIDATE','VIEW_CANDIDATE_MESSAGE')")
     public ResponseEntity<Page<ResponseVM<CandidateMessageDTO>>> getAllCandidateByCandidateId
         (@PathVariable("candidateId") Long candidateId, @ApiParam Pageable page) {
         log.debug("REST request to get all CandidateMessageDTOs by candidate id : {}", candidateId);
@@ -122,6 +107,7 @@ public class CandidateMessageResource {
 
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE','VIEW_CANDIDATE_MESSAGE')")
     public ResponseEntity<ResponseVM<CandidateMessageDTO>> getCandidate(@PathVariable Long id) {
         log.debug("REST request to get CandidateDto : {}", id);
         try {
@@ -132,15 +118,4 @@ public class CandidateMessageResource {
         }
     }
 
-    @DeleteMapping("/{id}")
-    @Timed
-    public ResponseEntity<Void> deleteCandidate(@PathVariable Long id) {
-        log.debug("REST request to delete CandidateDto : {}", id);
-        try {
-            candidateMessageService.delete(id);
-            return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
 }

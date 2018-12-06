@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class CandidateScheduleMemberResource {
 
     @PostMapping
     @Timed
+    @PreAuthorize("isMember(#candidateScheduleMemberDTO.candidateScheduleId,'SCHEDULE','ADD_SCHEDULE_MEMBER')")
     public ResponseEntity<ResponseVM<CandidateScheduleMemberDTO>> save(
         @RequestBody CandidateScheduleMemberDTO candidateScheduleMemberDTO) {
         log.debug("REST Request to save candidateScheduleMember : {}", candidateScheduleMemberDTO);
@@ -45,6 +47,7 @@ public class CandidateScheduleMemberResource {
 
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#candidateScheduleMemberDTO.candidateScheduleId,'SCHEDULE','EDIT_SCHEDULE_MEMBER')")
     public ResponseEntity<ResponseVM<CandidateScheduleMemberDTO>> update(
         @RequestBody CandidateScheduleMemberDTO candidateScheduleMemberDTO) {
         log.debug("REST Request to save candidateScheduleMember : {}", candidateScheduleMemberDTO);
@@ -62,6 +65,7 @@ public class CandidateScheduleMemberResource {
 
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'SCHEDULE_MEMBER','VIEW_SCHEDULE_MEMBER')")
     public ResponseEntity<ResponseVM<CandidateScheduleMemberDTO>> findById(@PathVariable("id") Long id) {
         log.debug("REST Request to find candidateScheduleMember by id : {}", id);
         try {
@@ -74,6 +78,7 @@ public class CandidateScheduleMemberResource {
 
     @GetMapping("/schedule/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'SCHEDULE','VIEW_SCHEDULE_MEMBER')")
     public ResponseEntity<List<ResponseVM<CandidateScheduleMemberDTO>>> findByScheduleId(@PathVariable("id") Long id) {
         log.debug("REST Request to find candidateScheduleMember by scheduleId : {}", id);
         try {
@@ -87,6 +92,7 @@ public class CandidateScheduleMemberResource {
 
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'SCHEDULE_MEMBER','DELETE_SCHEDULE_MEMBER')")
     public void delete(@PathVariable("id") Long id) {
         log.debug("REST Request to delete candidateScheduleMember by id : {}", id);
         try {

@@ -1,0 +1,20 @@
+package io.avand.domain.enumeration;
+
+public enum ClassType {
+    ///JOB_TYPE
+    CANDIDATE,
+    CANDIDATE_MESSAGE,
+    CANDIDATE_EVALUATION,
+    SCHEDULE,
+    SCHEDULE_MEMBER,
+    COMMENT,
+    FEEDBACK,
+    JOB,
+    JOB_HIRE_TEAM,
+    ////SYSTEM_TYPE
+    COMPANY,
+    COMPANY_MEMBER,
+    COMPANY_PIPELINE,
+    EVALUATION_CRITERIA,
+    INVOICE
+}

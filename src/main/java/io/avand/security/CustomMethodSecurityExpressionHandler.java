@@ -1,8 +1,5 @@
 package io.avand.security;
 
-import io.avand.service.CompanyMemberService;
-import io.avand.service.JobHireTeamService;
-import io.avand.service.JobService;
 import io.avand.service.PermissionService;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -14,31 +11,21 @@ import org.springframework.security.core.Authentication;
 public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler {
 
     private AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
-    private final JobHireTeamService jobHireTeamService;
-    private final JobService jobService;
+    private final SecurityACLService securityACLService;
     private final PermissionService permissionService;
-    private final CompanyMemberService companyMemberService;
 
-    public CustomMethodSecurityExpressionHandler(JobHireTeamService jobHireTeamService,
-                                                 JobService jobService,
-                                                 PermissionService permissionService,
-                                                 CompanyMemberService companyMemberService) {
-        this.jobHireTeamService = jobHireTeamService;
-        this.jobService = jobService;
+    public CustomMethodSecurityExpressionHandler(SecurityACLService securityACLService, PermissionService permissionService) {
+        this.securityACLService = securityACLService;
         this.permissionService = permissionService;
-        this.companyMemberService = companyMemberService;
     }
 
     @Override
     protected MethodSecurityExpressionOperations createSecurityExpressionRoot(
         Authentication authentication, MethodInvocation invocation) {
         CustomMethodSecurityExpression root = new CustomMethodSecurityExpression(
-                authentication,
-                jobHireTeamService,
-                jobService,
-                companyMemberService,
-                permissionService
-            );
+            authentication,
+            securityACLService,
+            permissionService);
         root.setPermissionEvaluator(getPermissionEvaluator());
         root.setTrustResolver(trustResolver);
         return root;

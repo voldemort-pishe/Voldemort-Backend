@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -62,6 +63,7 @@ public class CompanyResource {
      */
     @PostMapping
     @Timed
+    @PreAuthorize("isMember('ADD_COMPANY')")
     public ResponseEntity<ResponseVM<CompanyDTO>> createCompany(@Valid @RequestBody CompanyDTO companyDTO)
         throws URISyntaxException {
         log.debug("REST request to save Company : {}", companyDTO);
@@ -98,6 +100,7 @@ public class CompanyResource {
      */
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#companyDTO.id,'COMPANY','EDIT_COMPANY')")
     public ResponseEntity<ResponseVM<CompanyDTO>> updateCompany(@Valid @RequestBody CompanyDTO companyDTO)
         throws URISyntaxException {
         log.debug("REST request to update Company : {}", companyDTO);
@@ -122,6 +125,7 @@ public class CompanyResource {
      */
     @GetMapping
     @Timed
+    @PreAuthorize("isMember('VIEW_COMPANY')")
     public ResponseEntity<ResponseVM<CompanyDTO>> getCompany() {
         log.debug("REST request to get CompanyEntity");
         try {
@@ -140,6 +144,7 @@ public class CompanyResource {
      */
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'COMPANY','DELETE_COMPANY')")
     public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
         log.debug("REST request to delete CompanyEntity : {}", id);
         try {
@@ -150,3 +155,4 @@ public class CompanyResource {
         }
     }
 }
+g

@@ -4,6 +4,7 @@ import io.avand.domain.enumeration.ClassType;
 import io.avand.domain.enumeration.PermissionAccess;
 import io.avand.service.PermissionService;
 import io.avand.service.dto.PermissionDTO;
+import javassist.NotFoundException;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ public class CustomMethodSecurityExpression extends SecurityExpressionRoot
 
     private final SecurityACLService securityACLService;
     private final PermissionService permissionService;
+    private final SecurityUtils securityUtils;
 
     @Override
     public void setFilterObject(Object o) {
@@ -42,10 +44,11 @@ public class CustomMethodSecurityExpression extends SecurityExpressionRoot
 
     public CustomMethodSecurityExpression(Authentication authentication,
                                           SecurityACLService securityACLService,
-                                          PermissionService permissionService) {
+                                          PermissionService permissionService, SecurityUtils securityUtils) {
         super(authentication);
         this.securityACLService = securityACLService;
         this.permissionService = permissionService;
+        this.securityUtils = securityUtils;
     }
 
     public boolean isMember(Long id, String type, String permission) {
@@ -55,6 +58,19 @@ public class CustomMethodSecurityExpression extends SecurityExpressionRoot
                 return securityACLService.isSystemMember(authentication, id, ClassType.valueOf(type), permissionDTO);
             } else {
                 return securityACLService.isJobMember(authentication, id, ClassType.valueOf(type), permissionDTO);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isMember(String permission) {
+        PermissionDTO permissionDTO = permissionService.findByAccess(PermissionAccess.valueOf(permission));
+        if (permissionDTO != null) {
+            try {
+                return securityACLService.isSystemMember(authentication, securityUtils.getCurrentCompanyId(), ClassType.COMPANY, permissionDTO);
+            } catch (NotFoundException e) {
+                return false;
             }
         } else {
             return false;

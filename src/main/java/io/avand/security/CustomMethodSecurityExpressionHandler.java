@@ -13,10 +13,14 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
     private AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
     private final SecurityACLService securityACLService;
     private final PermissionService permissionService;
+    private final SecurityUtils securityUtils;
 
-    public CustomMethodSecurityExpressionHandler(SecurityACLService securityACLService, PermissionService permissionService) {
+    public CustomMethodSecurityExpressionHandler(SecurityACLService securityACLService,
+                                                 PermissionService permissionService,
+                                                 SecurityUtils securityUtils) {
         this.securityACLService = securityACLService;
         this.permissionService = permissionService;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -25,7 +29,7 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         CustomMethodSecurityExpression root = new CustomMethodSecurityExpression(
             authentication,
             securityACLService,
-            permissionService);
+            permissionService, securityUtils);
         root.setPermissionEvaluator(getPermissionEvaluator());
         root.setTrustResolver(trustResolver);
         return root;

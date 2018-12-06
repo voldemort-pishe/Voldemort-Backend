@@ -141,6 +141,11 @@ public class SecurityACLService {
         }
     }
 
+    boolean checkTokenAuthority(Authentication authentication, PermissionDTO permissionDTO) {
+        List<String> authorities = this.createAuthorityList(authentication);
+        return this.checkAuthority(authorities, permissionDTO);
+    }
+
     private boolean isSystemMember(Authentication authentication, Long companyId, PermissionDTO permissionDTO) {
         Optional<String> username = SecurityUtils.getCurrentUserLogin();
         if (username.isPresent()) {

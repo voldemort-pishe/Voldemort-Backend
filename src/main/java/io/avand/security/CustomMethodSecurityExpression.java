@@ -67,11 +67,7 @@ public class CustomMethodSecurityExpression extends SecurityExpressionRoot
     public boolean isMember(String permission) {
         PermissionDTO permissionDTO = permissionService.findByAccess(PermissionAccess.valueOf(permission));
         if (permissionDTO != null) {
-            try {
-                return securityACLService.isSystemMember(authentication, securityUtils.getCurrentCompanyId(), ClassType.COMPANY, permissionDTO);
-            } catch (NotFoundException e) {
-                return false;
-            }
+            return securityACLService.checkTokenAuthority(authentication, permissionDTO);
         } else {
             return false;
         }

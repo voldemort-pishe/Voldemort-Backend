@@ -108,7 +108,7 @@ public class CandidateMessageResource {
 
     @GetMapping("/candidate/{candidateId}")
     @Timed
-    public ResponseEntity<Page<ResponseVM<CandidateMessageDTO>>> getAllCandidateByCandidateId
+    public ResponseEntity<Page<ResponseVM<CandidateMessageDTO>>> getAllCandidateMessageByCandidateId
         (@PathVariable("candidateId") Long candidateId, @ApiParam Pageable page) {
         log.debug("REST request to get all CandidateMessageDTOs by candidate id : {}", candidateId);
         try {

@@ -66,7 +66,7 @@ public class CustomMethodSecurityExpression extends SecurityExpressionRoot
             case COMPANY:
             case COMPANY_MEMBER:
             case COMPANY_PIPELINE:
-            case EVALUATION_CRITERIA:
+            case CRITERIA:
             case INVOICE:
                 return true;
         }

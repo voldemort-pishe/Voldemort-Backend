@@ -66,7 +66,7 @@ public class SecurityACLService {
                 case CANDIDATE:
                     jobId = this.findJobIdByCandidate(id);
                     break;
-                case CANDIDATE_EVALUATION:
+                case CANDIDATE_CRITERIA:
                     jobId = this.findJobByCandidateEvaluationCriteria(id);
                     break;
                 case CANDIDATE_MESSAGE:
@@ -127,7 +127,7 @@ public class SecurityACLService {
                 case COMPANY_PIPELINE:
                     companyId = this.findCompanyByPipeline(id);
                     break;
-                case EVALUATION_CRITERIA:
+                case CRITERIA:
                     companyId = this.findCompanyByEvaluation(id);
                     break;
             }

@@ -15,7 +15,7 @@ import java.util.Set;
  * A AuthorityEntity.
  */
 @Entity
-@Table(name = "authority_entity")
+@Table(name = "authority")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class AuthorityEntity implements Serializable {
 
@@ -30,7 +30,7 @@ public class AuthorityEntity implements Serializable {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-        name = "authority_permission_entity",
+        name = "authority_permission",
         joinColumns = {@JoinColumn(name = "authority_id")},
         inverseJoinColumns = {@JoinColumn(name = "permission_id")}
     )

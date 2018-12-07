@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "subscription_entity")
+@Table(name = "subscription")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class SubscriptionEntity implements Serializable {
 

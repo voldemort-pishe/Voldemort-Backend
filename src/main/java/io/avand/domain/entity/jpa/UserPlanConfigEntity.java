@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "user_plan_config_entity")
+@Table(name = "user_plan_config")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class UserPlanConfigEntity implements Serializable {
 

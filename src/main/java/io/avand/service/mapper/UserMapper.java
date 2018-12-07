@@ -6,7 +6,7 @@ import io.avand.web.rest.vm.response.UserIncludeVM;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {UserAuthorityMapper.class, CompanyMapper.class, TalentPoolMapper.class, InvoiceMapper.class})
+@Mapper(componentModel = "spring", uses = {UserAuthorityMapper.class, CompanyMapper.class, InvoiceMapper.class})
 public interface UserMapper extends EntityMapper<UserDTO, UserEntity>, VmMapper<UserDTO, UserIncludeVM> {
 
     @Override

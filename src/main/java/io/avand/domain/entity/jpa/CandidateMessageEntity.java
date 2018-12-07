@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "candidate_message_entity")
+@Table(name = "candidate_message")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CandidateMessageEntity extends AbstractAuditingEntity implements Serializable {
 

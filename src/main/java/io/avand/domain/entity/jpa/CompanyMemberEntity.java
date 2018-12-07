@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 
 @Entity
-@Table(name = "company_member_entity")
+@Table(name = "company_member")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyMemberEntity implements Serializable {
 

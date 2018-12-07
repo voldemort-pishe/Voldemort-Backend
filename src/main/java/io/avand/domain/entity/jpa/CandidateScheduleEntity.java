@@ -17,7 +17,7 @@ import java.util.Set;
  * A CandidateScheduleEntity.
  */
 @Entity
-@Table(name = "candidate_schedule_entity")
+@Table(name = "candidate_schedule")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CandidateScheduleEntity implements Serializable {
 

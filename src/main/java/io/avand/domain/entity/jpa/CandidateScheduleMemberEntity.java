@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "candidate_schedule_member_entity")
+@Table(name = "candidate_schedule_member")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CandidateScheduleMemberEntity extends AbstractAuditingEntity implements Serializable {
 

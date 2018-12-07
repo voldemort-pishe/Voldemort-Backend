@@ -19,7 +19,7 @@ import io.avand.domain.enumeration.InvoiceStatus;
  * A InvoiceEntity.
  */
 @Entity
-@Table(name = "invoice_entity")
+@Table(name = "invoice")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class InvoiceEntity extends AbstractAuditingEntity implements Serializable {
 

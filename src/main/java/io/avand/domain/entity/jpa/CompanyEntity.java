@@ -15,7 +15,7 @@ import java.util.Objects;
  * A CompanyEntity.
  */
 @Entity
-@Table(name = "company_entity")
+@Table(name = "company")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyEntity extends AbstractAuditingEntity implements Serializable {
 

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "permission_entity")
+@Table(name = "permission")
 public class PermissionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "job_hire_team_entity")
+@Table(name = "job_hire_team")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class JobHireTeamEntity extends AbstractAuditingEntity implements Serializable {
 

@@ -20,7 +20,7 @@ import java.util.Set;
  * A JobEntity.
  */
 @Entity
-@Table(name = "job_entity")
+@Table(name = "job")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class JobEntity extends AbstractAuditingEntity implements Serializable {
 

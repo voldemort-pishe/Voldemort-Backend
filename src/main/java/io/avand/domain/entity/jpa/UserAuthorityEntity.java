@@ -16,7 +16,7 @@ import java.util.Objects;
  * A UserAuthorityEntity.
  */
 @Entity
-@Table(name = "user_authority_entity")
+@Table(name = "user_authority")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class UserAuthorityEntity implements Serializable {
 

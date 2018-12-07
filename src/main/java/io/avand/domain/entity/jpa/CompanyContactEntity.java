@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "company_contact_entity")
+@Table(name = "company_contact")
 public class CompanyContactEntity extends AbstractAuditingEntity implements Serializable {
 
     @Id

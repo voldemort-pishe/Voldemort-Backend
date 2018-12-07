@@ -56,7 +56,7 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     @Override
     public CompanyMemberDTO save(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
         log.debug("Request to save company member : {}", companyMemberDTO);
-        Optional<CompanyEntity> companyEntity = companyRepository.findById(securityUtils.getCurrentCompanyId());
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(companyMemberDTO.getCompanyId());
         if (companyEntity.isPresent()) {
             Optional<UserEntity> userEntityOp = userRepository.findByLogin(companyMemberDTO.getUserEmail());
             UserEntity userEntity;
@@ -97,19 +97,19 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
-    public List<CompanyMemberDTO> saveAll(List<String> emails) throws NotFoundException {
+    public List<CompanyMemberDTO> saveAll(List<CompanyMemberDTO> memberDTOS) throws NotFoundException {
         log.debug("Request to save company member : {}");
         CompanyEntity companyEntity = companyRepository.findOne(securityUtils.getCurrentCompanyId());
         if (companyEntity != null) {
             List<CompanyMemberEntity> companyMemberEntities = new ArrayList<>();
-            for (String userEmail : emails) {
-                Optional<UserEntity> userEntityOp = userRepository.findByLogin(userEmail);
+            for (CompanyMemberDTO memberDTO : memberDTOS) {
+                Optional<UserEntity> userEntityOp = userRepository.findByLogin(memberDTO.getUserEmail());
                 UserEntity userEntity;
                 boolean register;
                 if (!userEntityOp.isPresent()) {
                     UserEntity user = new UserEntity();
-                    user.setLogin(userEmail);
-                    user.setEmail(userEmail);
+                    user.setLogin(memberDTO.getUserEmail());
+                    user.setEmail(memberDTO.getUserEmail());
                     user.setInvitationKey(RandomUtil.generateInvitationKey());
                     userEntity = userRepository.save(user);
                     register = true;
@@ -121,6 +121,8 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
                 CompanyMemberEntity companyMemberEntity = new CompanyMemberEntity();
                 companyMemberEntity.setUser(userEntity);
                 companyMemberEntity.setCompany(companyEntity);
+                companyMemberEntity.setPosition(memberDTO.getPosition());
+                companyMemberEntity.setDepartment(memberDTO.getDepartment());
 
                 companyMemberEntity = companyMemberRepository.save(companyMemberEntity);
 

@@ -13,7 +13,7 @@ public interface CompanyMemberService {
 
     CompanyMemberDTO save(CompanyMemberDTO companyMemberDTO) throws NotFoundException;
 
-    List<CompanyMemberDTO> saveAll(List<String> emails) throws NotFoundException;
+    List<CompanyMemberDTO> saveAll(List<CompanyMemberDTO> memberDTOS) throws NotFoundException;
 
     CompanyMemberDTO findById(Long id) throws NotFoundException;
 

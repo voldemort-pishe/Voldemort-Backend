@@ -18,6 +18,7 @@ import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -51,6 +52,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public CompanyDTO save(CompanyDTO companyDTO) throws NotFoundException {
         log.debug("Request to save company : {}", companyDTO);
         Long userId = securityUtils.getCurrentUserId();
@@ -71,6 +73,8 @@ public class CompanyServiceImpl implements CompanyService {
                 CompanyMemberDTO companyMemberDTO = new CompanyMemberDTO();
                 companyMemberDTO.setCompanyId(companyEntity.getId());
                 companyMemberDTO.setUserEmail(userEntity.getEmail());
+                companyMemberDTO.setDepartment("منابع انسانی");
+                companyMemberDTO.setPosition("رییس شرکت");
                 companyMemberService.save(companyMemberDTO);
             }
 

@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -86,6 +87,8 @@ public class CompanyResource {
             }
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
+        } catch (HttpClientErrorException e) {
+            throw new ServerErrorException("مشگلی در ایجاد دامنه پیش آمده است لطفا مجدد تلاش نمایید");
         }
     }
 

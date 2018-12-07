@@ -54,9 +54,9 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
     }
 
     @Override
-    public List<ResponseVM<CompanyMemberDTO>> saveAll(List<String> emails) throws NotFoundException {
+    public List<ResponseVM<CompanyMemberDTO>> saveAll(List<CompanyMemberDTO> memberDTOS) throws NotFoundException {
         log.debug("Request to save companyMemberDTO via component");
-        List<CompanyMemberDTO> companyMemberDTOS = companyMemberService.saveAll(emails);
+        List<CompanyMemberDTO> companyMemberDTOS = companyMemberService.saveAll(memberDTOS);
         List<ResponseVM<CompanyMemberDTO>> responseVMS = new ArrayList<>();
         for (CompanyMemberDTO companyMemberDTO : companyMemberDTOS) {
             ResponseVM<CompanyMemberDTO> responseVM = new ResponseVM<>();

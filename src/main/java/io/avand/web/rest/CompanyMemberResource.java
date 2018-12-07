@@ -35,11 +35,14 @@ public class CompanyMemberResource {
     private final Logger log = LoggerFactory.getLogger(CompanyMemberResource.class);
     private final CompanyMemberService companyMemberService;
     private final CompanyMemberComponent companyMemberComponent;
+    private final SecurityUtils securityUtils;
 
     public CompanyMemberResource(CompanyMemberService companyMemberService,
-                                 CompanyMemberComponent companyMemberComponent) {
+                                 CompanyMemberComponent companyMemberComponent,
+                                 SecurityUtils securityUtils) {
         this.companyMemberService = companyMemberService;
         this.companyMemberComponent = companyMemberComponent;
+        this.securityUtils = securityUtils;
     }
 
     @PostMapping
@@ -49,6 +52,7 @@ public class CompanyMemberResource {
         log.debug("REST Request to save company member : {}", companyMemberDTO);
 
         try {
+            companyMemberDTO.setCompanyId(securityUtils.getCurrentCompanyId());
             ResponseVM<CompanyMemberDTO> result = companyMemberComponent.save(companyMemberDTO);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
@@ -65,7 +69,7 @@ public class CompanyMemberResource {
         log.debug("REST Request to save company member : {}", companyMemberVM);
 
         try {
-            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.saveAll(companyMemberVM.getEmails());
+            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.saveAll(companyMemberVM.getMembers());
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             throw new ServerErrorException("شماه قبلا عضو شده‌اید");

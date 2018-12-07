@@ -22,7 +22,7 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
     private String subDomain;
 
     private Long fileId;
-
+    @NotNull
     private CompanyContactDTO contact;
 
     @JsonIgnore

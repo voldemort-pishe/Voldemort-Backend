@@ -100,14 +100,22 @@ public class UserServiceImpl implements UserService {
             userEntity.setActivationKey(RandomUtil.generateActivationKey());
             userEntity.setActivated(false);
 
-            UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-            AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
+            UserAuthorityEntity userAuthority = new UserAuthorityEntity();
+            AuthorityEntity userAuthorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
-            userAuthorityEntity.setAuthority(authorityEntity);
-            userAuthorityEntity.setUser(userEntity);
+            userAuthority.setAuthority(userAuthorityEntity);
+            userAuthority.setUser(userEntity);
+
+            UserAuthorityEntity adminAuthority = new UserAuthorityEntity();
+            AuthorityEntity userAdminAuthority = authorityRepository.findByName(AuthoritiesConstants.ADMIN);
+
+            adminAuthority.setAuthority(userAdminAuthority);
+            adminAuthority.setUser(userEntity);
+
 
             Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
-            userAuthorityEntities.add(userAuthorityEntity);
+            userAuthorityEntities.add(userAuthority);
+            userAuthorityEntities.add(adminAuthority);
 
             userEntity.setUserAuthorities(userAuthorityEntities);
         }

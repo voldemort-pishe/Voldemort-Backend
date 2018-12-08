@@ -14,9 +14,9 @@ import java.util.Set;
  * A PlanEntity.
  */
 @Entity
-@Table(name = "user_plan")
+@Table(name = "company_plan")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
-public class UserPlanEntity implements Serializable {
+public class CompanyPlanEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,11 +29,11 @@ public class UserPlanEntity implements Serializable {
 
     @OneToMany(mappedBy = "plan",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    private Set<UserPlanConfigEntity> planConfig = new HashSet<>();
+    private Set<CompanyPlanConfigEntity> planConfig = new HashSet<>();
 
     @OneToOne
     @JoinColumn(unique = true, nullable = false)
-    private UserEntity user;
+    private CompanyEntity company;
 
     @OneToOne
     @JoinColumn(unique = true, nullable = false)
@@ -56,20 +56,20 @@ public class UserPlanEntity implements Serializable {
         this.length = length;
     }
 
-    public Set<UserPlanConfigEntity> getPlanConfig() {
+    public Set<CompanyPlanConfigEntity> getPlanConfig() {
         return planConfig;
     }
 
-    public void setPlanConfig(Set<UserPlanConfigEntity> planConfig) {
+    public void setPlanConfig(Set<CompanyPlanConfigEntity> planConfig) {
         this.planConfig = planConfig;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public CompanyEntity getCompany() {
+        return company;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setCompany(CompanyEntity company) {
+        this.company = company;
     }
 
     public InvoiceEntity getInvoice() {
@@ -88,7 +88,7 @@ public class UserPlanEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        UserPlanEntity planEntity = (UserPlanEntity) o;
+        CompanyPlanEntity planEntity = (CompanyPlanEntity) o;
         if (planEntity.getId() == null || getId() == null) {
             return false;
         }
@@ -97,7 +97,7 @@ public class UserPlanEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "UserPlanEntity{" +
+        return "CompanyPlanEntity{" +
             "id=" + id +
             ", length=" + length +
             '}';

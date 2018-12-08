@@ -69,11 +69,6 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyEntity> companies = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONE)
-    private Set<InvoiceEntity> invoices = new HashSet<>();
-
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
@@ -273,31 +268,6 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setCompanies(Set<CompanyEntity> companyEntities) {
         this.companies = companyEntities;
-    }
-
-    public Set<InvoiceEntity> getInvoices() {
-        return invoices;
-    }
-
-    public UserEntity invoices(Set<InvoiceEntity> invoiceEntities) {
-        this.invoices = invoiceEntities;
-        return this;
-    }
-
-    public UserEntity addInvoice(InvoiceEntity invoiceEntity) {
-        this.invoices.add(invoiceEntity);
-        invoiceEntity.setUser(this);
-        return this;
-    }
-
-    public UserEntity removeInvoice(InvoiceEntity invoiceEntity) {
-        this.invoices.remove(invoiceEntity);
-        invoiceEntity.setUser(null);
-        return this;
-    }
-
-    public void setInvoices(Set<InvoiceEntity> invoiceEntities) {
-        this.invoices = invoiceEntities;
     }
 
     public Set<EventEntity> getEvents() {

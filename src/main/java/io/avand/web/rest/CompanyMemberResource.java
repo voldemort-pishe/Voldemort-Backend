@@ -28,7 +28,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/company-member")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyMemberResource {
 
     private final static String ENTITY_NAME = "CompanyMemberEntity";

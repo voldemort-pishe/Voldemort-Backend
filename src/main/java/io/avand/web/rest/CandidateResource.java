@@ -37,7 +37,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/candidate")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CandidateResource {
 
     private final Logger log = LoggerFactory.getLogger(CandidateResource.class);

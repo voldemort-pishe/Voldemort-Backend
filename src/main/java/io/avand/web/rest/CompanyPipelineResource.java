@@ -30,7 +30,6 @@ import java.net.URISyntaxException;
  */
 @RestController
 @RequestMapping("/api/company-pipeline")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyPipelineResource {
 
     private final Logger log = LoggerFactory.getLogger(CompanyPipelineResource.class);

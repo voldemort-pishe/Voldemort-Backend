@@ -34,6 +34,9 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
     @JsonIgnore
     private Set<CompanyPipelineDTO> companyPipelines = new HashSet<>();
 
+    @JsonIgnore
+    private Set<InvoiceDTO> invoices = new HashSet<>();
+
     private Long userId;
 
     public String getNameEn() {
@@ -122,6 +125,14 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setCompanyPipelines(Set<CompanyPipelineDTO> companyPipelines) {
         this.companyPipelines = companyPipelines;
+    }
+
+    public Set<InvoiceDTO> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Set<InvoiceDTO> invoices) {
+        this.invoices = invoices;
     }
 
     public Long getUserId() {

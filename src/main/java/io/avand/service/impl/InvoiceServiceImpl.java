@@ -2,6 +2,8 @@ package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.*;
 import io.avand.domain.enumeration.InvoiceStatus;
+import io.avand.domain.enumeration.PlanType;
+import io.avand.repository.jpa.CompanyRepository;
 import io.avand.repository.jpa.InvoiceRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
@@ -32,19 +34,19 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceMapper invoiceMapper;
 
-    private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
 
     private final SecurityUtils securityUtils;
 
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository,
                               PlanService planService,
                               InvoiceMapper invoiceMapper,
-                              UserRepository userRepository,
+                              CompanyRepository companyRepository,
                               SecurityUtils securityUtils) {
         this.invoiceRepository = invoiceRepository;
         this.planService = planService;
         this.invoiceMapper = invoiceMapper;
-        this.userRepository = userRepository;
+        this.companyRepository = companyRepository;
         this.securityUtils = securityUtils;
     }
 
@@ -52,9 +54,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceDTO save(InvoiceDTO invoiceDTO) throws NotFoundException {
         logger.debug("Request to save invoice : {}", invoiceDTO);
         InvoiceEntity invoiceEntity = invoiceMapper.toEntity(invoiceDTO);
-        Optional<UserEntity> userEntityOptional = userRepository.findById(invoiceDTO.getUserId());
-        if (userEntityOptional.isPresent()) {
-            invoiceEntity.setUser(userEntityOptional.get());
+        Optional<CompanyEntity> companyEntityOptional = companyRepository.findById(invoiceDTO.getCompanyId());
+        if (companyEntityOptional.isPresent()) {
+            invoiceEntity.setCompany(companyEntityOptional.get());
             for (InvoiceItemEntity invoiceItemEntity : invoiceEntity.getInvoiceItem()) {
                 invoiceItemEntity.setInvoice(invoiceEntity);
             }
@@ -66,12 +68,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDTO saveByPlanId(Long planId,Long userId) throws NotFoundException {
+    public InvoiceDTO saveByPlanId(Long planId, Long companyId) throws NotFoundException {
         logger.debug("Request to save invoice by planId : {}", planId);
         Optional<PlanDTO> planDTOOptional = planService.findOneById(planId);
         if (planDTOOptional.isPresent()) {
             InvoiceEntity invoiceEntity = new InvoiceEntity();
-            invoiceEntity.setStatus(InvoiceStatus.INITIALIZED);
+            invoiceEntity.setStatus(planDTOOptional.get().getType() == PlanType.FREE ? InvoiceStatus.SUCCESS : InvoiceStatus.INITIALIZED);
 
             InvoiceItemEntity invoiceItemEntity = new InvoiceItemEntity();
             invoiceItemEntity.setCount(1L);
@@ -88,9 +90,9 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceEntity.setTax((planDTOOptional.get().getAmount() * 9) / 100);
             invoiceEntity.setTotal(invoiceEntity.getAmount() + invoiceEntity.getTax() - invoiceEntity.getDiscount());
 
-            Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
-            if (userEntityOptional.isPresent()) {
-                invoiceEntity.setUser(userEntityOptional.get());
+            Optional<CompanyEntity> companyEntityOptional = companyRepository.findById(companyId);
+            if (companyEntityOptional.isPresent()) {
+                invoiceEntity.setCompany(companyEntityOptional.get());
                 invoiceEntity = invoiceRepository.save(invoiceEntity);
                 return invoiceMapper.toDto(invoiceEntity);
             } else {
@@ -112,33 +114,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Optional<InvoiceDTO> findOneById(Long id) throws NotFoundException {
         logger.debug("Request to get a invoice with an id : {}", id);
         return invoiceRepository.
-            findByIdAndUser_Id(id, securityUtils.getCurrentUserId())
+            findByIdAndCompany_Id(id, securityUtils.getCurrentCompanyId())
             .map(invoiceMapper::toDto);
     }
 
     @Override
-    public Optional<InvoiceDTO> findOneByIdAndStatus(Long id, InvoiceStatus status) throws NotFoundException {
-        logger.debug("Request to get a invoice by id and status : {}, {}", id, status);
-        return invoiceRepository
-            .findByIdAndStatusAndUser_Id(id, status, securityUtils.getCurrentUserId())
-            .map(invoiceMapper::toDto);
-    }
-
-    @Override
-    public Optional<InvoiceDTO> findOneByUserId(Long userId) throws NotFoundException {
-        logger.debug("Request to invoice service to find a invoice by user id : {}", userId);
-
-        Optional<UserEntity> userEntity = userRepository.findById(userId);
-        if (userEntity.isPresent()) {
-            Optional<InvoiceEntity> invoiceEntity = invoiceRepository.findTopByUser(userEntity.get());
-            return invoiceEntity.map(invoiceMapper::toDto);
-        } else {
-            throw new NotFoundException("Sorry, who are you?");
-        }
-    }
-
-    @Override
-    public Optional<InvoiceDTO> findOneByTrackingCode(String trackingCode) throws NotFoundException {
+    public Optional<InvoiceDTO> findOneByTrackingCode(String trackingCode) {
         logger.debug("Request to invoice service to find a invoice by reference id : {}", trackingCode);
         return invoiceRepository
             .findByTrackingCode(trackingCode)
@@ -149,7 +130,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Page<InvoiceDTO> findAll(Pageable pageable) throws NotFoundException {
         logger.debug("Request to get all invoices");
         return invoiceRepository
-            .findAllByUser_Id(securityUtils.getCurrentUserId(), pageable)
+            .findAllByCompany_Id(securityUtils.getCurrentCompanyId(), pageable)
             .map(invoiceMapper::toDto);
     }
 }

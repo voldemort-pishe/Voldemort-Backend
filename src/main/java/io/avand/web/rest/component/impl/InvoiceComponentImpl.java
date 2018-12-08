@@ -1,10 +1,11 @@
 package io.avand.web.rest.component.impl;
 
+import io.avand.service.CompanyService;
 import io.avand.service.InvoiceService;
-import io.avand.service.UserService;
+import io.avand.service.dto.CompanyDTO;
 import io.avand.service.dto.InvoiceDTO;
 import io.avand.service.dto.UserDTO;
-import io.avand.service.mapper.UserMapper;
+import io.avand.service.mapper.CompanyMapper;
 import io.avand.web.rest.component.InvoiceComponent;
 import io.avand.web.rest.util.PageMaker;
 import io.avand.web.rest.vm.response.ResponseVM;
@@ -22,13 +23,15 @@ public class InvoiceComponentImpl implements InvoiceComponent {
 
     private final Logger log = LoggerFactory.getLogger(InvoiceComponentImpl.class);
     private final InvoiceService invoiceService;
-    private final UserService userService;
-    private final UserMapper userMapper;
+    private final CompanyService companyService;
+    private final CompanyMapper companyMapper;
 
-    public InvoiceComponentImpl(InvoiceService invoiceService, UserService userService, UserMapper userMapper) {
+    public InvoiceComponentImpl(InvoiceService invoiceService,
+                                CompanyService companyService,
+                                CompanyMapper companyMapper) {
         this.invoiceService = invoiceService;
-        this.userService = userService;
-        this.userMapper = userMapper;
+        this.companyService = companyService;
+        this.companyMapper = companyMapper;
     }
 
     @Override
@@ -59,11 +62,11 @@ public class InvoiceComponentImpl implements InvoiceComponent {
         return new PageMaker<>(responseVMS, invoiceDTOS);
     }
 
-    private Map<String, Object> createIncluded(InvoiceDTO invoiceDTO) {
+    private Map<String, Object> createIncluded(InvoiceDTO invoiceDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
 
-        Optional<UserDTO> userDTOOptional = userService.findById(invoiceDTO.getUserId());
-        userDTOOptional.ifPresent(userDTO -> included.put("user", userMapper.dtoToVm(userDTO)));
+        CompanyDTO companyDTO = companyService.findById(invoiceDTO.getCompanyId());
+        included.put("company", companyMapper.dtoToVm(companyDTO));
 
         return included;
     }

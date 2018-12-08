@@ -31,7 +31,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/candidate-message")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CandidateMessageResource {
 
     private final String ENTITY_NAME = "CandidateMessage";

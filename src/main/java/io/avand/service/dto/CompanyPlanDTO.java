@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserPlanDTO implements Serializable {
+public class CompanyPlanDTO implements Serializable {
 
     @NotNull
     private Long id;
@@ -15,10 +15,10 @@ public class UserPlanDTO implements Serializable {
     private Integer length;
 
     @JsonIgnore
-    private Set<UserPlanConfigDTO> planConfig = new HashSet<>();
+    private Set<CompanyPlanConfigDTO> planConfig = new HashSet<>();
 
     @NotNull
-    private Long userId;
+    private Long companyId;
 
     @NotNull
     private Long invoiceId;
@@ -39,20 +39,20 @@ public class UserPlanDTO implements Serializable {
         this.length = length;
     }
 
-    public Set<UserPlanConfigDTO> getPlanConfig() {
+    public Set<CompanyPlanConfigDTO> getPlanConfig() {
         return planConfig;
     }
 
-    public void setPlanConfig(Set<UserPlanConfigDTO> planConfig) {
+    public void setPlanConfig(Set<CompanyPlanConfigDTO> planConfig) {
         this.planConfig = planConfig;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     public Long getInvoiceId() {
@@ -65,10 +65,10 @@ public class UserPlanDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "UserPlanDTO{" +
+        return "CompanyPlanDTO{" +
             "id=" + id +
             ", length=" + length +
-            ", userId=" + userId +
+            ", companyId=" + companyId +
             ", invoiceId=" + invoiceId +
             '}';
     }

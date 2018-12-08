@@ -32,7 +32,7 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
     private Set<InvoiceItemDTO> invoiceItem = new HashSet<>();
 
     @NotNull
-    private Long userId;
+    private Long companyId;
 
     public PaymentType getPaymentType() {
         return paymentType;
@@ -114,12 +114,12 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
         this.invoiceItem = invoiceItem;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     @Override
@@ -132,7 +132,7 @@ public class InvoiceDTO extends AbstractAuditingDTO implements Serializable {
             ", discount=" + discount +
             ", total=" + total +
             ", status=" + status +
-            ", userId=" + userId +
+            ", companyId=" + companyId +
             '}';
     }
 }

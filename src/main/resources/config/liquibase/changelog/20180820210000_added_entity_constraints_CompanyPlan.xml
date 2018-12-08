@@ -8,15 +8,15 @@
     -->
     <changeSet id="20180820210000-2" author="jhipster">
 
-        <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="user_plan"
-                                 constraintName="fk_user_plan_user_id"
+        <addForeignKeyConstraint baseColumnNames="company_id"
+                                 baseTableName="company_plan"
+                                 constraintName="fk_user_plan_company_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"/>
+                                 referencedTableName="company"/>
 
         <addForeignKeyConstraint baseColumnNames="invoice_id"
-                                 baseTableName="user_plan"
-                                 constraintName="fk_user_plan_invoice_id"
+                                 baseTableName="company_plan"
+                                 constraintName="fk_company_plan_invoice_id"
                                  referencedColumnNames="id"
                                  referencedTableName="invoice"/>
 

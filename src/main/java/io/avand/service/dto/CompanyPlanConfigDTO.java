@@ -4,7 +4,7 @@ import io.avand.domain.enumeration.PlanConfigType;
 
 import java.io.Serializable;
 
-public class UserPlanConfigDTO implements Serializable {
+public class CompanyPlanConfigDTO implements Serializable {
     private Long id;
     private PlanConfigType type;
     private Long value;
@@ -44,7 +44,7 @@ public class UserPlanConfigDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "UserPlanConfigDTO{" +
+        return "CompanyPlanConfigDTO{" +
             "id=" + id +
             ", type=" + type +
             ", value=" + value +

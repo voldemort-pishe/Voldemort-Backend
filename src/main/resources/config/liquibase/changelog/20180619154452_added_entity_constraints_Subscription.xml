@@ -8,17 +8,17 @@
     -->
     <changeSet id="20180619154452-2" author="Morteza">
 
-        <addForeignKeyConstraint baseColumnNames="user_id"
+        <addForeignKeyConstraint baseColumnNames="company_id"
                                  baseTableName="subscription"
-                                 constraintName="fk_subscription_user_id"
+                                 constraintName="fk_subscription_company_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"/>
+                                 referencedTableName="company"/>
 
-        <addForeignKeyConstraint baseColumnNames="user_plan_id"
+        <addForeignKeyConstraint baseColumnNames="company_plan_id"
                                  baseTableName="subscription"
-                                 constraintName="fk_subscription_user_plan_id"
+                                 constraintName="fk_subscription_company_plan_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="user_plan"/>
+                                 referencedTableName="company_plan"/>
 
 
     </changeSet>

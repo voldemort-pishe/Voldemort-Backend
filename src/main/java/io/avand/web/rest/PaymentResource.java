@@ -7,14 +7,12 @@ import io.avand.domain.enumeration.PaymentType;
 import io.avand.payment.service.PaymentService;
 import io.avand.payment.service.dto.PaymentDTO;
 import io.avand.payment.service.error.PaymentException;
-import io.avand.security.AuthoritiesConstants;
+import io.avand.service.CompanyPlanService;
 import io.avand.service.InvoiceService;
 import io.avand.service.SubscriptionService;
 import io.avand.service.UserAuthorityService;
-import io.avand.service.UserPlanService;
+import io.avand.service.dto.CompanyPlanDTO;
 import io.avand.service.dto.InvoiceDTO;
-import io.avand.service.dto.SubscriptionDTO;
-import io.avand.service.dto.UserPlanDTO;
 import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -39,7 +37,7 @@ public class PaymentResource {
 
     private final InvoiceService invoiceService;
 
-    private final UserPlanService userPlanService;
+    private final CompanyPlanService companyPlanService;
 
     private final SubscriptionService subscriptionService;
 
@@ -49,13 +47,13 @@ public class PaymentResource {
 
     public PaymentResource(PaymentService paymentService,
                            InvoiceService invoiceService,
-                           UserPlanService userPlanService,
+                           CompanyPlanService companyPlanService,
                            SubscriptionService subscriptionService,
                            ApplicationProperties applicationProperties,
                            UserAuthorityService userAuthorityService) {
         this.paymentService = paymentService;
         this.invoiceService = invoiceService;
-        this.userPlanService = userPlanService;
+        this.companyPlanService = companyPlanService;
         this.subscriptionService = subscriptionService;
         this.applicationProperties = applicationProperties;
         this.userAuthorityService = userAuthorityService;
@@ -110,16 +108,10 @@ public class PaymentResource {
                 foundInvoice.setPaymentDate(ZonedDateTime.now());
                 foundInvoice.setPaymentType(PaymentType.ZARINPAL);
                 invoiceService.save(foundInvoice);
-                Optional<UserPlanDTO> userPlanDTO = userPlanService.findByInvoiceId(foundInvoice.getId());
+                Optional<CompanyPlanDTO> companyPlanDTO = companyPlanService.findByInvoiceId(foundInvoice.getId());
 
-                SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
-                subscriptionDTO.setUserPlanId(userPlanDTO.get().getId());
-                subscriptionDTO.setUserId(foundInvoice.getUserId());
-                subscriptionDTO.setStartDate(ZonedDateTime.now());
-                subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(userPlanDTO.get().getLength()));
-                subscriptionService.save(subscriptionDTO);
+                subscriptionService.save(companyPlanDTO.get().getId(), foundInvoice.getCompanyId());
 
-                userAuthorityService.grantAuthority(AuthoritiesConstants.SUBSCRIPTION, foundInvoice.getUserId());
             } catch (PaymentException e) {
                 foundInvoice.setStatus(InvoiceStatus.FAILED);
                 foundInvoice.setPaymentDate(ZonedDateTime.now());

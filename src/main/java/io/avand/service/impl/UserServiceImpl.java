@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     private final FileRepository fileRepository;
 
     private final PlanService planService;
-    private final UserPlanService userPlanService;
+    private final CompanyPlanService companyPlanService;
     private final InvoiceService invoiceService;
     private final SubscriptionService subscriptionService;
     private final UserAuthorityService userAuthorityService;
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
                            TokenService tokenService,
                            FileRepository fileRepository,
                            PlanService planService,
-                           UserPlanService userPlanService,
+                           CompanyPlanService companyPlanService,
                            InvoiceService invoiceService,
                            SubscriptionService subscriptionService,
                            UserAuthorityService userAuthorityService,
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         this.tokenService = tokenService;
         this.fileRepository = fileRepository;
         this.planService = planService;
-        this.userPlanService = userPlanService;
+        this.companyPlanService = companyPlanService;
         this.invoiceService = invoiceService;
         this.subscriptionService = subscriptionService;
         this.userAuthorityService = userAuthorityService;
@@ -122,11 +122,6 @@ public class UserServiceImpl implements UserService {
 
         userEntity = userRepository.save(userEntity);
 
-        try {
-            this.addSubscription(userEntity);
-        } catch (NotFoundException ignore) {
-        }
-
         boolean bool = smsService.send(userEntity.getCellphone(), userEntity.getActivationKey());
         if (!bool) {
             mailService.sendActivationEmail(userEntity);
@@ -162,11 +157,6 @@ public class UserServiceImpl implements UserService {
         userEntity.setUserAuthorities(userAuthorityEntities);
 
         userEntity = userRepository.save(userEntity);
-
-        try {
-            this.addSubscription(userEntity);
-        } catch (NotFoundException ignore) {
-        }
 
         return userMapper.toDto(userEntity);
     }
@@ -348,21 +338,4 @@ public class UserServiceImpl implements UserService {
             .map(userMapper::toDto);
     }
 
-    private void addSubscription(UserEntity userEntity) throws NotFoundException {
-        Optional<PlanDTO> planDTO = planService.findFreePlan();
-        if (planDTO.isPresent()) {
-            InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planDTO.get().getId(), userEntity.getId());
-
-            UserPlanDTO userPlanDTO = userPlanService.save(planDTO.get().getId(), invoiceDTO.getId(), userEntity.getId());
-
-            SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
-            subscriptionDTO.setUserPlanId(userPlanDTO.getId());
-            subscriptionDTO.setUserId(userEntity.getId());
-            subscriptionDTO.setStartDate(ZonedDateTime.now());
-            subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(planDTO.get().getLength()));
-            subscriptionService.save(subscriptionDTO);
-
-            userAuthorityService.grantAuthority(AuthoritiesConstants.SUBSCRIPTION, userEntity.getId());
-        }
-    }
 }

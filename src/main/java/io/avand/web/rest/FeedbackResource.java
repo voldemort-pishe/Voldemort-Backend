@@ -33,7 +33,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/feedback")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class FeedbackResource {
 
     private final Logger log = LoggerFactory.getLogger(FeedbackResource.class);

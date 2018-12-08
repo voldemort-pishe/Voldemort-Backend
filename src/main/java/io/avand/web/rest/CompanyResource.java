@@ -32,7 +32,6 @@ import java.net.URISyntaxException;
  */
 @RestController
 @RequestMapping("/api/company")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyResource {
 
     private final Logger log = LoggerFactory.getLogger(CompanyResource.class);

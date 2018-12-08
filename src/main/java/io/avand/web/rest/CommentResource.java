@@ -31,7 +31,6 @@ import java.net.URISyntaxException;
  */
 @RestController
 @RequestMapping("/api/comment")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CommentResource {
 
     private final Logger log = LoggerFactory.getLogger(CommentResource.class);

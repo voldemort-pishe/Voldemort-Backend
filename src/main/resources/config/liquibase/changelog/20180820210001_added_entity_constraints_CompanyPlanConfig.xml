@@ -9,10 +9,10 @@
     <changeSet id="20180619154441-2" author="jhipster">
 
         <addForeignKeyConstraint baseColumnNames="plan_id"
-                                 baseTableName="user_plan_config"
-                                 constraintName="fk_user_plan_config_plan_id"
+                                 baseTableName="company_plan_config"
+                                 constraintName="fk_company_plan_config_plan_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="user_plan"/>
+                                 referencedTableName="company_plan"/>
 
     </changeSet>
 </databaseChangeLog>

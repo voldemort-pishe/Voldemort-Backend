@@ -38,7 +38,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/job")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class JobResource {
 
     private final Logger log = LoggerFactory.getLogger(JobResource.class);

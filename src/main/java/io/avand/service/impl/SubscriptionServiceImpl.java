@@ -1,10 +1,11 @@
 package io.avand.service.impl;
 
+import io.avand.domain.entity.jpa.CompanyEntity;
 import io.avand.domain.entity.jpa.SubscriptionEntity;
-import io.avand.domain.entity.jpa.UserEntity;
-import io.avand.domain.entity.jpa.UserPlanEntity;
+import io.avand.domain.entity.jpa.CompanyPlanEntity;
+import io.avand.repository.jpa.CompanyRepository;
 import io.avand.repository.jpa.SubscriptionRepository;
-import io.avand.repository.jpa.UserPlanRepository;
+import io.avand.repository.jpa.CompanyPlanRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.service.SubscriptionService;
 import io.avand.service.dto.SubscriptionDTO;
@@ -26,39 +27,38 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     private final SubscriptionMapper subscriptionMapper;
 
-    private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
 
-    private final UserPlanRepository userPlanRepository;
+    private final CompanyPlanRepository companyPlanRepository;
 
     public SubscriptionServiceImpl(SubscriptionRepository subscriptionRepository,
                                    SubscriptionMapper subscriptionMapper,
-                                   UserRepository userRepository,
-                                   UserPlanRepository userPlanRepository) {
+                                   CompanyRepository companyRepository,
+                                   CompanyPlanRepository companyPlanRepository) {
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionMapper = subscriptionMapper;
-        this.userRepository = userRepository;
-        this.userPlanRepository = userPlanRepository;
+        this.companyRepository = companyRepository;
+        this.companyPlanRepository = companyPlanRepository;
     }
 
     @Override
-    public SubscriptionDTO save(SubscriptionDTO subscriptionDTO) throws NotFoundException {
-        logger.debug("Request for service to save a subscription : {}", subscriptionDTO);
-        SubscriptionEntity subscriptionEntity = subscriptionRepository.findByUser_Id(subscriptionDTO.getUserId());
-        if (subscriptionEntity != null) {
-            subscriptionEntity.setStartDate(subscriptionDTO.getStartDate());
-            subscriptionEntity.setEndDate(subscriptionDTO.getEndDate());
-        } else {
-            subscriptionEntity = subscriptionMapper.toEntity(subscriptionDTO);
-            Optional<UserEntity> userEntityOptional = userRepository.findById(subscriptionDTO.getUserId());
-            if (userEntityOptional.isPresent()) {
-                subscriptionEntity.setUser(userEntityOptional.get());
+    public SubscriptionDTO save(Long planId, Long companyId) throws NotFoundException {
+        logger.debug("Request to save subscription by planId and companyId");
+        SubscriptionEntity subscriptionEntity = subscriptionRepository.findByCompany_Id(companyId);
+        if (subscriptionEntity == null) {
+            subscriptionEntity = new SubscriptionEntity();
+            Optional<CompanyEntity> companyEntityOptional = companyRepository.findById(companyId);
+            if (companyEntityOptional.isPresent()) {
+                subscriptionEntity.setCompany(companyEntityOptional.get());
             } else {
-                throw new NotFoundException("User Not Available");
+                throw new NotFoundException("Company Not Available");
             }
         }
 
-        UserPlanEntity userPlanEntity = userPlanRepository.findOne(subscriptionDTO.getUserPlanId());
-        subscriptionEntity.setUserPlan(userPlanEntity);
+        CompanyPlanEntity companyPlanEntity = companyPlanRepository.findOne(planId);
+        subscriptionEntity.setCompanyPlan(companyPlanEntity);
+        subscriptionEntity.setStartDate(ZonedDateTime.now());
+        subscriptionEntity.setEndDate(ZonedDateTime.now().plusDays(companyPlanEntity.getLength()));
 
         subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
 
@@ -66,10 +66,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public SubscriptionDTO checkSubscription(Long userId) throws NotFoundException {
-        logger.debug("Request to check user subscription : {}", userId);
+    public SubscriptionDTO checkSubscription(Long companyId) throws NotFoundException {
+        logger.debug("Request to check user subscription : {}", companyId);
         SubscriptionEntity subscriptionEntity = subscriptionRepository
-            .findByStartDateBeforeAndEndDateAfterAndUser_Id(ZonedDateTime.now(), ZonedDateTime.now(), userId);
+            .findByStartDateBeforeAndEndDateAfterAndCompany_Id(ZonedDateTime.now(), ZonedDateTime.now(), companyId);
         if (subscriptionEntity != null) {
             return subscriptionMapper.toDto(subscriptionEntity);
         } else {

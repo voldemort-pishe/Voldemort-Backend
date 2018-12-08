@@ -9,6 +9,6 @@ import org.mapstruct.Mapping;
 public interface InvoiceMapper extends EntityMapper<InvoiceDTO, InvoiceEntity> {
 
     @Override
-    @Mapping(source = "user.id",target = "userId")
+    @Mapping(source = "company.id",target = "companyId")
     InvoiceDTO toDto(InvoiceEntity entity);
 }

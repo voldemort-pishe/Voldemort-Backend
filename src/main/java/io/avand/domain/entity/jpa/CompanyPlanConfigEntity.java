@@ -8,9 +8,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "user_plan_config")
+@Table(name = "company_plan_config")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
-public class UserPlanConfigEntity implements Serializable {
+public class CompanyPlanConfigEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,7 +26,7 @@ public class UserPlanConfigEntity implements Serializable {
     private Long value;
 
     @ManyToOne
-    private UserPlanEntity plan;
+    private CompanyPlanEntity plan;
 
     public Long getId() {
         return id;
@@ -52,17 +52,17 @@ public class UserPlanConfigEntity implements Serializable {
         this.value = value;
     }
 
-    public UserPlanEntity getPlan() {
+    public CompanyPlanEntity getPlan() {
         return plan;
     }
 
-    public void setPlan(UserPlanEntity plan) {
+    public void setPlan(CompanyPlanEntity plan) {
         this.plan = plan;
     }
 
     @Override
     public String toString() {
-        return "UserPlanConfigEntity{" +
+        return "CompanyPlanConfigEntity{" +
             "id=" + id +
             ", type=" + type +
             ", value=" + value +

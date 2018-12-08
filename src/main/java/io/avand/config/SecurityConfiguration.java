@@ -1,15 +1,14 @@
 package io.avand.config;
 
-import io.avand.security.*;
-import io.avand.security.jwt.*;
-
+import io.avand.security.AuthoritiesConstants;
+import io.avand.security.jwt.JWTConfigurer;
+import io.avand.security.jwt.TokenProvider;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,7 +26,6 @@ import javax.annotation.PostConstruct;
 @Configuration
 @Import(SecurityProblemSupport.class)
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -107,6 +105,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/account/reset-password/finish").permitAll()
             .antMatchers("/api/account/logout").permitAll()
             .antMatchers("/api/career-page/**").permitAll()
+            .antMatchers("/api/mail/income").permitAll()
             .antMatchers("/api/file/load/**").permitAll()
             .antMatchers("/api/payment/callback/**").permitAll()
             .antMatchers("/api/**").authenticated()

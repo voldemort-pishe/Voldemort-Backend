@@ -18,7 +18,7 @@ import java.util.List;
 @Repository
 public interface CompanyPipelineRepository extends JpaRepository<CompanyPipelineEntity, Long> {
 
-    Page<CompanyPipelineEntity> findAllByCompany(CompanyEntity company, Pageable pageable);
+    Page<CompanyPipelineEntity> findAllByCompany_Id(Long companyId, Pageable pageable);
 
-    List<CompanyPipelineEntity> findAllByCompany(CompanyEntity company);
+    CompanyPipelineEntity findByIdAndCompany_Id(Long id,Long companyId);
 }

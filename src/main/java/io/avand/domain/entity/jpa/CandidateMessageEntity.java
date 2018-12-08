@@ -1,7 +1,7 @@
 package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.avand.domain.enumeration.MessageOwnerType;
+import io.avand.domain.enumeration.CandidateMessageOwnerType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "candidate_message_entity")
+@Table(name = "candidate_message")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CandidateMessageEntity extends AbstractAuditingEntity implements Serializable {
 
@@ -27,6 +27,10 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
     @Column(name = "message")
     private String message;
 
+    @Column(name = "owner")
+    @Enumerated(EnumType.STRING)
+    private CandidateMessageOwnerType owner;
+
     @Column(name = "from_user_id")
     private Long fromUserId;
 
@@ -36,14 +40,10 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
     @Column(name = "message_id")
     private String messageId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "owner")
-    private MessageOwnerType owner;
-
     @ManyToOne
     private CandidateMessageEntity parent;
 
-    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CandidateMessageEntity> child = new HashSet<>();
@@ -75,6 +75,14 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
         this.message = message;
     }
 
+    public CandidateMessageOwnerType getOwner() {
+        return owner;
+    }
+
+    public void setOwner(CandidateMessageOwnerType owner) {
+        this.owner = owner;
+    }
+
     public Long getFromUserId() {
         return fromUserId;
     }
@@ -97,14 +105,6 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
-    }
-
-    public MessageOwnerType getOwner() {
-        return owner;
-    }
-
-    public void setOwner(MessageOwnerType owner) {
-        this.owner = owner;
     }
 
     public CandidateMessageEntity getParent() {
@@ -137,10 +137,10 @@ public class CandidateMessageEntity extends AbstractAuditingEntity implements Se
             "id=" + id +
             ", subject='" + subject + '\'' +
             ", message='" + message + '\'' +
+            ", owner=" + owner +
             ", fromUserId=" + fromUserId +
             ", toUserId=" + toUserId +
             ", messageId='" + messageId + '\'' +
-            ", owner=" + owner +
             ", parent=" + parent +
             ", child=" + child +
             ", candidate=" + candidate +

@@ -3,25 +3,23 @@ package io.avand.service.impl;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.FileEntity;
 import io.avand.domain.entity.jpa.JobEntity;
-import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.domain.enumeration.CandidateState;
 import io.avand.domain.enumeration.CandidateType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.JobRepository;
-import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CandidateService;
 import io.avand.service.dto.CandidateDTO;
 import io.avand.service.mapper.CandidateMapper;
+import io.avand.web.rest.vm.CandidateFilterVM;
+import io.avand.web.specification.CandidateSpecification;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CandidateServiceImpl implements CandidateService {
@@ -31,22 +29,21 @@ public class CandidateServiceImpl implements CandidateService {
     private final JobRepository jobRepository;
     private final FileRepository fileRepository;
     private final CandidateMapper candidateMapper;
+    private final CandidateSpecification specification;
     private final SecurityUtils securityUtils;
-    private final UserRepository userRepository;
 
     public CandidateServiceImpl(CandidateRepository candidateRepository,
                                 JobRepository jobRepository,
                                 FileRepository fileRepository,
                                 CandidateMapper candidateMapper,
-                                SecurityUtils securityUtils,
-                                UserRepository userRepository) {
+                                CandidateSpecification specification,
+                                SecurityUtils securityUtils) {
         this.candidateRepository = candidateRepository;
         this.jobRepository = jobRepository;
         this.fileRepository = fileRepository;
         this.candidateMapper = candidateMapper;
+        this.specification = specification;
         this.securityUtils = securityUtils;
-
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -99,7 +96,8 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public CandidateDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find candidate by id : {}", id);
-        CandidateEntity candidateEntity = candidateRepository.findOne(id);
+        CandidateEntity candidateEntity =
+            candidateRepository.findByIdAndJob_Company_Id(id, securityUtils.getCurrentCompanyId());
         if (candidateEntity != null) {
             return candidateMapper.toDto(candidateEntity);
         } else {
@@ -108,23 +106,14 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public Page<CandidateDTO> findAll(Pageable pageable) {
-        log.debug("Request to find all candidate");
-        return candidateRepository.findAll(pageable)
-            .map(candidateMapper::toDto);
-    }
-
-    @Override
-    public Page<CandidateDTO> findByJobId(Long jobId, Pageable pageable) throws NotFoundException {
+    public Page<CandidateDTO> findByFilter(CandidateFilterVM filterVM, Pageable pageable)
+        throws NotFoundException {
+        if (filterVM == null) {
+            filterVM = new CandidateFilterVM();
+        }
+        filterVM.setCompany(securityUtils.getCurrentCompanyId());
         return candidateRepository
-            .findAllByJob_IdAndJob_Company_User_Id(jobId, securityUtils.getCurrentUserId(), pageable)
-            .map(candidateMapper::toDto);
-    }
-
-    @Override
-    public Page<CandidateDTO> findByCompanyId(Long companyId, Pageable pageable) throws NotFoundException {
-        return candidateRepository
-            .findAllByJob_Company_IdAndJob_Company_User_Id(companyId, securityUtils.getCurrentUserId(), pageable)
+            .findAll(specification.getFilter(filterVM), pageable)
             .map(candidateMapper::toDto);
     }
 

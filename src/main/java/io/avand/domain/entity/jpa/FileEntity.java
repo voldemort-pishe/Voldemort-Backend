@@ -12,7 +12,7 @@ import java.util.Objects;
  * A FileEntity.
  */
 @Entity
-@Table(name = "file_entity")
+@Table(name = "file")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class FileEntity implements Serializable {
 
@@ -22,10 +22,10 @@ public class FileEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "filename")
+    @Column(name = "name")
     private String filename;
 
-    @Column(name = "file_type")
+    @Column(name = "type")
     private String fileType;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

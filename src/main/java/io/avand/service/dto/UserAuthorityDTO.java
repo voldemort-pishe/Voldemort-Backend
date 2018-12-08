@@ -12,10 +12,8 @@ public class UserAuthorityDTO implements Serializable {
     @NotNull
     private Long id;
 
-    private String authorityName;
-
-    @JsonIgnore
-    private Set<UserPermissionDTO> userPermissions = new HashSet<>();
+    @NotNull
+    private Long authorityId;
 
     @NotNull
     private Long userId;
@@ -28,20 +26,12 @@ public class UserAuthorityDTO implements Serializable {
         this.id = id;
     }
 
-    public String getAuthorityName() {
-        return authorityName;
+    public Long getAuthorityId() {
+        return authorityId;
     }
 
-    public void setAuthorityName(String authorityName) {
-        this.authorityName = authorityName;
-    }
-
-    public Set<UserPermissionDTO> getUserPermissions() {
-        return userPermissions;
-    }
-
-    public void setUserPermissions(Set<UserPermissionDTO> userPermissions) {
-        this.userPermissions = userPermissions;
+    public void setAuthorityId(Long authorityId) {
+        this.authorityId = authorityId;
     }
 
     public Long getUserId() {
@@ -56,8 +46,8 @@ public class UserAuthorityDTO implements Serializable {
     public String toString() {
         return "UserAuthorityDTO{" +
             "id=" + id +
-            ", authorityName='" + authorityName + '\'' +
-            ", userPermissions=" + userPermissions +
+            ", authorityId=" + authorityId +
+            ", userId=" + userId +
             '}';
     }
 }

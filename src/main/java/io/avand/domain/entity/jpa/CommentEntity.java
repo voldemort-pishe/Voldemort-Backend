@@ -12,7 +12,7 @@ import java.util.Objects;
  * A CommentEntity.
  */
 @Entity
-@Table(name = "comment_entity")
+@Table(name = "comment")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CommentEntity implements Serializable {
 

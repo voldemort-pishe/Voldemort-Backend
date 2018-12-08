@@ -2,7 +2,9 @@ package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.avand.domain.enumeration.JobStatus;
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.SecurityUtils;
 import io.avand.service.JobService;
 import io.avand.service.dto.JobDTO;
 import io.avand.service.util.RandomUtil;
@@ -10,6 +12,7 @@ import io.avand.web.rest.component.JobComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.JobFilterVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,7 +38,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/job")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class JobResource {
 
     private final Logger log = LoggerFactory.getLogger(JobResource.class);
@@ -44,13 +47,15 @@ public class JobResource {
     private final JobService jobService;
 
     private final JobComponent jobComponent;
+    private final SecurityUtils securityUtils;
 
     public JobResource(JobService jobService,
-                       JobComponent jobComponent) {
+                       JobComponent jobComponent,
+                       SecurityUtils securityUtils) {
         this.jobService = jobService;
         this.jobComponent = jobComponent;
+        this.securityUtils = securityUtils;
     }
-
 
     /**
      * POST  /job : Create a new jobEntity.
@@ -60,17 +65,17 @@ public class JobResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping
+    @PreAuthorize("isMember(#jobDTO.companyId,'COMPANY','ADD_JOB')")
     @Timed
-    public ResponseEntity<ResponseVM<JobDTO>> createJob(@Valid @RequestBody JobDTO jobDTO,
-                                                        @RequestAttribute("companyId") Long companyId)
+    public ResponseEntity<ResponseVM<JobDTO>> createJob(@Valid @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
         log.debug("REST request to save Job : {}", jobDTO);
         if (jobDTO.getId() != null) {
             throw new BadRequestAlertException("A new jobEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            jobDTO.setCompanyId(companyId);
             jobDTO.setUniqueId(RandomUtil.getUniqueId());
+            jobDTO.setStatus(JobStatus.OPEN);
             ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
             return ResponseEntity.created(new URI("/api/job/" + result.getData().getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
@@ -91,37 +96,19 @@ public class JobResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity<ResponseVM<JobDTO>> updateJob(@Valid @RequestBody JobDTO jobDTO,
-                                                        @RequestAttribute("companyId") Long companyId)
+    @PreAuthorize("isMember(#jobDTO.companyId,'COMPANY','EDIT_JOB')")
+    public ResponseEntity<ResponseVM<JobDTO>> updateJob(@Valid @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
         log.debug("REST request to update Job : {}", jobDTO);
         if (jobDTO.getId() == null) {
-            return createJob(jobDTO, companyId);
+            return createJob(jobDTO);
         }
         try {
-            jobDTO.setCompanyId(companyId);
             ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, jobDTO.getId().toString()))
                 .body(result);
         } catch (NotFoundException | SecurityException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
-    /**
-     * GET  /job : get all the jobEntities.
-     *
-     * @return the ResponseEntity with status 200 (OK) and the list of jobEntities in body
-     */
-    @GetMapping
-    @Timed
-    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJob(@ApiParam Pageable pageable) {
-        log.debug("REST request to get all Job");
-        try {
-            Page<ResponseVM<JobDTO>> jobDTOS = jobComponent.findAll(pageable);
-            return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -134,12 +121,32 @@ public class JobResource {
      */
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'JOB','VIEW_JOB')")
     public ResponseEntity<ResponseVM<JobDTO>> getJob(@PathVariable Long id) {
         log.debug("REST request to get Job : {}", id);
         try {
             ResponseVM<JobDTO> jobDTO = jobComponent.findById(id);
             return ResponseUtil.wrapOrNotFound(Optional.ofNullable(jobDTO));
         } catch (NotFoundException | SecurityException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * GET  /job/company-list/{id} : get all the jobEntities by company id.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of jobEntities in body
+     */
+    @GetMapping
+    @Timed
+    @PreAuthorize("isMember('VIEW_JOB')")
+    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJob(@ApiParam Pageable pageable,
+                                                              JobFilterVM filterVM) {
+        log.debug("REST request to get all Job");
+        try {
+            Page<ResponseVM<JobDTO>> jobDTOs = jobComponent.findAllByFilter(filterVM, pageable);
+            return new ResponseEntity<>(jobDTOs, HttpStatus.OK);
+        } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
@@ -152,6 +159,7 @@ public class JobResource {
      */
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'JOB','DELETE_JOB')")
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         log.debug("REST request to delete Job : {}", id);
         try {
@@ -161,23 +169,4 @@ public class JobResource {
             throw new ServerErrorException(e.getMessage());
         }
     }
-
-
-    /**
-     * GET  /job/company-list/{id} : get all the jobEntities by company id.
-     *
-     * @return the ResponseEntity with status 200 (OK) and the list of jobEntities in body
-     */
-    @GetMapping("/company-list")
-    @Timed
-    public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJobByCompany(@ApiParam Pageable pageable, @RequestAttribute("companyId") Long companyId) {
-        log.debug("REST request to get all Job");
-        try {
-            Page<ResponseVM<JobDTO>> jobDTOS = jobComponent.findAllByCompany(companyId, pageable);
-            return new ResponseEntity<>(jobDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
 }

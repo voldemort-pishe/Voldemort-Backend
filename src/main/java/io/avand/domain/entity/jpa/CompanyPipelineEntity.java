@@ -12,7 +12,7 @@ import java.util.Objects;
  * A CompanyPipelineEntity.
  */
 @Entity
-@Table(name = "company_pipeline_entity")
+@Table(name = "company_pipeline")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyPipelineEntity implements Serializable {
 

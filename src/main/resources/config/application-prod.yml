@@ -48,10 +48,10 @@ spring:
             hibernate.enable_lazy_load_no_trans: true
             hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.NoDefaultJCacheRegionFactory
     mail:
-        host: mail.ehdi.in
+        host: smtp.mailgun.org
         port: 25
-        username: devel@ehdi.in
-        password: 2&x7NEMhl=*h
+        username: postmaster@mg.avand.io
+        password: 025becb64d426871948efb2c23491ed1-a5d1a068-69368402
     thymeleaf:
         cache: true
 
@@ -107,7 +107,7 @@ jhipster:
                 token-validity-in-seconds: 86400
                 token-validity-in-seconds-for-remember-me: 2592000
     mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: devel@ehdi.in
+        from: team@avand.io
         base-url: http://testbed.avand.io:8080 # Modify according to your server's URL
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx.enabled: true
@@ -138,7 +138,8 @@ jhipster:
 # More documentation is available at:
 # http://www.jhipster.tech/common-application-properties/
 # ===================================================================
-
+payment:
+    callbackUrl: http://testbed.avand.io:8080/api/payment/callback
 application:
   base:
     url: http://testbed.avand.io:8080/

@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 
 @Entity
-@Table(name = "company_member_entity")
+@Table(name = "company_member")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyMemberEntity implements Serializable {
 
@@ -24,6 +24,9 @@ public class CompanyMemberEntity implements Serializable {
     @OneToOne
     @JoinColumn
     private UserEntity user;
+
+    @Column(name = "position")
+    private String position;
 
     @ManyToOne
     private CompanyEntity company;
@@ -52,6 +55,14 @@ public class CompanyMemberEntity implements Serializable {
         this.user = user;
     }
 
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
     public CompanyEntity getCompany() {
         return company;
     }
@@ -65,6 +76,7 @@ public class CompanyMemberEntity implements Serializable {
         return "CompanyMemberEntity{" +
             "id=" + id +
             ", department='" + department + '\'' +
+            ", position='" + position + '\'' +
             '}';
     }
 }

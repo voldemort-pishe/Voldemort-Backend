@@ -7,6 +7,7 @@ public class UserIncludeVM implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
+    private String cellphone;
     private Long fileId;
 
     public Long getId() {
@@ -41,6 +42,14 @@ public class UserIncludeVM implements Serializable {
         this.email = email;
     }
 
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
+    }
+
     public Long getFileId() {
         return fileId;
     }
@@ -56,6 +65,7 @@ public class UserIncludeVM implements Serializable {
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
+            ", cellphone='" + cellphone + '\'' +
             ", fileId=" + fileId +
             '}';
     }

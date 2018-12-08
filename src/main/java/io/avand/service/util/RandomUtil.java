@@ -39,7 +39,7 @@ public final class RandomUtil {
      * @return the generated activation key
      */
     public static String generateActivationKey() {
-        return RandomStringUtils.randomNumeric(DEF_COUNT);
+        return RandomStringUtils.randomNumeric(6);
     }
 
     /**

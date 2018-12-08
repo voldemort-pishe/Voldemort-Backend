@@ -12,11 +12,13 @@ public class UserRegisterVM implements Serializable {
     @NotNull
     private String lastName;
     @NotNull
-    @Size(min = 4)
+    @Size(min = 6)
     private String password;
     @NotNull
     @Pattern(regexp = Constants.EMAIL_REGEX)
     private String email;
+    @NotNull
+    private String cellphone;
 
     public String getFirstName() {
         return firstName;
@@ -48,5 +50,13 @@ public class UserRegisterVM implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
     }
 }

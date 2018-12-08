@@ -42,10 +42,10 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
 
     @NotNull
     private Long fileId;
-    
+
     private String employer;
 
-    @NotNull
+
     private Long jobId;
 
     public String getFirstName() {
@@ -151,15 +151,15 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
     public void setFileId(Long fileId) {
         this.fileId = fileId;
     }
-    
+
     public String getEmployer() {
         return employer;
     }
-    
+
     public void setEmployer(String employer) {
         this.employer = employer;
     }
-    
+
     public Long getJobId() {
         return jobId;
     }

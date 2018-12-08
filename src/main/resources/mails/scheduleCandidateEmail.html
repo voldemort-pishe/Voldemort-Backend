@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" dir="rtl">
+<head>
+    <title th:text="#{email.schedule.title}"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="direction: rtl">
+<p th:text="#{email.greeting(${name})}">
+</p>
+<p th:text="#{email.schedule.candidate.content(${candidateSchedule.getCandidate().getJob().getCompany().nameFa},${date},${candidateSchedule.getCandidate().getJob().nameFa})}">
+</p>
+<p>
+    <span th:text="#{email.bestRegards}"></span>
+    <br/>
+    <em th:text="#{email.company(${candidateSchedule.getCandidate().getJob().getCompany().nameFa})}"></em>
+</p>
+</body>
+</html>

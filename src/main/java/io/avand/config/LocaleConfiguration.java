@@ -1,6 +1,6 @@
 package io.avand.config;
 
-import io.avand.interceptor.CompanyInterceptor;
+import io.avand.interceptor.GeneralInterceptor;
 import io.avand.interceptor.SubscriptionInterceptor;
 import io.github.jhipster.config.locale.AngularCookieLocaleResolver;
 
@@ -22,13 +22,13 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
     }
 
     @Bean
-    public CompanyInterceptor companyInterceptor() {
-        return new CompanyInterceptor();
+    public SubscriptionInterceptor subscriptionInterceptor() {
+        return new SubscriptionInterceptor();
     }
 
     @Bean
-    public SubscriptionInterceptor subscriptionInterceptor() {
-        return new SubscriptionInterceptor();
+    public GeneralInterceptor generalInterceptor() {
+        return new GeneralInterceptor();
     }
 
     @Bean(name = "localeResolver")
@@ -44,14 +44,7 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         localeChangeInterceptor.setParamName("language");
         registry.addInterceptor(localeChangeInterceptor);
 
-        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/job");
-        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/job/**");
-        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-pipeline");
-        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-pipeline/**");
-        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-member");
-        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company-member/**");
-        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/candidate/company");
-        registry.addInterceptor(companyInterceptor()).addPathPatterns("/api/company");
+        registry.addInterceptor(generalInterceptor()).addPathPatterns("/api/**");
 
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate-message");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate-message/**");
@@ -65,8 +58,8 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-member/**");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-pipeline");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-pipeline/**");
-        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company");
-        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company/**");
+//        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company");
+//        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company/**");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/feedback");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/feedback/**");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/job");

@@ -2,12 +2,8 @@ package io.avand.web.rest.component.impl;
 
 import io.avand.service.CandidateScheduleService;
 import io.avand.service.CandidateService;
-import io.avand.service.UserService;
-import io.avand.service.dto.CandidateMessageDTO;
 import io.avand.service.dto.CandidateScheduleDTO;
-import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.CandidateMapper;
-import io.avand.service.mapper.UserMapper;
 import io.avand.web.rest.component.CandidateScheduleComponent;
 import io.avand.web.rest.util.PageMaker;
 import io.avand.web.rest.vm.response.ResponseVM;
@@ -18,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -27,25 +25,19 @@ public class CandidateScheduleComponentImpl implements CandidateScheduleComponen
     private final Logger log = LoggerFactory.getLogger(CandidateScheduleComponentImpl.class);
 
     private final CandidateScheduleService candidateScheduleService;
-    private final UserService userService;
     private final CandidateService candidateService;
-    private final UserMapper userMapper;
     private final CandidateMapper candidateMapper;
 
     public CandidateScheduleComponentImpl(CandidateScheduleService candidateScheduleService,
-                                          UserService userService,
                                           CandidateService candidateService,
-                                          UserMapper userMapper,
                                           CandidateMapper candidateMapper) {
         this.candidateScheduleService = candidateScheduleService;
-        this.userService = userService;
         this.candidateService = candidateService;
-        this.userMapper = userMapper;
         this.candidateMapper = candidateMapper;
     }
 
     @Override
-    public ResponseVM<CandidateScheduleDTO> save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException {
+    public ResponseVM<CandidateScheduleDTO> save(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException, IOException, URISyntaxException {
         log.debug("Request to save candidateScheduleDTO via component : {}", candidateScheduleDTO);
         candidateScheduleDTO = candidateScheduleService.save(candidateScheduleDTO);
         ResponseVM<CandidateScheduleDTO> responseVM = new ResponseVM<>();
@@ -65,9 +57,9 @@ public class CandidateScheduleComponentImpl implements CandidateScheduleComponen
     }
 
     @Override
-    public Page<ResponseVM<CandidateScheduleDTO>> findByOwner(Pageable pageable) throws NotFoundException {
+    public Page<ResponseVM<CandidateScheduleDTO>> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find candidateScheduleDTO by owner via component");
-        Page<CandidateScheduleDTO> candidateScheduleDTOS = candidateScheduleService.findByOwnerId(pageable);
+        Page<CandidateScheduleDTO> candidateScheduleDTOS = candidateScheduleService.findAll(pageable);
         List<ResponseVM<CandidateScheduleDTO>> responseVMS = new ArrayList<>();
         for (CandidateScheduleDTO candidateScheduleDTO : candidateScheduleDTOS) {
             ResponseVM<CandidateScheduleDTO> responseVM = new ResponseVM<>();
@@ -79,9 +71,9 @@ public class CandidateScheduleComponentImpl implements CandidateScheduleComponen
     }
 
     @Override
-    public Page<ResponseVM<CandidateScheduleDTO>> findByOwnerAndDate(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable) throws NotFoundException {
+    public Page<ResponseVM<CandidateScheduleDTO>> findByDate(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable) throws NotFoundException {
         log.debug("Request to find candidateScheduleDTO by owner and date via component");
-        Page<CandidateScheduleDTO> candidateScheduleDTOS = candidateScheduleService.findByOwnerIdAndDateBetween(startDate, endDate, pageable);
+        Page<CandidateScheduleDTO> candidateScheduleDTOS = candidateScheduleService.findByDate(startDate, endDate, pageable);
         List<ResponseVM<CandidateScheduleDTO>> responseVMS = new ArrayList<>();
         for (CandidateScheduleDTO candidateScheduleDTO : candidateScheduleDTOS) {
             ResponseVM<CandidateScheduleDTO> responseVM = new ResponseVM<>();
@@ -108,9 +100,6 @@ public class CandidateScheduleComponentImpl implements CandidateScheduleComponen
 
     private Map<String, Object> createIncluded(CandidateScheduleDTO candidateScheduleDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
-
-        Optional<UserDTO> userDTOOptional = userService.findById(candidateScheduleDTO.getOwner());
-        userDTOOptional.ifPresent(userDTO -> included.put("owner", userMapper.dtoToVm(userDTO)));
 
         included.put("candidate", candidateMapper.dtoToVm(candidateService.findById(candidateScheduleDTO.getCandidateId())));
 

@@ -1,5 +1,7 @@
 package io.avand.domain.entity.jpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.ScheduleStatus;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -7,13 +9,15 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A CandidateScheduleEntity.
  */
 @Entity
-@Table(name = "candidate_schedule_entity")
+@Table(name = "candidate_schedule")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CandidateScheduleEntity implements Serializable {
 
@@ -23,11 +27,26 @@ public class CandidateScheduleEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "owner")
-    private Long owner;
+    @Column(name = "start_date")
+    private ZonedDateTime startDate;
 
-    @Column(name = "schedule_date")
-    private ZonedDateTime scheduleDate;
+    @Column(name = "end_date")
+    private ZonedDateTime endDate;
+
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ScheduleStatus status;
+
+    @Column(name = "description")
+    private String description;
+
+    @OneToMany(mappedBy = "candidateSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
+    private Set<CandidateScheduleMemberEntity> member = new HashSet<>();
 
     @ManyToOne
     private CandidateEntity candidate;
@@ -41,30 +60,52 @@ public class CandidateScheduleEntity implements Serializable {
         this.id = id;
     }
 
-    public Long getOwner() {
-        return owner;
+    public ZonedDateTime getStartDate() {
+        return startDate;
     }
 
-    public CandidateScheduleEntity owner(Long owner) {
-        this.owner = owner;
-        return this;
+    public void setStartDate(ZonedDateTime startDate) {
+        this.startDate = startDate;
     }
 
-    public void setOwner(Long owner) {
-        this.owner = owner;
+    public ZonedDateTime getEndDate() {
+        return endDate;
     }
 
-    public ZonedDateTime getScheduleDate() {
-        return scheduleDate;
+    public void setEndDate(ZonedDateTime endDate) {
+        this.endDate = endDate;
     }
 
-    public CandidateScheduleEntity scheduleDate(ZonedDateTime scheduleDate) {
-        this.scheduleDate = scheduleDate;
-        return this;
+    public String getLocation() {
+        return location;
     }
 
-    public void setScheduleDate(ZonedDateTime scheduleDate) {
-        this.scheduleDate = scheduleDate;
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public ScheduleStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ScheduleStatus status) {
+        this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<CandidateScheduleMemberEntity> getMember() {
+        return member;
+    }
+
+    public void setMember(Set<CandidateScheduleMemberEntity> member) {
+        this.member = member;
     }
 
     public CandidateEntity getCandidate() {
@@ -104,9 +145,13 @@ public class CandidateScheduleEntity implements Serializable {
     @Override
     public String toString() {
         return "CandidateScheduleEntity{" +
-            "id=" + getId() +
-            ", owner=" + getOwner() +
-            ", scheduleDate='" + getScheduleDate() + "'" +
-            "}";
+            "id=" + id +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", location='" + location + '\'' +
+            ", status=" + status +
+            ", description='" + description + '\'' +
+            ", candidate=" + candidate +
+            '}';
     }
 }

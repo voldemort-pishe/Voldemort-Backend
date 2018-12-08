@@ -15,7 +15,7 @@ import java.util.Objects;
  * A CompanyEntity.
  */
 @Entity
-@Table(name = "company_entity")
+@Table(name = "company")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyEntity extends AbstractAuditingEntity implements Serializable {
 
@@ -47,25 +47,34 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     @JoinColumn(unique = true)
     private FileEntity file;
 
-    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(optional = false)
+    @JoinColumn(unique = true)
+    private CompanyContactEntity contact;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<JobEntity> jobs = new HashSet<>();
 
-    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<EvaluationCriteriaEntity> evaluationCriteria = new HashSet<>();
 
-    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyPipelineEntity> companyPipelines = new HashSet<>();
 
-    @OneToMany(mappedBy = "company",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyMemberEntity> companyMembers = new HashSet<>();
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
+    private Set<InvoiceEntity> invoices = new HashSet<>();
 
     @ManyToOne
     private UserEntity user;
@@ -133,6 +142,14 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
 
     public void setFile(FileEntity file) {
         this.file = file;
+    }
+
+    public CompanyContactEntity getContact() {
+        return contact;
+    }
+
+    public void setContact(CompanyContactEntity contact) {
+        this.contact = contact;
     }
 
     public Set<JobEntity> getJobs() {
@@ -216,6 +233,14 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
 
     public void setCompanyMembers(Set<CompanyMemberEntity> companyMemberEntities) {
         this.companyMembers = companyMemberEntities;
+    }
+
+    public Set<InvoiceEntity> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Set<InvoiceEntity> invoices) {
+        this.invoices = invoices;
     }
 
     public UserEntity getUser() {

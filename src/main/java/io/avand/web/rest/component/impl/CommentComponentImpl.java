@@ -62,21 +62,8 @@ public class CommentComponentImpl implements CommentComponent {
     }
 
     @Override
-    public Page<ResponseVM<CommentDTO>> findAll(Pageable pageable) throws NotFoundException {
-        log.debug("Request to findAll commentDTO via component");
-        Page<CommentDTO> commentDTOS = commentService.findAll(pageable);
-        List<ResponseVM<CommentDTO>> responseVMS = new ArrayList<>();
-        for (CommentDTO commentDTO : commentDTOS) {
-            ResponseVM<CommentDTO> responseVM = new ResponseVM<>();
-            responseVM.setData(commentDTO);
-            responseVM.setInclude(this.createIncluded(commentDTO));
-            responseVMS.add(responseVM);
-        }
-        return new PageMaker<>(responseVMS, commentDTOS);
-    }
-
-    @Override
-    public Page<ResponseVM<CommentDTO>> findByCandidateId(Long candidateId, Pageable pageable) throws NotFoundException {
+    public Page<ResponseVM<CommentDTO>> findByCandidateId(Long candidateId, Pageable pageable)
+        throws NotFoundException {
         log.debug("Request to findAll commentDTO by candidateId via component");
         Page<CommentDTO> commentDTOS = commentService.findAllByCandidateId(pageable, candidateId);
         List<ResponseVM<CommentDTO>> responseVMS = new ArrayList<>();

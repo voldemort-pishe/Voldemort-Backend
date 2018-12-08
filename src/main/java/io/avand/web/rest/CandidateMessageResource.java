@@ -8,10 +8,12 @@ import io.avand.web.rest.component.CandidateMessageComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
+import io.avand.web.rest.vm.CandidateMessageVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
+import org.checkerframework.checker.units.qual.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,7 +31,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/candidate-message")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CandidateMessageResource {
 
     private final String ENTITY_NAME = "CandidateMessage";
@@ -36,6 +38,7 @@ public class CandidateMessageResource {
     private final Logger log = LoggerFactory.getLogger(CandidateMessageResource.class);
     private final CandidateMessageService candidateMessageService;
     private final CandidateMessageComponent candidateMessageComponent;
+
 
     public CandidateMessageResource(CandidateMessageService candidateMessageService,
                                     CandidateMessageComponent candidateMessageComponent) {
@@ -45,7 +48,10 @@ public class CandidateMessageResource {
 
     @PostMapping
     @Timed
-    public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateMessage(@Valid @RequestBody CandidateMessageDTO candidateMessageDTO) throws URISyntaxException {
+    @PreAuthorize("isMember(#candidateMessageDTO.candidateId,'CANDIDATE','ADD_CANDIDATE_MESSAGE')")
+    public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateMessage
+        (@Valid @RequestBody CandidateMessageDTO candidateMessageDTO)
+        throws URISyntaxException {
         log.debug("REST request to save candidateMessage : {}", candidateMessageDTO);
         if (candidateMessageDTO.getId() != null) {
             throw new BadRequestAlertException("A new candidateEntity cannot already have an ID", ENTITY_NAME, "idexists");
@@ -60,17 +66,23 @@ public class CandidateMessageResource {
         }
     }
 
-    @PutMapping
+    @PostMapping("/create-specific")
     @Timed
-    public ResponseEntity<ResponseVM<CandidateMessageDTO>> updateCandidateMessage(@Valid @RequestBody CandidateMessageDTO candidateMessageDTO) throws URISyntaxException {
-        log.debug("REST request to update candidateMessageDTO : {}", candidateMessageDTO);
-        if (candidateMessageDTO.getId() == null) {
-            return createCandidateMessage(candidateMessageDTO);
-        }
+    @PreAuthorize("isMember(#candidateMessageVM.candidateId,'CANDIDATE','ADD_CANDIDATE_MESSAGE')")
+    public ResponseEntity<ResponseVM<CandidateMessageDTO>> createCandidateSpecificMessage(
+        @RequestBody CandidateMessageVM candidateMessageVM
+    ) throws URISyntaxException {
+        log.debug("REST Request to save candidateMessage : {}", candidateMessageVM);
         try {
-            ResponseVM<CandidateMessageDTO> result = candidateMessageComponent.save(candidateMessageDTO);
-            return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, candidateMessageDTO.getId().toString()))
+            ResponseVM<CandidateMessageDTO> result = candidateMessageComponent
+                .save(
+                    candidateMessageVM.getSubject(),
+                    candidateMessageVM.getMessage(),
+                    candidateMessageVM.getParent(),
+                    candidateMessageVM.getCandidateId()
+                );
+            return ResponseEntity.created(new URI("/api/candidate-message/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
                 .body(result);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -79,10 +91,13 @@ public class CandidateMessageResource {
 
     @GetMapping("/candidate/{candidateId}")
     @Timed
-    public ResponseEntity<Page<ResponseVM<CandidateMessageDTO>>> getAllCandidateByCandidateId(@PathVariable("candidateId") Long candidateId, @ApiParam Pageable page) {
-        log.debug("REST request to get all CandidateMessageDtos by candidate id : {}", candidateId);
+    @PreAuthorize("isMember(#candidateId,'CANDIDATE','VIEW_CANDIDATE_MESSAGE')")
+    public ResponseEntity<Page<ResponseVM<CandidateMessageDTO>>> getAllCandidateByCandidateId
+        (@PathVariable("candidateId") Long candidateId, @ApiParam Pageable page) {
+        log.debug("REST request to get all CandidateMessageDTOs by candidate id : {}", candidateId);
         try {
-            Page<ResponseVM<CandidateMessageDTO>> candidateDTOS = candidateMessageComponent.findByCandidateId(candidateId, page);
+            Page<ResponseVM<CandidateMessageDTO>> candidateDTOS =
+                candidateMessageComponent.findByCandidateId(candidateId, page);
             return new ResponseEntity<>(candidateDTOS, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
@@ -91,6 +106,7 @@ public class CandidateMessageResource {
 
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE','VIEW_CANDIDATE_MESSAGE')")
     public ResponseEntity<ResponseVM<CandidateMessageDTO>> getCandidate(@PathVariable Long id) {
         log.debug("REST request to get CandidateDto : {}", id);
         try {
@@ -101,15 +117,4 @@ public class CandidateMessageResource {
         }
     }
 
-    @DeleteMapping("/{id}")
-    @Timed
-    public ResponseEntity<Void> deleteCandidate(@PathVariable Long id) {
-        log.debug("REST request to delete CandidateDto : {}", id);
-        try {
-            candidateMessageService.delete(id);
-            return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
 }

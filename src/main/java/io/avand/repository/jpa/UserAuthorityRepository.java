@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -15,6 +16,8 @@ import java.util.Optional;
 @Repository
 public interface UserAuthorityRepository extends JpaRepository<UserAuthorityEntity, Long> {
 
-    Optional<UserAuthorityEntity> findByAuthorityNameAndUser_Id(String authorityName, Long userId);
+    List<UserAuthorityEntity> findAllByUser_Id(Long userId);
+
+    Optional<UserAuthorityEntity> findByAuthority_NameAndUser_Id(String authorityName, Long userId);
 
 }

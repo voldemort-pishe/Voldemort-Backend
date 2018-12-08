@@ -1,9 +1,7 @@
 package io.avand.interceptor;
 
-import io.avand.security.AuthoritiesConstants;
 import io.avand.security.SecurityUtils;
 import io.avand.service.SubscriptionService;
-import io.avand.service.UserAuthorityService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,20 +15,17 @@ public class SubscriptionInterceptor implements HandlerInterceptor {
     @Autowired
     public SubscriptionService subscriptionService;
     @Autowired
-    public UserAuthorityService userAuthorityService;
-    @Autowired
     public SecurityUtils securityUtils;
 
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        Long userId = securityUtils.getCurrentUserId();
+        Long companyId = securityUtils.getCurrentCompanyId();
         try {
-            subscriptionService.checkSubscription(userId);
+            subscriptionService.checkSubscription(companyId);
             return true;
         } catch (NotFoundException e) {
-            userAuthorityService.removeAuthority(AuthoritiesConstants.SUBSCRIPTION, userId);
-            httpServletResponse.sendError(401, "Subscription Needed");
+            httpServletResponse.sendError(402, "Subscription Needed");
             return false;
         }
     }

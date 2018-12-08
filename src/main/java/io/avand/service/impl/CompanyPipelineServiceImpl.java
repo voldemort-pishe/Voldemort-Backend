@@ -47,68 +47,44 @@ public class CompanyPipelineServiceImpl implements CompanyPipelineService {
 
         logger.debug("Request to company pipeline service to save a pipeline object : {}", companyPipelineDTO);
 
-        Optional<CompanyEntity> companyEntityOp = companyRepository.findById(companyPipelineDTO.getCompanyId());
+        Optional<CompanyEntity> companyEntityOp = companyRepository.findById(securityUtils.getCurrentCompanyId());
 
         if (companyEntityOp.isPresent()) {
             CompanyEntity companyEntity = companyEntityOp.get();
-            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                CompanyPipelineEntity companyPipelineEntity = companyPipelineMapper.toEntity(companyPipelineDTO);
-                companyPipelineEntity.setCompany(companyEntity);
-                companyPipelineEntity = companyPipelineRepository.save(companyPipelineEntity);
-                return companyPipelineMapper.toDto(companyPipelineEntity);
-            } else {
-                throw new SecurityException("Sorry you don't have right permissions to save this!");
-            }
+            CompanyPipelineEntity companyPipelineEntity = companyPipelineMapper.toEntity(companyPipelineDTO);
+            companyPipelineEntity.setCompany(companyEntity);
+            companyPipelineEntity = companyPipelineRepository.save(companyPipelineEntity);
+            return companyPipelineMapper.toDto(companyPipelineEntity);
         } else {
             throw new NotFoundException("Sorry the company you're claiming to own does not exist!");
         }
     }
 
     @Override
-    public Page<CompanyPipelineDTO> getAllByCompanyId(Long companyId, Pageable pageable) throws NotFoundException {
+    public Page<CompanyPipelineDTO> findAll(Pageable pageable) throws NotFoundException {
         logger.debug("Request to company pipeline service to get all by user id");
-
-        CompanyEntity companyEntity = companyRepository.findOne(companyId);
-        if (companyEntity != null) {
-            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                return companyPipelineRepository
-                    .findAllByCompany(companyEntity, pageable)
-                    .map(companyPipelineMapper::toDto);
-            } else {
-                throw new SecurityException("Sorry you do not have the right permission to get this company pipelines!");
-            }
-        } else {
-            throw new NotFoundException("Company Not Available");
-        }
+        return companyPipelineRepository
+            .findAllByCompany_Id(securityUtils.getCurrentCompanyId(), pageable)
+            .map(companyPipelineMapper::toDto);
     }
 
     @Override
     public CompanyPipelineDTO findOne(Long id) throws NotFoundException {
         logger.debug("Request to company pipeline service to find one : {}", id);
 
-        CompanyPipelineEntity companyPipelineEntity = companyPipelineRepository.findOne(id);
+        CompanyPipelineEntity companyPipelineEntity =
+            companyPipelineRepository.findByIdAndCompany_Id(id, securityUtils.getCurrentCompanyId());
         if (companyPipelineEntity != null) {
-            CompanyEntity companyEntity = companyPipelineEntity.getCompany();
-            if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-                return companyPipelineMapper.toDto(companyPipelineEntity);
-            } else {
-                throw new SecurityException("Sorry you do not have the right permission to get this!");
-            }
+            return companyPipelineMapper.toDto(companyPipelineEntity);
         } else {
             throw new NotFoundException("Pipeline Not Found");
         }
     }
 
     @Override
-    public void delete(Long id) throws NotFoundException {
+    public void delete(Long id) {
         logger.debug("Request to company pipeline service to delete : {}", id);
-
         CompanyPipelineEntity companyPipelineEntity = companyPipelineRepository.findOne(id);
-        CompanyEntity companyEntity = companyRepository.findOne(companyPipelineEntity.getCompany().getId());
-        if (companyEntity.getUser().getId().equals(securityUtils.getCurrentUserId())) {
-            companyPipelineRepository.delete(companyPipelineEntity.getId());
-        } else {
-            throw new SecurityException("Sorry you do not have the right permission to delete this!");
-        }
+        companyPipelineRepository.delete(companyPipelineEntity.getId());
     }
 }

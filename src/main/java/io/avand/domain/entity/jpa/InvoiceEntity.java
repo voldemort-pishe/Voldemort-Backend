@@ -19,7 +19,7 @@ import io.avand.domain.enumeration.InvoiceStatus;
  * A InvoiceEntity.
  */
 @Entity
-@Table(name = "invoice_entity")
+@Table(name = "invoice")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class InvoiceEntity extends AbstractAuditingEntity implements Serializable {
 
@@ -62,7 +62,7 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
     private Set<InvoiceItemEntity> invoiceItem = new HashSet<>();
 
     @ManyToOne
-    private UserEntity user;
+    private CompanyEntity company;
 
     public Long getId() {
         return id;
@@ -152,12 +152,12 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
         this.invoiceItem = invoiceItem;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public CompanyEntity getCompany() {
+        return company;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setCompany(CompanyEntity company) {
+        this.company = company;
     }
 
     @Override
@@ -193,7 +193,7 @@ public class InvoiceEntity extends AbstractAuditingEntity implements Serializabl
             ", trackingCode='" + trackingCode + '\'' +
             ", referenceId='" + referenceId + '\'' +
             ", status=" + status +
-            ", user=" + user +
+            ", company=" + company +
             '}';
     }
 }

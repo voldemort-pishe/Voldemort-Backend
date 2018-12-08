@@ -18,7 +18,7 @@ import io.avand.domain.enumeration.CandidateState;
  * A CandidateEntity.
  */
 @Entity
-@Table(name = "candidate_entity")
+@Table(name = "candidate")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CandidateEntity extends AbstractAuditingEntity implements Serializable {
 

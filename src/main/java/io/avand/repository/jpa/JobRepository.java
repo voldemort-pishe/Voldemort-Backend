@@ -15,13 +15,13 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface JobRepository extends JpaRepository<JobEntity, Long> {
+public interface JobRepository extends JpaRepository<JobEntity, Long>, JpaSpecificationExecutor<JobEntity> {
 
-    Page<JobEntity> findAllByCompany_User_Id(Long id, Pageable pageable);
+    JobEntity findByIdAndCompany_Id(Long id, Long companyId);
 
     Page<JobEntity> findAllByCompany_Id(Pageable pageable, Long id);
 
-    JobEntity findByUniqueIdAndCompany_SubDomain(String uniqueId,String subDomain);
+    JobEntity findByUniqueIdAndCompany_SubDomain(String uniqueId, String subDomain);
 
     List<JobEntity> findAllByCompany_SubDomain(String subDomain);
 

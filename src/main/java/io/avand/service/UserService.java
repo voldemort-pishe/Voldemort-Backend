@@ -11,9 +11,9 @@ import java.util.Optional;
 
 public interface UserService {
 
-    UserDTO save(String login,String firstName,String lastName,String email,String password);
+    UserDTO save(String login,String firstName,String lastName,String email,String password,String cellphone);
 
-    UserDTO saveActive(String login,String firstName,String lastName,String email,String password, Boolean activated);
+    UserDTO saveActive(String login,String firstName,String lastName,String email,String password,String cellphone, Boolean activated);
 
     UserDTO update(UserDTO userDTO) throws NotFoundException;
 
@@ -39,6 +39,10 @@ public interface UserService {
 
     TokenDTO authorize(String username,String password,Boolean isRemember) throws NotFoundException;
 
+    TokenDTO authorizeWithoutPassword(UserDTO userDTO);
+
     void changePassword(String login,String oldPassword,String newPassword) throws NotFoundException;
+
+    Optional<UserDTO> getUserWithAuthorities();
 
 }

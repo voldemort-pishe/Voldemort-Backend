@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" dir="rtl">
-    <head>
-        <title th:text="#{email.activation.title}">فعال سازی حساب کاربری</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}" />
-    </head>
-    <body style="direction: rtl">
-        <p th:text="#{email.activation.greeting(${user.login})}">
-            عزیز
-        </p>
-        <p th:text="#{email.activation.text1}">
-            حساب کاربری شما با موفقیت ایجاد شد، برای فعال سازی حساب کاربری خود بر روی لینک زیر کلیک کنید
-        </p>
-        <p>
-            <a th:href="@{|${baseUrl}/api/account/activate/${user.activationKey}|}"
-               th:text="@{|${baseUrl}/api/account/activate/${user.activationKey}|}">لینک فعال سازی</a>
-        </p>
-        <p>
-            <span th:text="#{email.activation.text2}">با احترام،</span>
-            <br/>
-            <em th:text="#{email.signature}">آوند.</em>
-        </p>
-    </body>
+<head>
+    <title th:text="#{email.activation.title}"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="direction: rtl">
+<p th:text="#{email.greeting(${user.firstName})}">
+</p>
+<p th:text="#{email.activation.content}">
+</p>
+<p>
+    کد تایید : <span th:text="${user.activationKey}"></span>
+</p>
+<p>
+    <span th:text="#{email.bestRegards}"></span>
+    <br/>
+    <em th:text="#{email.signature}"></em>
+</p>
+</body>
 </html>

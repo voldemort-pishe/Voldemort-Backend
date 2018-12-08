@@ -1,18 +1,21 @@
 package io.avand.domain.entity.jpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A AuthorityEntity.
  */
 @Entity
-@Table(name = "authority_entity")
+@Table(name = "authority")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class AuthorityEntity implements Serializable {
 
@@ -24,6 +27,15 @@ public class AuthorityEntity implements Serializable {
 
     @Column(name = "name")
     private String name;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "authority_permission",
+        joinColumns = {@JoinColumn(name = "authority_id")},
+        inverseJoinColumns = {@JoinColumn(name = "permission_id")}
+    )
+    @JsonIgnore
+    private Set<PermissionEntity> permissions = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -47,6 +59,15 @@ public class AuthorityEntity implements Serializable {
         this.name = name;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+
+    public Set<PermissionEntity> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<PermissionEntity> permissions) {
+        this.permissions = permissions;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,9 @@
 package io.avand.security;
 
-import io.avand.service.UserService;
+import io.avand.domain.entity.jpa.CompanyMemberEntity;
+import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.repository.jpa.CompanyMemberRepository;
+import io.avand.repository.jpa.UserRepository;
 import io.avand.service.dto.UserDTO;
 import javassist.NotFoundException;
 import org.springframework.security.core.context.SecurityContext;
@@ -8,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 /**
@@ -18,11 +20,16 @@ import java.util.Optional;
 public class SecurityUtils {
 
 
-    private final UserService userService;
+    private final UserRepository userRepository;
+    private final CompanyMemberRepository companyMemberRepository;
 
-    private SecurityUtils(UserService userService) {
-        this.userService = userService;
+    public SecurityUtils(
+        UserRepository userRepository,
+        CompanyMemberRepository companyMemberRepository) {
+        this.userRepository = userRepository;
+        this.companyMemberRepository = companyMemberRepository;
     }
+
 
     /**
      * Get the login of the current user.
@@ -46,7 +53,7 @@ public class SecurityUtils {
     public Long getCurrentUserId() throws NotFoundException {
         Optional<String> currentUserLogin = getCurrentUserLogin();
         if (currentUserLogin.isPresent()) {
-            Optional<UserDTO> userDTO = userService.findByLogin(currentUserLogin.get());
+            Optional<UserEntity> userDTO = userRepository.findByLogin(currentUserLogin.get());
             if (userDTO.isPresent()) {
                 return userDTO.get().getId();
             } else {
@@ -55,6 +62,12 @@ public class SecurityUtils {
         } else {
             throw new NotFoundException("You Should Login First");
         }
+    }
+
+    public Long getCurrentCompanyId() throws NotFoundException {
+        Long userId = getCurrentUserId();
+        CompanyMemberEntity companyMemberDTO = companyMemberRepository.findByUser_Id(userId);
+        return companyMemberDTO.getCompany().getId();
     }
 
     /**

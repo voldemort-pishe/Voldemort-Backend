@@ -13,10 +13,13 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CandidateRepository extends JpaRepository<CandidateEntity, Long> {
+public interface CandidateRepository extends JpaRepository<CandidateEntity, Long>,
+    JpaSpecificationExecutor<CandidateEntity> {
 
-    Page<CandidateEntity> findAllByJob_IdAndJob_Company_User_Id(Long jobId,Long userId, Pageable pageable);
+    CandidateEntity findByIdAndJob_Company_Id(Long id, Long companyId);
 
-    Page<CandidateEntity> findAllByJob_Company_IdAndJob_Company_User_Id(Long companyId,Long userId,Pageable pageable);
+    Page<CandidateEntity> findAllByJob_IdAndJob_Company_User_Id(Long jobId, Long userId, Pageable pageable);
+
+    Page<CandidateEntity> findAllByJob_Company_IdAndJob_Company_User_Id(Long companyId, Long userId, Pageable pageable);
 
 }

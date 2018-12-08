@@ -1,6 +1,7 @@
 package io.avand.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.JobStatus;
 import io.avand.domain.enumeration.JobType;
 import io.avand.domain.enumeration.LanguageType;
 
@@ -20,14 +21,12 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
     private JobType type;
     private String location;
     private String department;
-    @NotNull
-    private Long hiredManagerId;
-    @NotNull
-    private Long hiredExpertId;
-
+    private JobStatus status;
+    @JsonIgnore
+    private Set<JobHireTeamDTO> jobHireTeam = new HashSet<>();
     @JsonIgnore
     private Set<CandidateDTO> candidate = new HashSet<>();
-    
+
     private Long companyId;
 
     public String getUniqueId() {
@@ -102,20 +101,20 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
         this.department = department;
     }
 
-    public Long getHiredManagerId() {
-        return hiredManagerId;
+    public JobStatus getStatus() {
+        return status;
     }
 
-    public void setHiredManagerId(Long hiredManagerId) {
-        this.hiredManagerId = hiredManagerId;
+    public void setStatus(JobStatus status) {
+        this.status = status;
     }
 
-    public Long getHiredExpertId() {
-        return hiredExpertId;
+    public Set<JobHireTeamDTO> getJobHireTeam() {
+        return jobHireTeam;
     }
 
-    public void setHiredExpertId(Long hiredExpertId) {
-        this.hiredExpertId = hiredExpertId;
+    public void setJobHireTeam(Set<JobHireTeamDTO> jobHireTeam) {
+        this.jobHireTeam = jobHireTeam;
     }
 
     public Set<CandidateDTO> getCandidate() {
@@ -146,8 +145,7 @@ public class JobDTO extends AbstractAuditingDTO implements Serializable {
             ", type=" + type +
             ", location='" + location + '\'' +
             ", department='" + department + '\'' +
-            ", hiredManagerId=" + hiredManagerId +
-            ", hiredExpertId=" + hiredExpertId +
+            ", status=" + status +
             ", companyId=" + companyId +
             '}';
     }

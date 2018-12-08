@@ -22,6 +22,9 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
     private String subDomain;
 
     private Long fileId;
+    @NotNull
+    private CompanyContactDTO contact;
+
     @JsonIgnore
     private Set<JobDTO> jobs = new HashSet<>();
 
@@ -30,6 +33,9 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
 
     @JsonIgnore
     private Set<CompanyPipelineDTO> companyPipelines = new HashSet<>();
+
+    @JsonIgnore
+    private Set<InvoiceDTO> invoices = new HashSet<>();
 
     private Long userId;
 
@@ -89,6 +95,14 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
         this.fileId = fileId;
     }
 
+    public CompanyContactDTO getContact() {
+        return contact;
+    }
+
+    public void setContact(CompanyContactDTO contact) {
+        this.contact = contact;
+    }
+
     public Set<JobDTO> getJobs() {
         return jobs;
     }
@@ -113,6 +127,14 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
         this.companyPipelines = companyPipelines;
     }
 
+    public Set<InvoiceDTO> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Set<InvoiceDTO> invoices) {
+        this.invoices = invoices;
+    }
+
     public Long getUserId() {
         return userId;
     }
@@ -131,6 +153,7 @@ public class CompanyDTO extends AbstractAuditingDTO implements Serializable {
             ", language='" + language + '\'' +
             ", subDomain='" + subDomain + '\'' +
             ", fileId=" + fileId +
+            ", contact=" + contact +
             ", userId=" + userId +
             '}';
     }

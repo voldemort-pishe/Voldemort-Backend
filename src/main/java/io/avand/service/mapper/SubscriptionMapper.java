@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 public interface SubscriptionMapper extends EntityMapper<SubscriptionDTO, SubscriptionEntity> {
 
     @Override
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "plan.id", target = "planId")
+    @Mapping(source = "company.id", target = "companyId")
+    @Mapping(source = "companyPlan.id", target = "companyPlanId")
     SubscriptionDTO toDto(SubscriptionEntity entity);
 }

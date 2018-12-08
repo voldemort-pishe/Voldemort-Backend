@@ -14,7 +14,7 @@ import io.avand.domain.enumeration.FeedbackRate;
  * A FeedbackEntity.
  */
 @Entity
-@Table(name = "feedback_entity")
+@Table(name = "feedback")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class FeedbackEntity implements Serializable {
 

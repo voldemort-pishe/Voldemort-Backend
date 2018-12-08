@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "invoice_item_entity")
+@Table(name = "invoice_item")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class InvoiceItemEntity implements Serializable {
 

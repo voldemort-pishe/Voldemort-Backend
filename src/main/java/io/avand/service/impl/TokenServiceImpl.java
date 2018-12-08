@@ -1,5 +1,7 @@
 package io.avand.service.impl;
 
+import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.repository.jpa.UserRepository;
 import io.avand.security.jwt.TokenProvider;
 import io.avand.service.TokenService;
 import io.avand.service.dto.TokenDTO;
@@ -8,8 +10,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -18,10 +27,14 @@ public class TokenServiceImpl implements TokenService {
     private final TokenProvider tokenProvider;
 
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
 
-    public TokenServiceImpl(TokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+    public TokenServiceImpl(TokenProvider tokenProvider,
+                            AuthenticationManager authenticationManager,
+                            UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,8 +55,21 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public TokenDTO createAccessTokenByUserName(String username, Boolean rememberMe) {
-        return null;
+    public TokenDTO createAccessTokenByUserName(String login) {
+        Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(login);
+        if (userEntity.isPresent()) {
+            List<GrantedAuthority> grantedAuthorities = userEntity.get().getUserAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority().getName()))
+                .collect(Collectors.toList());
+            PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(login, null, grantedAuthorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = tokenProvider.createToken(authentication, false);
+            TokenDTO tokenDTO = new TokenDTO();
+            tokenDTO.setToken(jwt);
+            return tokenDTO;
+        } else {
+            return null;
+        }
     }
 
 

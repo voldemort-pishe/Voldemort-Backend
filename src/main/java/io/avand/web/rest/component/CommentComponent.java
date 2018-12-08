@@ -12,8 +12,6 @@ public interface CommentComponent {
 
     ResponseVM<CommentDTO> findById(Long id) throws NotFoundException;
 
-    Page<ResponseVM<CommentDTO>> findAll(Pageable pageable) throws NotFoundException;
-
     Page<ResponseVM<CommentDTO>> findByCandidateId(Long candidateId, Pageable pageable) throws NotFoundException;
 
 }

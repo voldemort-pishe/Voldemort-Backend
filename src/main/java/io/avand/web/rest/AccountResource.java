@@ -1,8 +1,9 @@
 package io.avand.web.rest;
 
-import io.avand.config.ApplicationProperties;
+import com.codahale.metrics.annotation.Timed;
 import io.avand.security.SecurityUtils;
 import io.avand.security.jwt.JWTConfigurer;
+import io.avand.service.UserAuthorityService;
 import io.avand.service.UserService;
 import io.avand.service.dto.TokenDTO;
 import io.avand.service.dto.UserDTO;
@@ -15,15 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -32,15 +31,15 @@ public class AccountResource {
 
     private final Logger log = LoggerFactory.getLogger(AccountResource.class);
     private final UserService userService;
+    private final UserAuthorityService userAuthorityService;
     private final SecurityUtils securityUtils;
-    private final ApplicationProperties applicationProperties;
 
     public AccountResource(UserService userService,
-                           SecurityUtils securityUtils,
-                           ApplicationProperties applicationProperties) {
+                           UserAuthorityService userAuthorityService,
+                           SecurityUtils securityUtils) {
         this.userService = userService;
+        this.userAuthorityService = userAuthorityService;
         this.securityUtils = securityUtils;
-        this.applicationProperties = applicationProperties;
     }
 
     @PostMapping("/register")
@@ -56,11 +55,12 @@ public class AccountResource {
                     userRegisterVM.getFirstName(),
                     userRegisterVM.getLastName(),
                     userRegisterVM.getEmail(),
-                    userRegisterVM.getPassword()
+                    userRegisterVM.getPassword(),
+                    userRegisterVM.getCellphone()
                 );
 
             ServerMessage serverMessage = new ServerMessage();
-            serverMessage.setMessage("حساب کاربری شما با موفقیت ایجاد شد، جهت تایید حساب کاربری به پست الکترونیکی خودمراجعه کنید.");
+            serverMessage.setMessage("حساب کاربری شما با موفقیت ایجاد شد، کد تایید برای شما ارسال شد.");
             return new ResponseEntity<>(serverMessage, HttpStatus.OK);
         }
     }
@@ -79,6 +79,7 @@ public class AccountResource {
                     userRegisterInviteVM.getLastName(),
                     userFound.get().getEmail(),
                     userRegisterInviteVM.getPassword(),
+                    userRegisterInviteVM.getCellphone(),
                     true
                 );
             ServerMessage serverMessage = new ServerMessage();
@@ -90,13 +91,15 @@ public class AccountResource {
     }
 
     @GetMapping("/activate/{activation-key}")
-    public void activate(@PathVariable("activation-key") String activationKey,
+    public ResponseEntity activate(@PathVariable("activation-key") String activationKey,
                                    HttpServletResponse response,
                                    HttpServletRequest request) throws IOException {
         log.debug("REST Request to activate user by activationKey : {}", activationKey);
         try {
-            userService.activate(activationKey);
-            response.sendRedirect(applicationProperties.getBase().getPanel()+"/#/auth/login?activate=success");
+            UserDTO activatedUser = userService.activate(activationKey);
+            TokenDTO tokenDTO = userService.authorizeWithoutPassword(activatedUser);
+            response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
+            return new ResponseEntity<>(tokenDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
@@ -108,7 +111,7 @@ public class AccountResource {
         try {
             userService.requestToResendActivationEmail(activationVM.getEmail());
             ServerMessage serverMessage = new ServerMessage();
-            serverMessage.setMessage("پیام فعال سازی حساب به ایمیل شما ارسال گردید.");
+            serverMessage.setMessage("پیام فعال سازی حساب برای شما ارسال گردید.");
             return new ResponseEntity<>(serverMessage, HttpStatus.OK);
         } catch (NotFoundException | IllegalStateException e) {
             throw new ServerErrorException(e.getMessage());
@@ -128,6 +131,41 @@ public class AccountResource {
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         }
+    }
+
+    /**
+     * GET  /account : get the current user.
+     *
+     * @return the current user
+     * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be returned
+     */
+    @GetMapping
+    @Timed
+    public ResponseEntity<UserVM> getUser() {
+        log.debug("REST request to get User");
+        try {
+            Optional<UserDTO> userDTOOptional = userService.findById(securityUtils.getCurrentUserId());
+            if (userDTOOptional.isPresent()) {
+                UserDTO userDTO = userDTOOptional.get();
+                UserVM userVM = new UserVM();
+                userVM.setId(userDTO.getId());
+                userVM.setFirstName(userDTO.getFirstName());
+                userVM.setLastName(userDTO.getLastName());
+                userVM.setEmail(userDTO.getEmail());
+                userVM.setCellphone(userDTO.getCellphone());
+                userVM.setFileId(userDTO.getFileId());
+
+                List<UserAuthorityVM> userAuthorityVMS = userAuthorityService.findByUserId(securityUtils.getCurrentUserId());
+                userVM.setAuthorities(userAuthorityVMS);
+
+                return new ResponseEntity<>(userVM, HttpStatus.OK);
+            } else {
+                throw new SecurityException("Login First");
+            }
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+
     }
 
     @PostMapping("/change-password")
@@ -173,7 +211,7 @@ public class AccountResource {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity logout()  {
+    public ResponseEntity logout() {
         return new ResponseEntity(HttpStatus.OK);
     }
 }

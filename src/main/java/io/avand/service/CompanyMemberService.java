@@ -1,21 +1,30 @@
 package io.avand.service;
 
 import io.avand.service.dto.CompanyMemberDTO;
+import io.avand.web.rest.vm.CompanyMemberFilterVM;
 import javassist.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CompanyMemberService {
 
-    List<CompanyMemberDTO> save(List<String> emails,Long companyId) throws NotFoundException;
+    CompanyMemberDTO save(CompanyMemberDTO companyMemberDTO) throws NotFoundException;
+
+    List<CompanyMemberDTO> saveAll(List<CompanyMemberDTO> memberDTOS) throws NotFoundException;
 
     CompanyMemberDTO findById(Long id) throws NotFoundException;
 
-    Page<CompanyMemberDTO> findAll(Long companyId, Pageable pageable) throws NotFoundException;
+    CompanyMemberDTO findByUserId(Long userId) throws NotFoundException;
 
-    Page<CompanyMemberDTO> findAllActiveMember(Long companyId, Pageable pageable) throws NotFoundException;
+    Optional<CompanyMemberDTO> findByLogin(String login);
+
+    Page<CompanyMemberDTO> findAllByFilter(CompanyMemberFilterVM filterVM, Pageable pageable)
+        throws NotFoundException;
+
+    Page<CompanyMemberDTO> findAllActiveMember(Pageable pageable) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;
 

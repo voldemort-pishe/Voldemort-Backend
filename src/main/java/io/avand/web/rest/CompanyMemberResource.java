@@ -1,10 +1,12 @@
 package io.avand.web.rest;
 
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.SecurityUtils;
 import io.avand.service.CompanyMemberService;
 import io.avand.service.dto.CompanyMemberDTO;
 import io.avand.web.rest.component.CompanyMemberComponent;
 import io.avand.web.rest.errors.ServerErrorException;
+import io.avand.web.rest.vm.CompanyMemberFilterVM;
 import io.avand.web.rest.vm.CompanyMemberVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.swagger.annotations.ApiParam;
@@ -17,70 +19,66 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/company-member")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyMemberResource {
 
     private final static String ENTITY_NAME = "CompanyMemberEntity";
     private final Logger log = LoggerFactory.getLogger(CompanyMemberResource.class);
     private final CompanyMemberService companyMemberService;
     private final CompanyMemberComponent companyMemberComponent;
+    private final SecurityUtils securityUtils;
 
     public CompanyMemberResource(CompanyMemberService companyMemberService,
-                                 CompanyMemberComponent companyMemberComponent) {
+                                 CompanyMemberComponent companyMemberComponent,
+                                 SecurityUtils securityUtils) {
         this.companyMemberService = companyMemberService;
         this.companyMemberComponent = companyMemberComponent;
+        this.securityUtils = securityUtils;
     }
 
     @PostMapping
-    public ResponseEntity<List<ResponseVM<CompanyMemberDTO>>> save(@RequestBody @Valid CompanyMemberVM companyMemberVM,
-                                                                   @RequestAttribute("companyId") Long companyId)
+    @PreAuthorize("isMember(#companyMemberDTO.companyId,'COMPANY','ADD_COMPANY_MEMBER')")
+    public ResponseEntity<ResponseVM<CompanyMemberDTO>> save(@RequestBody @Valid CompanyMemberDTO companyMemberDTO)
         throws URISyntaxException {
-        log.debug("REST Request to save company member : {}", companyMemberVM);
+        log.debug("REST Request to save company member : {}", companyMemberDTO);
 
         try {
-            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.save(companyMemberVM.getEmails(), companyId);
+            companyMemberDTO.setCompanyId(securityUtils.getCurrentCompanyId());
+            ResponseVM<CompanyMemberDTO> result = companyMemberComponent.save(companyMemberDTO);
             return new ResponseEntity<>(result, HttpStatus.OK);
-        }catch(DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new ServerErrorException("شماه قبلا عضو شده‌اید");
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
 
-    @GetMapping("/company")
-    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAll(@RequestAttribute("companyId") Long companyId,
-                                                                     @ApiParam Pageable pageable) {
-        log.debug("Request to find active company member by company id : {}", companyId);
-        try {
-            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllActiveMember(companyId, pageable);
-            return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
+    @PostMapping("/all")
+    @PreAuthorize("isMember('ADD_COMPANY_MEMBER')")
+    public ResponseEntity<List<ResponseVM<CompanyMemberDTO>>> saveAll(@RequestBody @Valid CompanyMemberVM companyMemberVM)
+        throws URISyntaxException {
+        log.debug("REST Request to save company member : {}", companyMemberVM);
 
-    @GetMapping("/all-member")
-    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAllCompanyMember(@RequestAttribute("companyId") Long companyId,
-                                                                     @ApiParam Pageable pageable) {
-        log.debug("Request to find all company member by company id : {}", companyId);
         try {
-            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAll(companyId, pageable);
-            return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
+            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.saveAll(companyMemberVM.getMembers());
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (DataIntegrityViolationException e) {
+            throw new ServerErrorException("شماه قبلا عضو شده‌اید");
+        } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isMember(#id,'COMPANY_MEMBER','VIEW_COMPANY_MEMBER')")
     public ResponseEntity<ResponseVM<CompanyMemberDTO>> getById(@PathVariable("id") Long id) {
         log.debug("REST Request to find company member by id : {}", id);
         try {
@@ -91,7 +89,33 @@ public class CompanyMemberResource {
         }
     }
 
+    @GetMapping
+    @PreAuthorize("isMember('VIEW_COMPANY_MEMBER')")
+    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAll
+        (@ApiParam Pageable pageable, CompanyMemberFilterVM filterVM) {
+        log.debug("Request to find all company member");
+        try {
+            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllByFilter(filterVM, pageable);
+            return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    @GetMapping("/active")
+    @PreAuthorize("isMember('VIEW_COMPANY_MEMBER')")
+    public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAllActive(@ApiParam Pageable pageable) {
+        log.debug("Request to find active company member");
+        try {
+            Page<ResponseVM<CompanyMemberDTO>> companyMemberDTOS = companyMemberComponent.findAllActiveMember(pageable);
+            return new ResponseEntity<>(companyMemberDTOS, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
+    @PreAuthorize("isMember(#id,'COMPANY_MEMBER','DELETE_COMPANY_MEMBER')")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         log.debug("REST Request to delete company member by id : {}", id);
         try {
@@ -100,16 +124,5 @@ public class CompanyMemberResource {
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
         }
-    }
-
-    @GetMapping("/emails")
-    public ResponseEntity getMemberEmails() {
-        List<String> emails = new ArrayList<>();
-        emails.add("farhang.darzi@gmail.com");
-        emails.add("majid.khoshnasib@gmail.com");
-        emails.add("mortezamrd75@gmail.com");
-        emails.add("ehdi.sh@gmail.com");
-        emails.add("pouyaashna@gmail.com");
-        return new ResponseEntity<>(emails, HttpStatus.OK);
     }
 }

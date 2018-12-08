@@ -3,7 +3,10 @@ package io.avand.web.rest;
 import com.codahale.metrics.annotation.Timed;
 
 import io.avand.security.AuthoritiesConstants;
+import io.avand.security.SecurityUtils;
+import io.avand.service.CloudflareService;
 import io.avand.service.CompanyService;
+import io.avand.service.dto.CloudflareRequestDTO;
 import io.avand.service.dto.CompanyDTO;
 import io.avand.web.rest.component.CompanyComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
@@ -16,7 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -27,7 +32,6 @@ import java.net.URISyntaxException;
  */
 @RestController
 @RequestMapping("/api/company")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyResource {
 
     private final Logger log = LoggerFactory.getLogger(CompanyResource.class);
@@ -35,15 +39,20 @@ public class CompanyResource {
     private static final String ENTITY_NAME = "companyEntity";
 
     private final CompanyService companyService;
+    private final CloudflareService cloudflareService;
+    private final SecurityUtils securityUtils;
 
     private final CompanyComponent companyComponent;
 
     public CompanyResource(CompanyService companyService,
+                           CloudflareService cloudflareService,
+                           SecurityUtils securityUtils,
                            CompanyComponent companyComponent) {
         this.companyService = companyService;
+        this.cloudflareService = cloudflareService;
+        this.securityUtils = securityUtils;
         this.companyComponent = companyComponent;
     }
-
 
     /**
      * POST  /company : Create a new companyEntity.
@@ -54,6 +63,7 @@ public class CompanyResource {
      */
     @PostMapping
     @Timed
+    @PreAuthorize("isMember('ADD_COMPANY')")
     public ResponseEntity<ResponseVM<CompanyDTO>> createCompany(@Valid @RequestBody CompanyDTO companyDTO)
         throws URISyntaxException {
         log.debug("REST request to save Company : {}", companyDTO);
@@ -61,12 +71,23 @@ public class CompanyResource {
             throw new BadRequestAlertException("A new companyEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
-            return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
-                .body(result);
+            CloudflareRequestDTO requestDTO = new CloudflareRequestDTO();
+            requestDTO.setType("CNAME");
+            requestDTO.setName(companyDTO.getSubDomain() + ".avand.hr");
+            requestDTO.setContent("avand.hr");
+            requestDTO.setProxied(false);
+            if (cloudflareService.createDNSRecord(requestDTO)) {
+                ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
+                return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))
+                    .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
+                    .body(result);
+            } else {
+                throw new ServerErrorException("مشگلی در ایجاد دامنه پیش آمده است لطفا مجدد تلاش نمایید");
+            }
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
+        } catch (HttpClientErrorException e) {
+            throw new ServerErrorException("مشگلی در ایجاد دامنه پیش آمده است لطفا مجدد تلاش نمایید");
         }
     }
 
@@ -81,6 +102,7 @@ public class CompanyResource {
      */
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#companyDTO.id,'COMPANY','EDIT_COMPANY')")
     public ResponseEntity<ResponseVM<CompanyDTO>> updateCompany(@Valid @RequestBody CompanyDTO companyDTO)
         throws URISyntaxException {
         log.debug("REST request to update Company : {}", companyDTO);
@@ -101,15 +123,15 @@ public class CompanyResource {
     /**
      * GET  /company/:id : get the "id" companyEntity.
      *
-     * @param id the id of the companyEntity to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the companyEntity, or with status 404 (Not Found)
      */
     @GetMapping
     @Timed
-    public ResponseEntity<ResponseVM<CompanyDTO>> getCompany(@RequestAttribute("companyId") Long id) {
-        log.debug("REST request to get CompanyEntity : {}", id);
+    @PreAuthorize("isMember('VIEW_COMPANY')")
+    public ResponseEntity<ResponseVM<CompanyDTO>> getCompany() {
+        log.debug("REST request to get CompanyEntity");
         try {
-            ResponseVM<CompanyDTO> companyDTO = companyComponent.findById(id);
+            ResponseVM<CompanyDTO> companyDTO = companyComponent.findById(securityUtils.getCurrentCompanyId());
             return new ResponseEntity<>(companyDTO, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());
@@ -124,7 +146,8 @@ public class CompanyResource {
      */
     @DeleteMapping("/{id}")
     @Timed
-    public ResponseEntity<Void> deleteCompanyEntity(@PathVariable Long id) {
+    @PreAuthorize("isMember(#id,'COMPANY','DELETE_COMPANY')")
+    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
         log.debug("REST request to delete CompanyEntity : {}", id);
         try {
             companyService.delete(id);

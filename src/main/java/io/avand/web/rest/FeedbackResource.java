@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -32,7 +33,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/feedback")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class FeedbackResource {
 
     private final Logger log = LoggerFactory.getLogger(FeedbackResource.class);
@@ -59,7 +59,9 @@ public class FeedbackResource {
      */
     @PostMapping
     @Timed
-    public ResponseEntity<ResponseVM<FeedbackDTO>> createFeedback(@RequestBody FeedbackDTO feedbackDTO) throws URISyntaxException {
+    @PreAuthorize("isMember(#feedbackDTO.candidateId,'CANDIDATE','ADD_FEEDBACK')")
+    public ResponseEntity<ResponseVM<FeedbackDTO>> createFeedback(@RequestBody FeedbackDTO feedbackDTO)
+        throws URISyntaxException {
         log.debug("REST request to save Feedback : {}", feedbackDTO);
         if (feedbackDTO.getId() != null) {
             throw new BadRequestAlertException("A new feedback cannot already have an ID", ENTITY_NAME, "idexists");
@@ -85,7 +87,9 @@ public class FeedbackResource {
      */
     @PutMapping
     @Timed
-    public ResponseEntity<ResponseVM<FeedbackDTO>> updateFeedback(@RequestBody FeedbackDTO feedbackDTO) throws URISyntaxException {
+    @PreAuthorize("isMember(#feedbackDTO.candidateId,'CANDIDATE','EDIT_FEEDBACK')")
+    public ResponseEntity<ResponseVM<FeedbackDTO>> updateFeedback(@RequestBody FeedbackDTO feedbackDTO)
+        throws URISyntaxException {
         log.debug("REST request to update Feedback : {}", feedbackDTO);
         if (feedbackDTO.getId() == null) {
             return createFeedback(feedbackDTO);
@@ -101,23 +105,6 @@ public class FeedbackResource {
     }
 
     /**
-     * GET  /feedback : get all the feedbackEntities.
-     *
-     * @return the ResponseEntity with status 200 (OK) and the list of feedbackEntities in body
-     */
-    @GetMapping
-    @Timed
-    public ResponseEntity<Page<ResponseVM<FeedbackDTO>>> getAllFeedback(@ApiParam Pageable pageable) {
-        log.debug("REST request to get all Feedback");
-        try {
-            Page<ResponseVM<FeedbackDTO>> feedbackDTOS = feedbackComponent.findAll(pageable);
-            return new ResponseEntity<>(feedbackDTOS, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-    }
-
-    /**
      * GET  /feedback/:id : get the "id" feedbackEntity.
      *
      * @param id the id of the feedbackEntity to retrieve
@@ -125,6 +112,7 @@ public class FeedbackResource {
      */
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'FEEDBACK','VIEW_FEEDBACK')")
     public ResponseEntity<ResponseVM<FeedbackDTO>> getFeedback(@PathVariable Long id) {
         log.debug("REST request to get Feedback : {}", id);
         try {
@@ -137,26 +125,13 @@ public class FeedbackResource {
     }
 
     /**
-     * DELETE  /feedback/:id : delete the "id" feedbackEntity.
-     *
-     * @param id the id of the feedbackEntity to delete
-     * @return the ResponseEntity with status 200 (OK)
-     */
-    @DeleteMapping("/{id}")
-    @Timed
-    public ResponseEntity<Void> deleteFeedback(@PathVariable Long id) {
-        log.debug("REST request to delete Feedback : {}", id);
-        feedbackService.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-    }
-
-    /**
      * GET  /feedback/candidate-feedback/{id} : get all the feedbackEntities by candidate id.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of feedbackEntities in body
      */
-    @GetMapping("/candidate-feedback/{id}")
+    @GetMapping("/candidate/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE','VIEW_FEEDBACK')")
     public ResponseEntity<Page<ResponseVM<FeedbackDTO>>> getAllFeedbackByCandidate(@ApiParam Pageable pageable, @PathVariable Long id) {
         log.debug("REST request to get all Feedback");
         try {
@@ -166,5 +141,21 @@ public class FeedbackResource {
             throw new ServerErrorException(e.getMessage());
         }
     }
+
+    /**
+     * DELETE  /feedback/:id : delete the "id" feedbackEntity.
+     *
+     * @param id the id of the feedbackEntity to delete
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @DeleteMapping("/{id}")
+    @Timed
+    @PreAuthorize("isMember(#id,'FEEDBACK','DELETE_FEEDBACK')")
+    public ResponseEntity<Void> deleteFeedback(@PathVariable Long id) {
+        log.debug("REST request to delete Feedback : {}", id);
+        feedbackService.delete(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
 
 }

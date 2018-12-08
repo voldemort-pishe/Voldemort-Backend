@@ -1,21 +1,21 @@
 package io.avand.service;
 
 import io.avand.config.ApplicationProperties;
+import io.avand.domain.entity.jpa.CandidateScheduleEntity;
+import io.avand.domain.entity.jpa.CompanyMemberEntity;
 import io.avand.domain.entity.jpa.UserEntity;
-import io.github.jhipster.config.JHipsterProperties;
-import org.apache.commons.lang3.CharEncoding;
+import io.avand.mailgun.service.MailGunMessageService;
+import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
+import io.avand.mailgun.service.error.MailGunException;
+import io.avand.service.util.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.core.env.Environment;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
-import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.util.Locale;
 
 /**
@@ -26,109 +26,133 @@ import java.util.Locale;
 @Service
 public class MailService {
 
-	private final Logger log = LoggerFactory.getLogger(MailService.class);
+    private final Logger log = LoggerFactory.getLogger(MailService.class);
 
-	private static final String USER = "user";
+    private static final String USER = "user";
+    private static final String NAME = "name";
+    private static final String DATE = "date";
+    private static final String COMPANY_MEMBER = "companyMember";
+    private static final String CANDIDATE_SCHEDULE = "candidateSchedule";
+    private static final String PANEL_URL = "panelUrl";
+    private final Locale locale = Locale.forLanguageTag("fa");
+    private final ApplicationProperties applicationProperties;
 
-	private static final String BASE_URL = "baseUrl";
+    private final SpringTemplateEngine templateEngine;
+    private final MailGunMessageService mailGunMessageService;
 
-	private static final String PANEL_URL = "panelUrl";
-
-	private final JHipsterProperties jHipsterProperties;
-
-	private final ApplicationProperties applicationProperties;
-
-	private final JavaMailSender javaMailSender;
-
-	private final MessageSource messageSource;
-
-	private final SpringTemplateEngine templateEngine;
-	private final Environment environment;
-
-	public MailService(JHipsterProperties jHipsterProperties,
-                       ApplicationProperties applicationProperties, JavaMailSender javaMailSender,
-                       MessageSource messageSource,
+    public MailService(ApplicationProperties applicationProperties,
                        SpringTemplateEngine templateEngine,
-                       Environment environment) {
-
-		this.jHipsterProperties = jHipsterProperties;
+                       MailGunMessageService mailGunMessageService) {
         this.applicationProperties = applicationProperties;
-        this.javaMailSender = javaMailSender;
-		this.messageSource = messageSource;
-		this.templateEngine = templateEngine;
-		this.environment = environment;
-	}
+        this.templateEngine = templateEngine;
+        this.mailGunMessageService = mailGunMessageService;
+    }
 
-	@Async
-	public void sendEmail(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
-		log.debug("Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
-			isMultipart, isHtml, to, subject, content);
-
-		// Prepare message using a Spring helper
-		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-		try {
-			MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, CharEncoding.UTF_8);
-			message.setTo(to);
-			message.setFrom(jHipsterProperties.getMail().getFrom());
-			message.setSubject(subject);
-			message.setText(content, isHtml);
-			javaMailSender.send(mimeMessage);
-			log.debug("Sent email to User '{}'", to);
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.warn("Email could not be sent to user '{}'", to, e);
-			} else {
-				log.warn("Email could not be sent to user '{}': {}", to, e.getMessage());
-			}
-		}
-	}
-
-	@Async
-	public void sendEmailFromTemplate(UserEntity user, String templateName, String titleKey) {
-		Locale locale = Locale.forLanguageTag("fa");
-		Context context = new Context(locale);
-		context.setVariable(USER, user);
-		context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
-		context.setVariable(PANEL_URL, applicationProperties.getBase().getPanel());
-		String content = templateEngine.process(templateName, context);
-		String subject = messageSource.getMessage(titleKey, null, locale);
-		sendEmail(user.getEmail(), subject, content, false, true);
-
-	}
-
-	@Async
-	public void sendActivationEmail(UserEntity user) {
-		log.debug("Sending activation email to '{}'", user.getEmail());
-		sendEmailFromTemplate(user, "activationEmail", "email.activation.title");
-	}
 
     @Async
-    public void sendInviationEmail(UserEntity user) {
-        log.debug("Sending activation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "invitationEmail", "email.activation.title");
+    public void sendEmail(MailGunSendMessageRequestDTO requestDTO) {
+        log.debug("Request to send email : {}", requestDTO);
+        try {
+            mailGunMessageService.sendMessage(requestDTO);
+        } catch (MailGunException e) {
+            e.printStackTrace();
+        }
     }
 
     @Async
-    public void sendInviationMemberEmail(UserEntity user) {
+    public void sendActivationEmail(UserEntity user) {
         log.debug("Sending activation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "invitationMemberEmail", "email.activation.title");
+        Context context = new Context(locale);
+        context.setVariable(USER, user);
+        String content = templateEngine.process("activationEmail", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(user.getEmail());
+        sendMessageRequestDTO.setFromName("شرکت آوند");
+        sendMessageRequestDTO.setSubject("فعال سازی حساب کاربری");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        this.sendEmail(sendMessageRequestDTO);
     }
 
     @Async
-    public void sendInviationMemberEmailWithRegister(UserEntity user) {
-        log.debug("Sending activation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "invitationMemberEmailWithRegister", "email.activation.title");
+    public void sendPasswordResetMail(UserEntity user) {
+        log.debug("Sending password reset email to '{}'", user.getEmail());
+        Context context = new Context(locale);
+        context.setVariable(USER, user);
+        String content = templateEngine.process("passwordResetEmail", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(user.getEmail());
+        sendMessageRequestDTO.setFromName("شرکت آوند");
+        sendMessageRequestDTO.setSubject("فراموشی کلمه عبور");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        this.sendEmail(sendMessageRequestDTO);
     }
 
-	@Async
-	public void sendCreationEmail(UserEntity user) {
-		log.debug("Sending creation email to '{}'", user.getEmail());
-		sendEmailFromTemplate(user, "creationEmail", "email.activation.title");
-	}
+    @Async
+    public void sendInvitationMemberEmail(CompanyMemberEntity companyMemberEntity) {
+        log.debug("Sending activation email to '{}'", companyMemberEntity);
+        Context context = new Context(locale);
+        context.setVariable(COMPANY_MEMBER, companyMemberEntity);
+        String content = templateEngine.process("invitationMemberEmail", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(companyMemberEntity.getUser().getEmail());
+        sendMessageRequestDTO.setFromName(companyMemberEntity.getCompany().getNameFa());
+        sendMessageRequestDTO.setSubject("همکاران");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        this.sendEmail(sendMessageRequestDTO);
+    }
 
-	@Async
-	public void sendPasswordResetMail(UserEntity user) {
-		log.debug("Sending password reset email to '{}'", user.getEmail());
-		sendEmailFromTemplate(user, "passwordResetEmail", "email.reset.title");
-	}
+    @Async
+    public void sendInvitationMemberEmailWithRegister(CompanyMemberEntity companyMemberEntity) {
+        log.debug("Sending activation email to '{}'", companyMemberEntity);
+        Context context = new Context(locale);
+        context.setVariable(COMPANY_MEMBER, companyMemberEntity);
+        String content = templateEngine.process("invitationMemberEmailWithRegister", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(companyMemberEntity.getUser().getEmail());
+        sendMessageRequestDTO.setFromName(companyMemberEntity.getCompany().getNameFa());
+        sendMessageRequestDTO.setSubject("همکاران");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        this.sendEmail(sendMessageRequestDTO);
+    }
+
+    @Async
+    public void sendScheduleCandidate(CandidateScheduleEntity candidateScheduleEntity, String name, String email, File attachment) {
+        log.debug("Sending Schedule email to : {}", candidateScheduleEntity);
+        Context context = new Context(locale);
+        context.setVariable(CANDIDATE_SCHEDULE, candidateScheduleEntity);
+        context.setVariable(DATE, DateUtil.gToPersianWithTime(DateUtil.toDate(candidateScheduleEntity.getStartDate())));
+        context.setVariable(NAME, name);
+        String content = templateEngine.process("scheduleCandidateEmail", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(email);
+        sendMessageRequestDTO.setFromName(candidateScheduleEntity.getCandidate().getJob().getCompany().getNameFa());
+        sendMessageRequestDTO.setSubject("جلسه مصاحبه");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        sendMessageRequestDTO.setAttachment(attachment);
+        this.sendEmail(sendMessageRequestDTO);
+    }
+
+    @Async
+    public void sendScheduleTeam(CandidateScheduleEntity candidateScheduleEntity, String name, String email, File attachment) {
+        log.debug("Sending Schedule email to : {}", candidateScheduleEntity);
+        Context context = new Context(locale);
+        context.setVariable(CANDIDATE_SCHEDULE, candidateScheduleEntity);
+        context.setVariable(DATE, DateUtil.gToPersianWithTime(DateUtil.toDate(candidateScheduleEntity.getStartDate())));
+        context.setVariable(NAME, name);
+        String content = templateEngine.process("scheduleTeamEmail", context);
+        MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
+        sendMessageRequestDTO.setTo(email);
+        sendMessageRequestDTO.setFromName(candidateScheduleEntity.getCandidate().getJob().getCompany().getNameFa());
+        sendMessageRequestDTO.setSubject("جلسه مصاحبه");
+        sendMessageRequestDTO.setText(content);
+        sendMessageRequestDTO.setHtml(content);
+        sendMessageRequestDTO.setAttachment(attachment);
+        this.sendEmail(sendMessageRequestDTO);
+    }
+
 }

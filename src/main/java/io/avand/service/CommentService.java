@@ -13,9 +13,7 @@ public interface CommentService {
 
     CommentDTO findById(Long id) throws NotFoundException;
 
-    Page<CommentDTO> findAll(Pageable pageable);
-
-    Page<CommentDTO> findAllByCandidateId(Pageable pageable, Long id);
+    Page<CommentDTO> findAllByCandidateId(Pageable pageable, Long id) throws NotFoundException;
 
     void delete(Long id);
 

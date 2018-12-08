@@ -31,7 +31,7 @@ public class SubscriptionResource {
     public ResponseEntity checkSubscription() {
         log.debug("REST Request to check user subscription");
         try {
-            SubscriptionDTO subscriptionDTO = subscriptionService.checkSubscription(securityUtils.getCurrentUserId());
+            SubscriptionDTO subscriptionDTO = subscriptionService.checkSubscription(securityUtils.getCurrentCompanyId());
             return new ResponseEntity<>(subscriptionDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity(HttpStatus.NO_CONTENT);

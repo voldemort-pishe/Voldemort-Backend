@@ -5,6 +5,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -15,7 +16,7 @@ import java.util.Objects;
  * A UserAuthorityEntity.
  */
 @Entity
-@Table(name = "user_authority_entity")
+@Table(name = "user_authority")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class UserAuthorityEntity implements Serializable {
 
@@ -25,13 +26,9 @@ public class UserAuthorityEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "authority_name")
-    private String authorityName;
-
-    @OneToMany(mappedBy = "userAuthority", cascade = CascadeType.ALL)
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONE)
-    private Set<UserPermissionEntity> userPermissions = new HashSet<>();
+    @OneToOne(optional = false)
+    @NotNull
+    private AuthorityEntity authority;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -46,42 +43,12 @@ public class UserAuthorityEntity implements Serializable {
         this.id = id;
     }
 
-    public String getAuthorityName() {
-        return authorityName;
+    public AuthorityEntity getAuthority() {
+        return authority;
     }
 
-    public UserAuthorityEntity authorityName(String authorityName) {
-        this.authorityName = authorityName;
-        return this;
-    }
-
-    public void setAuthorityName(String authorityName) {
-        this.authorityName = authorityName;
-    }
-
-    public Set<UserPermissionEntity> getUserPermissions() {
-        return userPermissions;
-    }
-
-    public UserAuthorityEntity userPermissions(Set<UserPermissionEntity> userPermissionEntities) {
-        this.userPermissions = userPermissionEntities;
-        return this;
-    }
-
-    public UserAuthorityEntity addUserPermission(UserPermissionEntity userPermissionEntity) {
-        this.userPermissions.add(userPermissionEntity);
-        userPermissionEntity.setUserAuthority(this);
-        return this;
-    }
-
-    public UserAuthorityEntity removeUserPermission(UserPermissionEntity userPermissionEntity) {
-        this.userPermissions.remove(userPermissionEntity);
-        userPermissionEntity.setUserAuthority(null);
-        return this;
-    }
-
-    public void setUserPermissions(Set<UserPermissionEntity> userPermissionEntities) {
-        this.userPermissions = userPermissionEntities;
+    public void setAuthority(AuthorityEntity authority) {
+        this.authority = authority;
     }
 
     public UserEntity getUser() {
@@ -121,8 +88,9 @@ public class UserAuthorityEntity implements Serializable {
     @Override
     public String toString() {
         return "UserAuthorityEntity{" +
-            "id=" + getId() +
-            ", authorityName='" + getAuthorityName() + "'" +
-            "}";
+            "id=" + id +
+            ", authorityId=" + authority.getId() +
+            ", userId=" + user.getId() +
+            '}';
     }
 }

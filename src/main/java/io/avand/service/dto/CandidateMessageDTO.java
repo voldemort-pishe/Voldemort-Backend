@@ -1,7 +1,7 @@
 package io.avand.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.avand.domain.enumeration.MessageOwnerType;
+import io.avand.domain.enumeration.CandidateMessageOwnerType;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -13,12 +13,11 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
     @NotNull
     private String message;
     private String subject;
-    @NotNull
+    private CandidateMessageOwnerType owner;
     private Long fromUserId;
     @NotNull
     private Long toUserId;
     private String messageId;
-    private MessageOwnerType owner;
     private Long parentId;
 
     @JsonIgnore
@@ -43,6 +42,14 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
         this.subject = subject;
     }
 
+    public CandidateMessageOwnerType getOwner() {
+        return owner;
+    }
+
+    public void setOwner(CandidateMessageOwnerType owner) {
+        this.owner = owner;
+    }
+
     public Long getFromUserId() {
         return fromUserId;
     }
@@ -65,14 +72,6 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
-    }
-
-    public MessageOwnerType getOwner() {
-        return owner;
-    }
-
-    public void setOwner(MessageOwnerType owner) {
-        this.owner = owner;
     }
 
     public Long getParentId() {
@@ -104,10 +103,10 @@ public class CandidateMessageDTO extends AbstractAuditingDTO implements Serializ
         return "CandidateMessageDTO{" +
             "message='" + message + '\'' +
             ", subject='" + subject + '\'' +
+            ", owner=" + owner +
             ", fromUserId=" + fromUserId +
             ", toUserId=" + toUserId +
             ", messageId='" + messageId + '\'' +
-            ", owner=" + owner +
             ", parentId=" + parentId +
             ", child=" + child +
             ", candidateId=" + candidateId +

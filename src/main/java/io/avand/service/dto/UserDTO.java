@@ -12,6 +12,7 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     private String login;
 
+    @JsonIgnore
     private String passwordHash;
 
     private String firstName;
@@ -20,27 +21,27 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     private String email;
 
-    private Boolean activated;
-
-    private String activationKey;
-
-    private String invitationKey;
-
-    private String resetKey;
-
-    private ZonedDateTime resetDate;
+    private String cellphone;
 
     @JsonIgnore
+    private Boolean activated;
+
+    @JsonIgnore
+    private String activationKey;
+
+    @JsonIgnore
+    private String invitationKey;
+
+    @JsonIgnore
+    private String resetKey;
+
+    @JsonIgnore
+    private ZonedDateTime resetDate;
+
     private Set<UserAuthorityDTO> userAuthorities = new HashSet<>();
 
     @JsonIgnore
     private Set<CompanyDTO> companies = new HashSet<>();
-
-    @JsonIgnore
-    private Set<TalentPoolDTO> talentPools = new HashSet<>();
-
-    @JsonIgnore
-    private Set<InvoiceDTO> invoices = new HashSet<>();
 
     private Long fileId;
 
@@ -82,6 +83,14 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
     }
 
     public Boolean getActivated() {
@@ -140,22 +149,6 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
         this.companies = companies;
     }
 
-    public Set<TalentPoolDTO> getTalentPools() {
-        return talentPools;
-    }
-
-    public void setTalentPools(Set<TalentPoolDTO> talentPools) {
-        this.talentPools = talentPools;
-    }
-
-    public Set<InvoiceDTO> getInvoices() {
-        return invoices;
-    }
-
-    public void setInvoices(Set<InvoiceDTO> invoices) {
-        this.invoices = invoices;
-    }
-
     public Long getFileId() {
         return fileId;
     }
@@ -172,6 +165,7 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
+            ", cellphone='" + cellphone + '\'' +
             ", activated=" + activated +
             ", activationKey='" + activationKey + '\'' +
             ", invitationKey='" + invitationKey + '\'' +

@@ -1,5 +1,6 @@
 package io.avand.web.rest.component.impl;
 
+import io.avand.domain.enumeration.CandidateMessageOwnerType;
 import io.avand.service.CandidateMessageService;
 import io.avand.service.CandidateService;
 import io.avand.service.UserService;
@@ -55,9 +56,22 @@ public class CandidateMessageComponentImpl implements CandidateMessageComponent 
     }
 
     @Override
-    public Page<ResponseVM<CandidateMessageDTO>> findByCandidateId(Long candidateId, Pageable pageable) throws NotFoundException {
+    public ResponseVM<CandidateMessageDTO> save(String subject, String message, Long parentId, Long candidateId)
+        throws NotFoundException {
+        log.debug("Request to save candidateMessageDTO via component : {}, {}, {}, {}", subject, message, parentId, candidateId);
+        CandidateMessageDTO candidateMessageDTO = candidateMessageService.save(subject, message, parentId, candidateId);
+        ResponseVM<CandidateMessageDTO> responseVM = new ResponseVM<>();
+        responseVM.setData(candidateMessageDTO);
+        responseVM.setInclude(this.createIncluded(candidateMessageDTO));
+        return responseVM;
+    }
+
+    @Override
+    public Page<ResponseVM<CandidateMessageDTO>> findByCandidateId(Long candidateId, Pageable pageable)
+        throws NotFoundException {
         log.debug("Request to find candidateMessageDTO by candidateId via component : {}", candidateId);
-        Page<CandidateMessageDTO> candidateMessageDTOS = candidateMessageService.findByCandidateId(candidateId, pageable);
+        Page<CandidateMessageDTO> candidateMessageDTOS =
+            candidateMessageService.findByCandidateId(candidateId, pageable);
         List<ResponseVM<CandidateMessageDTO>> responseVMS = new ArrayList<>();
         for (CandidateMessageDTO candidateMessageDTO : candidateMessageDTOS) {
             ResponseVM<CandidateMessageDTO> responseVM = new ResponseVM<>();
@@ -80,9 +94,14 @@ public class CandidateMessageComponentImpl implements CandidateMessageComponent 
 
     private Map<String, Object> createIncluded(CandidateMessageDTO candidateMessageDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
-        included.put("from", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getFromUserId()).get()));
-        included.put("to", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getToUserId()).get()));
-        included.put("candidate", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getToUserId())));
+        if (candidateMessageDTO.getOwner() == CandidateMessageOwnerType.USER) {
+            included.put("from", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getFromUserId()).get()));
+            included.put("to", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getToUserId())));
+        }else {
+            included.put("from", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getToUserId())));
+            included.put("to", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getFromUserId()).get()));
+        }
+        included.put("candidate", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getCandidateId())));
         return included;
     }
 }

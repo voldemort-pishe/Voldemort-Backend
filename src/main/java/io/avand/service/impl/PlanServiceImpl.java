@@ -1,6 +1,7 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.PlanEntity;
+import io.avand.domain.enumeration.PlanType;
 import io.avand.repository.jpa.PlanRepository;
 import io.avand.service.PlanService;
 import io.avand.service.dto.PlanDTO;
@@ -43,15 +44,22 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public Page<PlanDTO> findAll(Pageable pageable) {
-        logger.debug("Request for service to get all of plans");
-        return planRepository.findAll(pageable).map(planMapper::toDto);
+    public Optional<PlanDTO> findFreePlan() {
+        logger.debug("Request to find free plan");
+        return planRepository.findFirstByType(PlanType.FREE)
+            .map(planMapper::toDto);
     }
 
     @Override
-    public Page<PlanDTO> getActivePlans(Pageable pageable) {
+    public Page<PlanDTO> findAllByType(Pageable pageable, PlanType type) {
+        logger.debug("Request for service to get all of plans");
+        return planRepository.findAllByType(pageable, type).map(planMapper::toDto);
+    }
+
+    @Override
+    public Page<PlanDTO> findActiveByType(Pageable pageable, PlanType type) {
         logger.debug("Request for service to get active plans");
-        return planRepository.findAllByActiveIsTrue(pageable)
+        return planRepository.findAllByActiveIsTrueAndType(pageable, type)
             .map(planMapper::toDto);
     }
 

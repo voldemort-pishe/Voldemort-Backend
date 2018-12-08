@@ -1,16 +1,13 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.*;
-import io.avand.domain.enumeration.PermissionAction;
 import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.security.AuthoritiesConstants;
-import io.avand.service.MailService;
-import io.avand.service.TokenService;
-import io.avand.service.UserService;
-import io.avand.service.dto.TokenDTO;
-import io.avand.service.dto.UserDTO;
+import io.avand.security.SecurityUtils;
+import io.avand.service.*;
+import io.avand.service.dto.*;
 import io.avand.service.mapper.UserMapper;
 import io.avand.service.util.RandomUtil;
 import io.avand.web.rest.errors.ServerErrorException;
@@ -21,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -44,13 +42,26 @@ public class UserServiceImpl implements UserService {
 
     private final FileRepository fileRepository;
 
+    private final PlanService planService;
+    private final CompanyPlanService companyPlanService;
+    private final InvoiceService invoiceService;
+    private final SubscriptionService subscriptionService;
+    private final UserAuthorityService userAuthorityService;
+    private final SmsService smsService;
+
     public UserServiceImpl(UserRepository userRepository,
                            AuthorityRepository authorityRepository,
                            UserMapper userMapper,
                            PasswordEncoder passwordEncoder,
                            MailService mailService,
                            TokenService tokenService,
-                           FileRepository fileRepository) {
+                           FileRepository fileRepository,
+                           PlanService planService,
+                           CompanyPlanService companyPlanService,
+                           InvoiceService invoiceService,
+                           SubscriptionService subscriptionService,
+                           UserAuthorityService userAuthorityService,
+                           SmsService smsService) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.userMapper = userMapper;
@@ -58,10 +69,17 @@ public class UserServiceImpl implements UserService {
         this.mailService = mailService;
         this.tokenService = tokenService;
         this.fileRepository = fileRepository;
+        this.planService = planService;
+        this.companyPlanService = companyPlanService;
+        this.invoiceService = invoiceService;
+        this.subscriptionService = subscriptionService;
+        this.userAuthorityService = userAuthorityService;
+        this.smsService = smsService;
     }
 
     @Override
-    public UserDTO save(String login, String firstName, String lastName, String email, String password) {
+    @Transactional
+    public UserDTO save(String login, String firstName, String lastName, String email, String password, String cellphone) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
         UserEntity userEntity;
@@ -70,6 +88,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setFirstName(firstName);
             userEntity.setLastName(lastName);
             userEntity.setEmail(email);
+            userEntity.setCellphone(cellphone);
         } else {
             userEntity = new UserEntity();
             userEntity.setLogin(login);
@@ -77,37 +96,42 @@ public class UserServiceImpl implements UserService {
             userEntity.setFirstName(firstName);
             userEntity.setLastName(lastName);
             userEntity.setEmail(email);
+            userEntity.setCellphone(cellphone);
             userEntity.setActivationKey(RandomUtil.generateActivationKey());
             userEntity.setActivated(false);
 
-            UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-            UserPermissionEntity userPermissionEntity = new UserPermissionEntity();
-            userPermissionEntity.setAction(PermissionAction.FULL);
-            userPermissionEntity.setUserAuthority(userAuthorityEntity);
+            UserAuthorityEntity userAuthority = new UserAuthorityEntity();
+            AuthorityEntity userAuthorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
-            Set<UserPermissionEntity> userPermissionEntities = new HashSet<>();
-            userPermissionEntities.add(userPermissionEntity);
-            AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
+            userAuthority.setAuthority(userAuthorityEntity);
+            userAuthority.setUser(userEntity);
 
-            userAuthorityEntity.setAuthorityName(authorityEntity.getName());
-            userAuthorityEntity.setUserPermissions(userPermissionEntities);
-            userAuthorityEntity.setUser(userEntity);
+            UserAuthorityEntity adminAuthority = new UserAuthorityEntity();
+            AuthorityEntity userAdminAuthority = authorityRepository.findByName(AuthoritiesConstants.ADMIN);
+
+            adminAuthority.setAuthority(userAdminAuthority);
+            adminAuthority.setUser(userEntity);
+
 
             Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
-            userAuthorityEntities.add(userAuthorityEntity);
+            userAuthorityEntities.add(userAuthority);
+            userAuthorityEntities.add(adminAuthority);
 
             userEntity.setUserAuthorities(userAuthorityEntities);
         }
 
         userEntity = userRepository.save(userEntity);
 
-        mailService.sendActivationEmail(userEntity);
-
+        boolean bool = smsService.send(userEntity.getCellphone(), userEntity.getActivationKey());
+        if (!bool) {
+            mailService.sendActivationEmail(userEntity);
+        }
         return userMapper.toDto(userEntity);
     }
 
     @Override
-    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, Boolean active) {
+    @Transactional
+    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, String cellphone, Boolean active) {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
 
@@ -117,20 +141,14 @@ public class UserServiceImpl implements UserService {
         userEntity.setFirstName(firstName);
         userEntity.setLastName(lastName);
         userEntity.setEmail(email);
+        userEntity.setCellphone(cellphone);
         userEntity.setActivated(active);
         userEntity.setInvitationKey(null);
 
         UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-        UserPermissionEntity userPermissionEntity = new UserPermissionEntity();
-        userPermissionEntity.setAction(PermissionAction.FULL);
-        userPermissionEntity.setUserAuthority(userAuthorityEntity);
-
-        Set<UserPermissionEntity> userPermissionEntities = new HashSet<>();
-        userPermissionEntities.add(userPermissionEntity);
         AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
-        userAuthorityEntity.setAuthorityName(authorityEntity.getName());
-        userAuthorityEntity.setUserPermissions(userPermissionEntities);
+        userAuthorityEntity.setAuthority(authorityEntity);
         userAuthorityEntity.setUser(userEntity);
 
         Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
@@ -217,13 +235,18 @@ public class UserServiceImpl implements UserService {
                 user.setActivationKey(RandomUtil.generateActivationKey());
                 user = userRepository.save(user);
 
-                mailService.sendActivationEmail(user);
+                boolean bool = smsService.send(user.getCellphone(), user.getActivationKey());
+                if (!bool) {
+                    mailService.sendActivationEmail(user);
+                }
+
             } else {
                 throw new IllegalStateException("User Is Active");
             }
         } else {
             throw new NotFoundException("User Not Available");
         }
+
     }
 
     @Override
@@ -275,7 +298,7 @@ public class UserServiceImpl implements UserService {
                 throw new IllegalStateException("User Is Active");
             }
         } else {
-            throw new NotFoundException("User Not Found By Activation Key");
+            throw new NotFoundException("کد وارد شده اشتباه است");
         }
     }
 
@@ -283,6 +306,12 @@ public class UserServiceImpl implements UserService {
     public TokenDTO authorize(String username, String password, Boolean isRemember) throws NotFoundException {
         log.debug("Request to authorize user : {}, {}, {}", username, password, isRemember);
         return tokenService.createAccessTokenByUserNameAndPassword(username, password, isRemember);
+    }
+
+    @Override
+    public TokenDTO authorizeWithoutPassword(UserDTO userDTO) {
+        log.debug("Request to authorize user : {}, {}, {}", userDTO.getEmail());
+        return tokenService.createAccessTokenByUserName(userDTO.getLogin());
     }
 
     @Override
@@ -301,4 +330,12 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("User Not Found");
         }
     }
+
+    @Transactional(readOnly = true)
+    public Optional<UserDTO> getUserWithAuthorities() {
+        return SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneWithAuthoritiesByLogin)
+            .map(userMapper::toDto);
+    }
+
 }

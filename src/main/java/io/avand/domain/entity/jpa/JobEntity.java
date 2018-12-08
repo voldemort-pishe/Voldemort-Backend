@@ -1,6 +1,7 @@
 package io.avand.domain.entity.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.avand.domain.enumeration.JobStatus;
 import io.avand.domain.enumeration.JobType;
 import io.avand.domain.enumeration.LanguageType;
 import org.checkerframework.checker.units.qual.C;
@@ -19,7 +20,7 @@ import java.util.Set;
  * A JobEntity.
  */
 @Entity
-@Table(name = "job_entity")
+@Table(name = "job")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class JobEntity extends AbstractAuditingEntity implements Serializable {
 
@@ -60,13 +61,14 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "department")
     private String department;
 
-    @OneToOne
-    @JoinColumn
-    private UserEntity hiredManager;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private JobStatus status;
 
-    @OneToOne
-    @JoinColumn
-    private UserEntity hiredExpert;
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
+    private Set<JobHireTeamEntity> jobHireTeam = new HashSet<>();
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -150,20 +152,20 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
         this.department = department;
     }
 
-    public UserEntity getHiredManager() {
-        return hiredManager;
+    public JobStatus getStatus() {
+        return status;
     }
 
-    public void setHiredManager(UserEntity hiredManager) {
-        this.hiredManager = hiredManager;
+    public void setStatus(JobStatus status) {
+        this.status = status;
     }
 
-    public UserEntity getHiredExpert() {
-        return hiredExpert;
+    public Set<JobHireTeamEntity> getJobHireTeam() {
+        return jobHireTeam;
     }
 
-    public void setHiredExpert(UserEntity hiredExpert) {
-        this.hiredExpert = hiredExpert;
+    public void setJobHireTeam(Set<JobHireTeamEntity> jobHireTeam) {
+        this.jobHireTeam = jobHireTeam;
     }
 
     public String getLocation() {
@@ -220,7 +222,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
     public String toString() {
         return "JobEntity{" +
             "id=" + id +
-            ", uniqueId=" + uniqueId +
+            ", uniqueId='" + uniqueId + '\'' +
             ", nameFa='" + nameFa + '\'' +
             ", descriptionFa='" + descriptionFa + '\'' +
             ", nameEn='" + nameEn + '\'' +
@@ -229,6 +231,7 @@ public class JobEntity extends AbstractAuditingEntity implements Serializable {
             ", type=" + type +
             ", location='" + location + '\'' +
             ", department='" + department + '\'' +
+            ", status=" + status +
             '}';
     }
 }

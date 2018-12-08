@@ -138,7 +138,8 @@ jhipster:
 # More documentation is available at:
 # http://www.jhipster.tech/common-application-properties/
 # ===================================================================
-
+payment:
+    callbackUrl: http://testbed.avand.io:8080/api/payment/callback
 application:
   base:
     url: http://testbed.avand.io:8080/

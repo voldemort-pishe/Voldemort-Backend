@@ -4,9 +4,17 @@ import com.codahale.metrics.annotation.Timed;
 import io.avand.config.ApplicationProperties;
 import io.avand.domain.enumeration.InvoiceStatus;
 import io.avand.domain.enumeration.PaymentType;
+import io.avand.payment.service.PaymentService;
+import io.avand.payment.service.dto.PaymentDTO;
+import io.avand.payment.service.error.PaymentException;
 import io.avand.security.AuthoritiesConstants;
-import io.avand.service.*;
-import io.avand.service.dto.*;
+import io.avand.service.InvoiceService;
+import io.avand.service.SubscriptionService;
+import io.avand.service.UserAuthorityService;
+import io.avand.service.UserPlanService;
+import io.avand.service.dto.InvoiceDTO;
+import io.avand.service.dto.SubscriptionDTO;
+import io.avand.service.dto.UserPlanDTO;
 import io.avand.web.rest.errors.ServerErrorException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -15,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -65,30 +72,20 @@ public class PaymentResource {
                 throw new ServerErrorException("فاکتور مورد نظر یافت نشد");
             } else {
                 InvoiceDTO foundInvoice = foundInvoiceDTOOptional.get();
-                ZarinpalRequestDTO zarinpalRequestDTO = new ZarinpalRequestDTO();
-
-                zarinpalRequestDTO.setAmount(foundInvoice.getTotal());
-                zarinpalRequestDTO.setDescription(String.format("پرداخت فاکتور شماره %s", foundInvoice.getId()));
-
-                ResponseEntity responseEntity = paymentService.paymentRequest(zarinpalRequestDTO);
-                HashMap<String, String> response = new HashMap<>();
-
-                if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                    ZarinpalResponseDTO zarinpalResponseDTO = (ZarinpalResponseDTO) responseEntity.getBody();
-                    if ("100".equals(zarinpalResponseDTO.getStatus())) {
-                        response.put("paymentUrl", "https://www.zarinpal.com/pg/pay/" + zarinpalResponseDTO.getAuthority());
-                        foundInvoice.setTrackingCode(zarinpalResponseDTO.getAuthority());
-                        try {
-                            invoiceService.save(foundInvoice);
-                        } catch (NotFoundException e) {
-                            throw new ServerErrorException(e.getMessage());
-                        }
-                        return new ResponseEntity<>(response, HttpStatus.OK);
-                    } else {
-                        throw new ServerErrorException("Cannot do payment right now!");
+                try {
+                    HashMap<String, String> response = new HashMap<>();
+                    PaymentDTO paymentDTO = paymentService
+                        .createPaymentLink(foundInvoice.getTotal(), String.format("پرداخت فاکتور شماره %s", foundInvoice.getId()));
+                    foundInvoice.setTrackingCode(paymentDTO.getRefId());
+                    response.put("paymentUrl", paymentDTO.getUrl());
+                    try {
+                        invoiceService.save(foundInvoice);
+                    } catch (NotFoundException e) {
+                        throw new ServerErrorException(e.getMessage());
                     }
-                } else {
-                    throw new ServerErrorException("Cannot do payment right now!");
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } catch (PaymentException e) {
+                    throw new ServerErrorException(e.getMessage());
                 }
             }
         } catch (NotFoundException e) {
@@ -102,39 +99,28 @@ public class PaymentResource {
                                 @RequestParam("Status") String status,
                                 HttpServletResponse response) throws NotFoundException {
 
-        ZarinpalVerifyRequestDTO zarinpalVerifyRequestDTO = new ZarinpalVerifyRequestDTO();
-        zarinpalVerifyRequestDTO.setAuthority(authority);
         Optional<InvoiceDTO> invoiceDTO = invoiceService.findOneByTrackingCode(authority);
         if (invoiceDTO.isPresent()) {
             InvoiceDTO foundInvoice = invoiceDTO.get();
-            zarinpalVerifyRequestDTO.setAmount(foundInvoice.getTotal());
 
-            ZarinpalVerifyResponseDTO zarinpalVerifyResponseDTO = (ZarinpalVerifyResponseDTO) paymentService
-                .paymentVerify(zarinpalVerifyRequestDTO).getBody();
-            if ("OK".equals(status)) {
-                if (zarinpalVerifyResponseDTO.getStatus() == 100) {
-                    foundInvoice.setReferenceId(zarinpalVerifyResponseDTO.getRefId());
-                    foundInvoice.setStatus(InvoiceStatus.SUCCESS);
-                    foundInvoice.setPaymentDate(ZonedDateTime.now());
-                    foundInvoice.setPaymentType(PaymentType.ZARINPAL);
-                    invoiceService.save(foundInvoice);
-                    Optional<UserPlanDTO> userPlanDTO = userPlanService.findByInvoiceId(foundInvoice.getId());
+            try {
+                String refId = paymentService.verifyPayment(foundInvoice.getTotal(), authority);
+                foundInvoice.setReferenceId(refId);
+                foundInvoice.setStatus(InvoiceStatus.SUCCESS);
+                foundInvoice.setPaymentDate(ZonedDateTime.now());
+                foundInvoice.setPaymentType(PaymentType.ZARINPAL);
+                invoiceService.save(foundInvoice);
+                Optional<UserPlanDTO> userPlanDTO = userPlanService.findByInvoiceId(foundInvoice.getId());
 
-                    SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
-                    subscriptionDTO.setUserPlanId(userPlanDTO.get().getId());
-                    subscriptionDTO.setUserId(foundInvoice.getUserId());
-                    subscriptionDTO.setStartDate(ZonedDateTime.now());
-                    subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(userPlanDTO.get().getLength()));
-                    subscriptionService.save(subscriptionDTO);
+                SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
+                subscriptionDTO.setUserPlanId(userPlanDTO.get().getId());
+                subscriptionDTO.setUserId(foundInvoice.getUserId());
+                subscriptionDTO.setStartDate(ZonedDateTime.now());
+                subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(userPlanDTO.get().getLength()));
+                subscriptionService.save(subscriptionDTO);
 
-                    userAuthorityService.grantAuthority(AuthoritiesConstants.SUBSCRIPTION, foundInvoice.getUserId());
-                } else {
-                    foundInvoice.setStatus(InvoiceStatus.FAILED);
-                    foundInvoice.setPaymentDate(ZonedDateTime.now());
-                    foundInvoice.setPaymentType(PaymentType.ZARINPAL);
-                    invoiceService.save(foundInvoice);
-                }
-            } else {
+                userAuthorityService.grantAuthority(AuthoritiesConstants.SUBSCRIPTION, foundInvoice.getUserId());
+            } catch (PaymentException e) {
                 foundInvoice.setStatus(InvoiceStatus.FAILED);
                 foundInvoice.setPaymentDate(ZonedDateTime.now());
                 foundInvoice.setPaymentType(PaymentType.ZARINPAL);

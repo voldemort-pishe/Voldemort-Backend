@@ -98,8 +98,8 @@ public class CandidateMessageComponentImpl implements CandidateMessageComponent 
             included.put("from", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getFromUserId()).get()));
             included.put("to", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getToUserId())));
         }else {
-            included.put("from", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getToUserId())));
-            included.put("to", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getFromUserId()).get()));
+            included.put("from", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getFromUserId())));
+            included.put("to", userMapper.dtoToVm(userService.findById(candidateMessageDTO.getToUserId()).get()));
         }
         included.put("candidate", candidateMapper.dtoToVm(candidateService.findById(candidateMessageDTO.getCandidateId())));
         return included;

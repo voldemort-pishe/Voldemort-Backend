@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -49,6 +50,7 @@ public class InvoiceResource {
      */
     @GetMapping("/invoice")
     @Timed
+    @PreAuthorize("isMember('VIEW_INVOICE')")
     public ResponseEntity<Page<ResponseVM<InvoiceDTO>>> getAllInvoice(@ApiParam Pageable pageable) {
         log.debug("REST request to get all InvoiceDTOs");
         try {
@@ -67,6 +69,7 @@ public class InvoiceResource {
      */
     @GetMapping("/invoice/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'INVOICE','VIEW_INVOICE')")
     public ResponseEntity<ResponseVM<InvoiceDTO>> getInvoice(@PathVariable Long id) {
         log.debug("REST request to get InvoiceDTO : {}", id);
         try {
@@ -85,6 +88,7 @@ public class InvoiceResource {
      */
     @DeleteMapping("/invoice/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'INVOICE','DELETE_INVOICE')")
     public ResponseEntity<Void> deleteInvoice(@PathVariable Long id) {
         log.debug("REST request to delete InvoiceDTO : {}", id);
         invoiceService.delete(id);

@@ -15,7 +15,7 @@ import java.util.Objects;
  * A CompanyEntity.
  */
 @Entity
-@Table(name = "company_entity")
+@Table(name = "company")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CompanyEntity extends AbstractAuditingEntity implements Serializable {
 
@@ -70,6 +70,11 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
     private Set<CompanyMemberEntity> companyMembers = new HashSet<>();
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
+    private Set<InvoiceEntity> invoices = new HashSet<>();
 
     @ManyToOne
     private UserEntity user;
@@ -228,6 +233,14 @@ public class CompanyEntity extends AbstractAuditingEntity implements Serializabl
 
     public void setCompanyMembers(Set<CompanyMemberEntity> companyMemberEntities) {
         this.companyMembers = companyMemberEntities;
+    }
+
+    public Set<InvoiceEntity> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Set<InvoiceEntity> invoices) {
+        this.invoices = invoices;
     }
 
     public UserEntity getUser() {

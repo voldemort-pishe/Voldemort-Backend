@@ -12,8 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -32,7 +34,8 @@ public class JobHireTeamResource {
 
     @PostMapping
     @Timed
-    public ResponseEntity<List<ResponseVM<JobHireTeamDTO>>> save(@RequestBody JobHireTeamVM jobHireTeamVM) {
+    @PreAuthorize("isMember(#jobHireTeamVM.jobId,'JOB','ADD_JOB_MEMBER')")
+    public ResponseEntity<List<ResponseVM<JobHireTeamDTO>>> save(@Valid @RequestBody JobHireTeamVM jobHireTeamVM) {
         log.debug("REST Request to save jobHireTeams");
         try {
             List<ResponseVM<JobHireTeamDTO>> responseVMS = jobHireTeamComponent.saveAll(jobHireTeamVM.getTeams());
@@ -44,6 +47,7 @@ public class JobHireTeamResource {
 
     @GetMapping("/job/{id}")
     @Timed
+    @PreAuthorize("isMember(#jobId,'JOB','VIEW_JOB_MEMBER')")
     public ResponseEntity<List<ResponseVM<JobHireTeamDTO>>> getByJobId(@PathVariable("id") Long jobId) {
         log.debug("REST Request to find jobHireTeam by jobId : {}", jobId);
         try {
@@ -56,6 +60,7 @@ public class JobHireTeamResource {
 
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'JOB_HIRE_TEAM','DELETE_JOB_MEMBER')")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         log.debug("REST Request to delete jobHireTeam : {}", id);
         try {

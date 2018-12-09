@@ -1,5 +1,6 @@
 package io.avand.config;
 
+import io.avand.interceptor.GeneralInterceptor;
 import io.avand.interceptor.SubscriptionInterceptor;
 import io.github.jhipster.config.locale.AngularCookieLocaleResolver;
 
@@ -25,6 +26,11 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         return new SubscriptionInterceptor();
     }
 
+    @Bean
+    public GeneralInterceptor generalInterceptor() {
+        return new GeneralInterceptor();
+    }
+
     @Bean(name = "localeResolver")
     public LocaleResolver localeResolver() {
         AngularCookieLocaleResolver cookieLocaleResolver = new AngularCookieLocaleResolver();
@@ -38,6 +44,8 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         localeChangeInterceptor.setParamName("language");
         registry.addInterceptor(localeChangeInterceptor);
 
+        registry.addInterceptor(generalInterceptor()).addPathPatterns("/api/**");
+
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate-message");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate-message/**");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/candidate");
@@ -50,8 +58,8 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-member/**");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-pipeline");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company-pipeline/**");
-        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company");
-        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company/**");
+//        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company");
+//        registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/company/**");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/feedback");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/feedback/**");
         registry.addInterceptor(subscriptionInterceptor()).addPathPatterns("/api/job");

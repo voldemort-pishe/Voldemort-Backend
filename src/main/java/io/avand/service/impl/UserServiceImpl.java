@@ -42,10 +42,6 @@ public class UserServiceImpl implements UserService {
 
     private final FileRepository fileRepository;
 
-    private final PlanService planService;
-    private final UserPlanService userPlanService;
-    private final InvoiceService invoiceService;
-    private final SubscriptionService subscriptionService;
     private final UserAuthorityService userAuthorityService;
     private final SmsService smsService;
 
@@ -56,10 +52,6 @@ public class UserServiceImpl implements UserService {
                            MailService mailService,
                            TokenService tokenService,
                            FileRepository fileRepository,
-                           PlanService planService,
-                           UserPlanService userPlanService,
-                           InvoiceService invoiceService,
-                           SubscriptionService subscriptionService,
                            UserAuthorityService userAuthorityService,
                            SmsService smsService) {
         this.userRepository = userRepository;
@@ -69,10 +61,6 @@ public class UserServiceImpl implements UserService {
         this.mailService = mailService;
         this.tokenService = tokenService;
         this.fileRepository = fileRepository;
-        this.planService = planService;
-        this.userPlanService = userPlanService;
-        this.invoiceService = invoiceService;
-        this.subscriptionService = subscriptionService;
         this.userAuthorityService = userAuthorityService;
         this.smsService = smsService;
     }
@@ -100,24 +88,27 @@ public class UserServiceImpl implements UserService {
             userEntity.setActivationKey(RandomUtil.generateActivationKey());
             userEntity.setActivated(false);
 
-            UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-            AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
+            UserAuthorityEntity userAuthority = new UserAuthorityEntity();
+            AuthorityEntity userAuthorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
 
-            userAuthorityEntity.setAuthority(authorityEntity);
-            userAuthorityEntity.setUser(userEntity);
+            userAuthority.setAuthority(userAuthorityEntity);
+            userAuthority.setUser(userEntity);
+
+            UserAuthorityEntity adminAuthority = new UserAuthorityEntity();
+            AuthorityEntity userAdminAuthority = authorityRepository.findByName(AuthoritiesConstants.ADMIN);
+
+            adminAuthority.setAuthority(userAdminAuthority);
+            adminAuthority.setUser(userEntity);
+
 
             Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
-            userAuthorityEntities.add(userAuthorityEntity);
+            userAuthorityEntities.add(userAuthority);
+            userAuthorityEntities.add(adminAuthority);
 
             userEntity.setUserAuthorities(userAuthorityEntities);
         }
 
         userEntity = userRepository.save(userEntity);
-
-        try {
-            this.addSubscription(userEntity);
-        } catch (NotFoundException ignore) {
-        }
 
         boolean bool = smsService.send(userEntity.getCellphone(), userEntity.getActivationKey());
         if (!bool) {
@@ -128,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, String cellphone, Boolean active) {
+    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, String cellphone, Boolean active) throws NotFoundException {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
 
@@ -141,26 +132,11 @@ public class UserServiceImpl implements UserService {
         userEntity.setCellphone(cellphone);
         userEntity.setActivated(active);
         userEntity.setInvitationKey(null);
-
-        UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-        AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
-
-        userAuthorityEntity.setAuthority(authorityEntity);
-        userAuthorityEntity.setUser(userEntity);
-
-        Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
-        userAuthorityEntities.add(userAuthorityEntity);
-
-        userEntity.setUserAuthorities(userAuthorityEntities);
-
+        userAuthorityService.grantAuthority(AuthoritiesConstants.USER, userEntity.getId());
         userEntity = userRepository.save(userEntity);
-
-        try {
-            this.addSubscription(userEntity);
-        } catch (NotFoundException ignore) {
-        }
-
         return userMapper.toDto(userEntity);
+
+
     }
 
     @Override
@@ -340,21 +316,4 @@ public class UserServiceImpl implements UserService {
             .map(userMapper::toDto);
     }
 
-    private void addSubscription(UserEntity userEntity) throws NotFoundException {
-        Optional<PlanDTO> planDTO = planService.findFreePlan();
-        if (planDTO.isPresent()) {
-            InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planDTO.get().getId(), userEntity.getId());
-
-            UserPlanDTO userPlanDTO = userPlanService.save(planDTO.get().getId(), invoiceDTO.getId(), userEntity.getId());
-
-            SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
-            subscriptionDTO.setUserPlanId(userPlanDTO.getId());
-            subscriptionDTO.setUserId(userEntity.getId());
-            subscriptionDTO.setStartDate(ZonedDateTime.now());
-            subscriptionDTO.setEndDate(ZonedDateTime.now().plusDays(planDTO.get().getLength()));
-            subscriptionService.save(subscriptionDTO);
-
-            userAuthorityService.grantAuthority(AuthoritiesConstants.SUBSCRIPTION, userEntity.getId());
-        }
-    }
 }

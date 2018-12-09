@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -36,7 +37,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/candidate")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CandidateResource {
 
     private final Logger log = LoggerFactory.getLogger(CandidateResource.class);
@@ -62,6 +62,7 @@ public class CandidateResource {
      */
     @PostMapping
     @Timed
+    @PreAuthorize("isMember(#candidateDTO.jobId,'JOB','ADD_CANDIDATE')")
     public ResponseEntity<ResponseVM<CandidateDTO>> createCandidate(@Valid @RequestBody CandidateDTO candidateDTO)
         throws URISyntaxException {
         log.debug("REST request to save candidateDTO : {}", candidateDTO);
@@ -90,6 +91,7 @@ public class CandidateResource {
      */
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#candidateDTO.jobId,'JOB','EDIT_CANDIDATE')")
     public ResponseEntity<ResponseVM<CandidateDTO>> updateCandidate(@Valid @RequestBody CandidateDTO candidateDTO)
         throws URISyntaxException {
         log.debug("REST request to update candidateDTO : {}", candidateDTO);
@@ -114,6 +116,7 @@ public class CandidateResource {
      */
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE','VIEW_CANDIDATE')")
     public ResponseEntity<ResponseVM<CandidateDTO>> getCandidate(@PathVariable Long id) {
         log.debug("REST request to get CandidateDTO : {}", id);
         try {
@@ -126,6 +129,7 @@ public class CandidateResource {
 
     @GetMapping
     @Timed
+    @PreAuthorize("isMember('VIEW_CANDIDATE')")
     public ResponseEntity<Page<ResponseVM<CandidateDTO>>> getAllCandidate(@ApiParam Pageable pageable,
                                                                           CandidateFilterVM filterVM) {
         log.debug("REST Request to get Candidates by filter : {}", filterVM);
@@ -145,6 +149,7 @@ public class CandidateResource {
      */
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE','DELETE_CANDIDATE')")
     public ResponseEntity<Void> deleteCandidate(@PathVariable Long id) {
         log.debug("REST request to delete CandidateDto : {}", id);
         candidateService.delete(id);

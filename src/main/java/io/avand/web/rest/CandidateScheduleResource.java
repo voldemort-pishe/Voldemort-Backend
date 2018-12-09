@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -36,7 +37,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/candidate-schedule")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CandidateScheduleResource {
 
     private final Logger log = LoggerFactory.getLogger(CandidateScheduleResource.class);
@@ -61,6 +61,7 @@ public class CandidateScheduleResource {
      */
     @PostMapping
     @Timed
+    @PreAuthorize("isMember(#candidateScheduleDTO.candidateId,'CANDIDATE','ADD_SCHEDULE')")
     public ResponseEntity<ResponseVM<CandidateScheduleDTO>> create
     (@RequestBody CandidateScheduleDTO candidateScheduleDTO)
         throws URISyntaxException {
@@ -90,6 +91,7 @@ public class CandidateScheduleResource {
      */
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#candidateScheduleDTO.candidateId,'CANDIDATE','EDIT_SCHEDULE')")
     public ResponseEntity<ResponseVM<CandidateScheduleDTO>> update
     (@RequestBody CandidateScheduleDTO candidateScheduleDTO)
         throws URISyntaxException {
@@ -115,6 +117,7 @@ public class CandidateScheduleResource {
      */
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'SCHEDULE','VIEW_SCHEDULE')")
     public ResponseEntity<ResponseVM<CandidateScheduleDTO>> getById(@PathVariable Long id) {
         log.debug("REST request to get CandidateScheduleDTO : {}", id);
         try {
@@ -127,6 +130,7 @@ public class CandidateScheduleResource {
 
     @GetMapping
     @Timed
+    @PreAuthorize("isMember('VIEW_SCHEDULE')")
     public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getAll(@ApiParam Pageable pageable) {
         log.debug("REST Request to get CandidateSchedules");
         try {
@@ -140,6 +144,7 @@ public class CandidateScheduleResource {
 
     @PostMapping("/time")
     @Timed
+    @PreAuthorize("isMember('VIEW_SCHEDULE')")
     public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getByTime
         (@ApiParam Pageable pageable, @RequestBody CandidateScheduleDateVM dateVM) {
         log.debug("REST Request to get CandidateSchedules by date : {}", dateVM);
@@ -154,6 +159,7 @@ public class CandidateScheduleResource {
 
     @GetMapping("/candidate/{id}")
     @Timed
+    @PreAuthorize("isMember(#candidateId,'CANDIDATE','VIEW_SCHEDULE')")
     public ResponseEntity<Page<ResponseVM<CandidateScheduleDTO>>> getByCandidateId
         (@ApiParam Pageable pageable, @PathVariable("id") Long candidateId) {
         log.debug("REST Request to get by candidateId : {}", candidateId);
@@ -174,6 +180,7 @@ public class CandidateScheduleResource {
      */
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'SCHEDULE','DELETE_SCHEDULE')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.debug("REST request to delete CandidateScheduleDTO : {}", id);
         try {

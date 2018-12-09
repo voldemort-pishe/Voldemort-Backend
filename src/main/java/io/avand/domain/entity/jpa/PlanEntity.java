@@ -16,7 +16,7 @@ import java.util.Set;
  * A PlanEntity.
  */
 @Entity
-@Table(name = "plan_entity")
+@Table(name = "plan")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class PlanEntity implements Serializable {
 

@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,7 +38,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/job")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class JobResource {
 
     private final Logger log = LoggerFactory.getLogger(JobResource.class);
@@ -65,6 +65,7 @@ public class JobResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping
+    @PreAuthorize("isMember(#jobDTO.companyId,'COMPANY','ADD_JOB')")
     @Timed
     public ResponseEntity<ResponseVM<JobDTO>> createJob(@Valid @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
@@ -95,6 +96,7 @@ public class JobResource {
      */
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#jobDTO.companyId,'COMPANY','EDIT_JOB')")
     public ResponseEntity<ResponseVM<JobDTO>> updateJob(@Valid @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
         log.debug("REST request to update Job : {}", jobDTO);
@@ -119,6 +121,7 @@ public class JobResource {
      */
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'JOB','VIEW_JOB')")
     public ResponseEntity<ResponseVM<JobDTO>> getJob(@PathVariable Long id) {
         log.debug("REST request to get Job : {}", id);
         try {
@@ -136,6 +139,7 @@ public class JobResource {
      */
     @GetMapping
     @Timed
+    @PreAuthorize("isMember('VIEW_JOB')")
     public ResponseEntity<Page<ResponseVM<JobDTO>>> getAllJob(@ApiParam Pageable pageable,
                                                               JobFilterVM filterVM) {
         log.debug("REST request to get all Job");
@@ -155,6 +159,7 @@ public class JobResource {
      */
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'JOB','DELETE_JOB')")
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         log.debug("REST request to delete Job : {}", id);
         try {

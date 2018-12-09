@@ -12,7 +12,7 @@ import java.util.Objects;
  * A EvaluationCriteriaEntity.
  */
 @Entity
-@Table(name = "evaluation_criteria_entity")
+@Table(name = "evaluation_criteria")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class EvaluationCriteriaEntity implements Serializable {
 

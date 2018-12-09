@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,7 +30,6 @@ import java.net.URISyntaxException;
  */
 @RestController
 @RequestMapping("/api/company-pipeline")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyPipelineResource {
 
     private final Logger log = LoggerFactory.getLogger(CompanyPipelineResource.class);
@@ -55,6 +55,7 @@ public class CompanyPipelineResource {
      */
     @PostMapping
     @Timed
+    @PreAuthorize("isMember(#companyPipelineDTO.companyId,'COMPANY','ADD_PIPELINE')")
     public ResponseEntity<ResponseVM<CompanyPipelineDTO>> createCompanyPipeline
     (@RequestBody CompanyPipelineDTO companyPipelineDTO)
         throws URISyntaxException, NotFoundException {
@@ -79,6 +80,7 @@ public class CompanyPipelineResource {
      */
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#companyPipelineDTO.companyId,'COMPANY','ADD_PIPELINE')")
     public ResponseEntity<ResponseVM<CompanyPipelineDTO>> updateCompanyPipeline
     (@RequestBody CompanyPipelineDTO companyPipelineDTO)
         throws URISyntaxException, NotFoundException {
@@ -101,6 +103,7 @@ public class CompanyPipelineResource {
      */
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'COMPANY_PIPELINE','VIEW_PIPELINE')")
     public ResponseEntity<ResponseVM<CompanyPipelineDTO>> getCompanyPipeline(@PathVariable Long id) {
         log.debug("REST request to get CompanyPipelineEntity : {}", id);
         try {
@@ -119,6 +122,7 @@ public class CompanyPipelineResource {
      */
     @GetMapping
     @Timed
+    @PreAuthorize("isMember('VIEW_PIPELINE')")
     public ResponseEntity<Page<ResponseVM<CompanyPipelineDTO>>> getAllCompanyPipeline(@ApiParam Pageable pageable) {
         log.debug("REST request to get all CompanyPipelineEntities");
         try {
@@ -137,6 +141,7 @@ public class CompanyPipelineResource {
      */
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'COMPANY_PIPELINE','DELETE_PIPELINE')")
     public ResponseEntity<Void> deleteCompanyPipeline(@PathVariable Long id) throws NotFoundException {
         log.debug("REST request to delete CompanyPipelineEntity : {}", id);
         pipelineService.delete(id);

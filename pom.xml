@@ -343,7 +343,11 @@
             <artifactId>mailgun</artifactId>
             <version>0.0.5-RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.avand</groupId>
+            <artifactId>payment</artifactId>
+            <version>0.0.1-RELEASE</version>
+        </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>
             <artifactId>unirest-java</artifactId>

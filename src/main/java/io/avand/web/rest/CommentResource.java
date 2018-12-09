@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -30,7 +31,6 @@ import java.net.URISyntaxException;
  */
 @RestController
 @RequestMapping("/api/comment")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CommentResource {
 
     private final Logger log = LoggerFactory.getLogger(CommentResource.class);
@@ -58,6 +58,7 @@ public class CommentResource {
      */
     @PostMapping
     @Timed
+    @PreAuthorize("isMember(#commentDTO.candidateId,'CANDIDATE','ADD_COMMENT')")
     public ResponseEntity<ResponseVM<CommentDTO>> createComment(@RequestBody CommentDTO commentDTO) throws URISyntaxException {
         log.debug("REST request to save Comment : {}", commentDTO);
         if (commentDTO.getId() != null) {
@@ -84,6 +85,7 @@ public class CommentResource {
      */
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#commentDTO.candidateId,'CANDIDATE','EDIT_COMMENT')")
     public ResponseEntity<ResponseVM<CommentDTO>> updateComment(@RequestBody CommentDTO commentDTO) throws URISyntaxException {
         log.debug("REST request to update Comment : {}", commentDTO);
         if (commentDTO.getId() == null) {
@@ -107,6 +109,7 @@ public class CommentResource {
      */
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'COMMENT','VIEW_COMMENT')")
     public ResponseEntity<ResponseVM<CommentDTO>> getComment(@PathVariable Long id) {
         log.debug("REST request to get Comment : {}", id);
         try {
@@ -126,6 +129,7 @@ public class CommentResource {
      */
     @GetMapping("/candidate/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE','VIEW_COMMENT')")
     public ResponseEntity<Page<ResponseVM<CommentDTO>>> getCandidateComment(@PathVariable Long id, @ApiParam Pageable pageable) {
         log.debug("REST request to get all Comment");
         try {
@@ -145,6 +149,7 @@ public class CommentResource {
      */
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'COMMENT','DELETE_COMMENT')")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
         log.debug("REST request to delete Comment : {}", id);
         commentService.delete(id);

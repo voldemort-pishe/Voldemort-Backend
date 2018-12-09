@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CompanyMemberRepository extends JpaRepository<CompanyMemberEntity, Long>,
@@ -16,6 +17,8 @@ public interface CompanyMemberRepository extends JpaRepository<CompanyMemberEnti
     CompanyMemberEntity findByIdAndCompany_Id(Long id, Long companyId);
 
     CompanyMemberEntity findByUser_Id(Long userId);
+
+    Optional<CompanyMemberEntity> findByUser_Login(String login);
 
     Page<CompanyMemberEntity> findAllByCompany_Id(Long companyId, Pageable pageable);
 

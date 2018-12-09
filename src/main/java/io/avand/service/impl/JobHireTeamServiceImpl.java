@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,6 +81,16 @@ public class JobHireTeamServiceImpl implements JobHireTeamService {
         log.debug("Request to jobHireTeam by jobId : {}", jobId);
         return jobHireTeamRepository
             .findByJob_IdAndJob_Company_Id(jobId, securityUtils.getCurrentCompanyId())
+            .stream()
+            .map(jobHireTeamMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<JobHireTeamDTO> findAllByUserLoginAndJobId(String login, Long jobId) {
+        log.debug("Request to ");
+        return jobHireTeamRepository
+            .findAllByUser_LoginAndJob_Id(login, jobId)
             .stream()
             .map(jobHireTeamMapper::toDto)
             .collect(Collectors.toList());

@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/province")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class ProvinceResource {
 
     private final Logger log = LoggerFactory.getLogger(ProvinceResource.class);

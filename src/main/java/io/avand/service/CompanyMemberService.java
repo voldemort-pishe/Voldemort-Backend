@@ -7,16 +7,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CompanyMemberService {
 
     CompanyMemberDTO save(CompanyMemberDTO companyMemberDTO) throws NotFoundException;
 
-    List<CompanyMemberDTO> saveAll(List<String> emails) throws NotFoundException;
+    List<CompanyMemberDTO> saveAll(List<CompanyMemberDTO> memberDTOS) throws NotFoundException;
 
     CompanyMemberDTO findById(Long id) throws NotFoundException;
 
     CompanyMemberDTO findByUserId(Long userId) throws NotFoundException;
+
+    Optional<CompanyMemberDTO> findByLogin(String login);
 
     Page<CompanyMemberDTO> findAllByFilter(CompanyMemberFilterVM filterVM, Pageable pageable)
         throws NotFoundException;

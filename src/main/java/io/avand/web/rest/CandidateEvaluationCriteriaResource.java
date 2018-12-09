@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -52,6 +53,7 @@ public class CandidateEvaluationCriteriaResource {
      */
     @PostMapping
     @Timed
+    @PreAuthorize("isMember(#candidateEvaluationCriteriaDTO.candidateId,'CANDIDATE','ADD_CANDIDATE_CRITERIA')")
     public ResponseEntity<ResponseVM<CandidateEvaluationCriteriaDTO>> create(@RequestBody CandidateEvaluationCriteriaDTO candidateEvaluationCriteriaDTO) throws URISyntaxException {
         log.debug("REST request to save CandidateEvaluationCriteriaDTO : {}", candidateEvaluationCriteriaDTO);
         if (candidateEvaluationCriteriaDTO.getId() != null) {
@@ -78,6 +80,7 @@ public class CandidateEvaluationCriteriaResource {
      */
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#candidateEvaluationCriteriaDTO.id,'CANDIDATE_CRITERIA','EDIT_CANDIDATE_CRITERIA')")
     public ResponseEntity<ResponseVM<CandidateEvaluationCriteriaDTO>> update(@RequestBody CandidateEvaluationCriteriaDTO candidateEvaluationCriteriaDTO) throws URISyntaxException {
         log.debug("REST request to update CandidateEvaluationCriteriaDTO : {}", candidateEvaluationCriteriaDTO);
         if (candidateEvaluationCriteriaDTO.getId() == null) {
@@ -100,6 +103,7 @@ public class CandidateEvaluationCriteriaResource {
      */
     @GetMapping("/candidate/{id}")
     @Timed
+    @PreAuthorize("isMember(#candidateId,'CANDIDATE','VIEW_CANDIDATE_CRITERIA')")
     public ResponseEntity<Page<ResponseVM<CandidateEvaluationCriteriaDTO>>> getAllByCandidateId(@PathVariable("id") Long candidateId, @ApiParam Pageable pageable) {
         log.debug("REST request to get all CandidateEvaluationCriteriaEntities");
         try {
@@ -118,6 +122,7 @@ public class CandidateEvaluationCriteriaResource {
      */
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE_CRITERIA','VIEW_CANDIDATE_CRITERIA')")
     public ResponseEntity<ResponseVM<CandidateEvaluationCriteriaDTO>> getById(@PathVariable Long id) {
         log.debug("REST request to get CandidateEvaluationCriteriaDTO : {}", id);
         try {
@@ -136,6 +141,7 @@ public class CandidateEvaluationCriteriaResource {
      */
     @DeleteMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE_CRITERIA','DELETE_CANDIDATE_CRITERIA')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.debug("REST request to delete CandidateEvaluationCriteriaDTO : {}", id);
         try {

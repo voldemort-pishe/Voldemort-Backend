@@ -66,6 +66,8 @@ mailgun:
     domain: mg.avand.io
     username: api
     apiKey: f066257be5bee16639b8cb420426711d-a5d1a068-3f41d055
+payment:
+    merchantId: cb812188-aea2-11e8-b869-000c295eb8fc
 
 # ===================================================================
 # JHipster specific properties

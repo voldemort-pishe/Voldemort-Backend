@@ -1,5 +1,6 @@
 package io.avand.repository.jpa;
 
+import io.avand.domain.entity.jpa.CompanyEntity;
 import io.avand.domain.entity.jpa.InvoiceEntity;
 import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.domain.enumeration.InvoiceStatus;
@@ -18,13 +19,9 @@ import java.util.Optional;
 @Repository
 public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long> {
 
-    Optional<InvoiceEntity> findByIdAndStatusAndUser_Id(Long id, InvoiceStatus status,Long userId);
+    Page<InvoiceEntity> findAllByCompany_Id(Long id, Pageable pageable);
 
-    Page<InvoiceEntity> findAllByUser_Id(Long id, Pageable pageable);
-
-    Optional<InvoiceEntity> findByIdAndUser_Id(Long id, Long userId);
-
-    Optional<InvoiceEntity> findTopByUser(UserEntity user);
+    Optional<InvoiceEntity> findByIdAndCompany_Id(Long id, Long companyId);
 
     Optional<InvoiceEntity> findByTrackingCode(String trackingCode);
 }

@@ -43,12 +43,6 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
     @JsonIgnore
     private Set<CompanyDTO> companies = new HashSet<>();
 
-    @JsonIgnore
-    private Set<TalentPoolDTO> talentPools = new HashSet<>();
-
-    @JsonIgnore
-    private Set<InvoiceDTO> invoices = new HashSet<>();
-
     private Long fileId;
 
     public String getLogin() {
@@ -153,22 +147,6 @@ public class UserDTO extends AbstractAuditingDTO implements Serializable {
 
     public void setCompanies(Set<CompanyDTO> companies) {
         this.companies = companies;
-    }
-
-    public Set<TalentPoolDTO> getTalentPools() {
-        return talentPools;
-    }
-
-    public void setTalentPools(Set<TalentPoolDTO> talentPools) {
-        this.talentPools = talentPools;
-    }
-
-    public Set<InvoiceDTO> getInvoices() {
-        return invoices;
-    }
-
-    public void setInvoices(Set<InvoiceDTO> invoices) {
-        this.invoices = invoices;
     }
 
     public Long getFileId() {

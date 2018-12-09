@@ -9,16 +9,16 @@ import io.avand.repository.jpa.CompanyRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
-import io.avand.service.CompanyMemberService;
-import io.avand.service.CompanyService;
-import io.avand.service.dto.CompanyDTO;
-import io.avand.service.dto.CompanyMemberDTO;
+import io.avand.service.*;
+import io.avand.service.dto.*;
 import io.avand.service.mapper.CompanyMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Service
@@ -33,6 +33,10 @@ public class CompanyServiceImpl implements CompanyService {
     private final FileRepository fileRepository;
     private final CompanyMemberService companyMemberService;
     private final CompanyContactRepository companyContactRepository;
+    private final PlanService planService;
+    private final InvoiceService invoiceService;
+    private final CompanyPlanService companyPlanService;
+    private final SubscriptionService subscriptionService;
 
     public CompanyServiceImpl(CompanyRepository companyRepository,
                               CompanyMapper companyMapper,
@@ -40,7 +44,11 @@ public class CompanyServiceImpl implements CompanyService {
                               SecurityUtils securityUtils,
                               FileRepository fileRepository,
                               CompanyMemberService companyMemberService,
-                              CompanyContactRepository companyContactRepository) {
+                              CompanyContactRepository companyContactRepository,
+                              PlanService planService,
+                              InvoiceService invoiceService,
+                              CompanyPlanService companyPlanService,
+                              SubscriptionService subscriptionService) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.userRepository = userRepository;
@@ -48,9 +56,14 @@ public class CompanyServiceImpl implements CompanyService {
         this.fileRepository = fileRepository;
         this.companyMemberService = companyMemberService;
         this.companyContactRepository = companyContactRepository;
+        this.planService = planService;
+        this.invoiceService = invoiceService;
+        this.companyPlanService = companyPlanService;
+        this.subscriptionService = subscriptionService;
     }
 
     @Override
+    @Transactional
     public CompanyDTO save(CompanyDTO companyDTO) throws NotFoundException {
         log.debug("Request to save company : {}", companyDTO);
         Long userId = securityUtils.getCurrentUserId();
@@ -71,8 +84,12 @@ public class CompanyServiceImpl implements CompanyService {
                 CompanyMemberDTO companyMemberDTO = new CompanyMemberDTO();
                 companyMemberDTO.setCompanyId(companyEntity.getId());
                 companyMemberDTO.setUserEmail(userEntity.getEmail());
+                companyMemberDTO.setDepartment("منابع انسانی");
+                companyMemberDTO.setPosition("رییس شرکت");
                 companyMemberService.save(companyMemberDTO);
             }
+
+            this.addSubscription(companyEntity);
 
             return companyMapper.toDto(companyEntity);
         } else {
@@ -109,6 +126,17 @@ public class CompanyServiceImpl implements CompanyService {
             companyRepository.delete(companyEntity);
         } else {
             throw new NotFoundException("Company Not Found By Id");
+        }
+    }
+
+    private void addSubscription(CompanyEntity companyEntity) throws NotFoundException {
+        Optional<PlanDTO> planDTO = planService.findFreePlan();
+        if (planDTO.isPresent()) {
+            InvoiceDTO invoiceDTO = invoiceService.saveByPlanId(planDTO.get().getId(), companyEntity.getId());
+
+            CompanyPlanDTO companyPlanDTO = companyPlanService.save(planDTO.get().getId(), invoiceDTO.getId(), companyEntity.getId());
+
+            subscriptionService.save(companyPlanDTO.getId(), companyEntity.getId());
         }
     }
 }

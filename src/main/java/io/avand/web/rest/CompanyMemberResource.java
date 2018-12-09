@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,26 +28,30 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/company-member")
-@Secured(AuthoritiesConstants.SUBSCRIPTION)
 public class CompanyMemberResource {
 
     private final static String ENTITY_NAME = "CompanyMemberEntity";
     private final Logger log = LoggerFactory.getLogger(CompanyMemberResource.class);
     private final CompanyMemberService companyMemberService;
     private final CompanyMemberComponent companyMemberComponent;
+    private final SecurityUtils securityUtils;
 
     public CompanyMemberResource(CompanyMemberService companyMemberService,
-                                 CompanyMemberComponent companyMemberComponent) {
+                                 CompanyMemberComponent companyMemberComponent,
+                                 SecurityUtils securityUtils) {
         this.companyMemberService = companyMemberService;
         this.companyMemberComponent = companyMemberComponent;
+        this.securityUtils = securityUtils;
     }
 
     @PostMapping
+    @PreAuthorize("isMember(#companyMemberDTO.companyId,'COMPANY','ADD_COMPANY_MEMBER')")
     public ResponseEntity<ResponseVM<CompanyMemberDTO>> save(@RequestBody @Valid CompanyMemberDTO companyMemberDTO)
         throws URISyntaxException {
         log.debug("REST Request to save company member : {}", companyMemberDTO);
 
         try {
+            companyMemberDTO.setCompanyId(securityUtils.getCurrentCompanyId());
             ResponseVM<CompanyMemberDTO> result = companyMemberComponent.save(companyMemberDTO);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
@@ -57,12 +62,13 @@ public class CompanyMemberResource {
     }
 
     @PostMapping("/all")
+    @PreAuthorize("isMember('ADD_COMPANY_MEMBER')")
     public ResponseEntity<List<ResponseVM<CompanyMemberDTO>>> saveAll(@RequestBody @Valid CompanyMemberVM companyMemberVM)
         throws URISyntaxException {
         log.debug("REST Request to save company member : {}", companyMemberVM);
 
         try {
-            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.saveAll(companyMemberVM.getEmails());
+            List<ResponseVM<CompanyMemberDTO>> result = companyMemberComponent.saveAll(companyMemberVM.getMembers());
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             throw new ServerErrorException("شماه قبلا عضو شده‌اید");
@@ -72,6 +78,7 @@ public class CompanyMemberResource {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isMember(#id,'COMPANY_MEMBER','VIEW_COMPANY_MEMBER')")
     public ResponseEntity<ResponseVM<CompanyMemberDTO>> getById(@PathVariable("id") Long id) {
         log.debug("REST Request to find company member by id : {}", id);
         try {
@@ -83,6 +90,7 @@ public class CompanyMemberResource {
     }
 
     @GetMapping
+    @PreAuthorize("isMember('VIEW_COMPANY_MEMBER')")
     public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAll
         (@ApiParam Pageable pageable, CompanyMemberFilterVM filterVM) {
         log.debug("Request to find all company member");
@@ -95,6 +103,7 @@ public class CompanyMemberResource {
     }
 
     @GetMapping("/active")
+    @PreAuthorize("isMember('VIEW_COMPANY_MEMBER')")
     public ResponseEntity<Page<ResponseVM<CompanyMemberDTO>>> getAllActive(@ApiParam Pageable pageable) {
         log.debug("Request to find active company member");
         try {
@@ -106,6 +115,7 @@ public class CompanyMemberResource {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("isMember(#id,'COMPANY_MEMBER','DELETE_COMPANY_MEMBER')")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         log.debug("REST Request to delete company member by id : {}", id);
         try {

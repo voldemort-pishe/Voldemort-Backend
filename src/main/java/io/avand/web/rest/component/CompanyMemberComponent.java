@@ -14,7 +14,7 @@ public interface CompanyMemberComponent {
 
     ResponseVM<CompanyMemberDTO> save(CompanyMemberDTO companyMemberDTO) throws NotFoundException;
 
-    List<ResponseVM<CompanyMemberDTO>> saveAll(List<String> emails) throws NotFoundException;
+    List<ResponseVM<CompanyMemberDTO>> saveAll(List<CompanyMemberDTO> memberDTOS) throws NotFoundException;
 
     ResponseVM<CompanyMemberDTO> findById(Long id) throws NotFoundException;
 

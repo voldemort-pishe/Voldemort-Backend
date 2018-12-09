@@ -1,25 +1,25 @@
 package io.avand.web.rest.vm;
 
+import io.avand.service.dto.CompanyMemberDTO;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class CompanyMemberVM implements Serializable {
-    private List<String> emails;
+    private List<CompanyMemberDTO> members;
 
-    public List<String> getEmails() {
-        return emails;
+    public List<CompanyMemberDTO> getMembers() {
+        return members;
     }
 
-    public void setEmails(List<String> emails) {
-        this.emails = emails;
+    public void setMembers(List<CompanyMemberDTO> members) {
+        this.members = members;
     }
-
-
 
     @Override
     public String toString() {
         return "CompanyMemberVM{" +
-            "emails=" + emails +
+            "members=" + members +
             '}';
     }
 }

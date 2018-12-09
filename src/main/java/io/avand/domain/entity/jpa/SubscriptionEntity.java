@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "subscription_entity")
+@Table(name = "subscription")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
 public class SubscriptionEntity implements Serializable {
 
@@ -18,11 +18,11 @@ public class SubscriptionEntity implements Serializable {
 
     @OneToOne
     @JoinColumn(unique = true)
-    private UserEntity user;
+    private CompanyEntity company;
 
     @OneToOne
     @JoinColumn(unique = true)
-    private UserPlanEntity userPlan;
+    private CompanyPlanEntity companyPlan;
 
     @Column(name = "start_date")
     private ZonedDateTime startDate;
@@ -38,20 +38,20 @@ public class SubscriptionEntity implements Serializable {
         this.id = id;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public CompanyEntity getCompany() {
+        return company;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setCompany(CompanyEntity company) {
+        this.company = company;
     }
 
-    public UserPlanEntity getUserPlan() {
-        return userPlan;
+    public CompanyPlanEntity getCompanyPlan() {
+        return companyPlan;
     }
 
-    public void setUserPlan(UserPlanEntity userPlan) {
-        this.userPlan = userPlan;
+    public void setCompanyPlan(CompanyPlanEntity companyPlan) {
+        this.companyPlan = companyPlan;
     }
 
     public ZonedDateTime getStartDate() {

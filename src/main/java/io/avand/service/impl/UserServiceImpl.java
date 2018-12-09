@@ -42,10 +42,6 @@ public class UserServiceImpl implements UserService {
 
     private final FileRepository fileRepository;
 
-    private final PlanService planService;
-    private final CompanyPlanService companyPlanService;
-    private final InvoiceService invoiceService;
-    private final SubscriptionService subscriptionService;
     private final UserAuthorityService userAuthorityService;
     private final SmsService smsService;
 
@@ -56,10 +52,6 @@ public class UserServiceImpl implements UserService {
                            MailService mailService,
                            TokenService tokenService,
                            FileRepository fileRepository,
-                           PlanService planService,
-                           CompanyPlanService companyPlanService,
-                           InvoiceService invoiceService,
-                           SubscriptionService subscriptionService,
                            UserAuthorityService userAuthorityService,
                            SmsService smsService) {
         this.userRepository = userRepository;
@@ -69,10 +61,6 @@ public class UserServiceImpl implements UserService {
         this.mailService = mailService;
         this.tokenService = tokenService;
         this.fileRepository = fileRepository;
-        this.planService = planService;
-        this.companyPlanService = companyPlanService;
-        this.invoiceService = invoiceService;
-        this.subscriptionService = subscriptionService;
         this.userAuthorityService = userAuthorityService;
         this.smsService = smsService;
     }
@@ -131,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, String cellphone, Boolean active) {
+    public UserDTO saveActive(String login, String firstName, String lastName, String email, String password, String cellphone, Boolean active) throws NotFoundException {
         log.debug("Request to save user : {}, {}, {}, {}, {}", login, firstName, lastName, email, password);
         Optional<UserEntity> userEntityOptional = userRepository.findByLogin(login);
 
@@ -144,21 +132,11 @@ public class UserServiceImpl implements UserService {
         userEntity.setCellphone(cellphone);
         userEntity.setActivated(active);
         userEntity.setInvitationKey(null);
-
-        UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
-        AuthorityEntity authorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
-
-        userAuthorityEntity.setAuthority(authorityEntity);
-        userAuthorityEntity.setUser(userEntity);
-
-        Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
-        userAuthorityEntities.add(userAuthorityEntity);
-
-        userEntity.setUserAuthorities(userAuthorityEntities);
-
+        userAuthorityService.grantAuthority(AuthoritiesConstants.USER, userEntity.getId());
         userEntity = userRepository.save(userEntity);
-
         return userMapper.toDto(userEntity);
+
+
     }
 
     @Override

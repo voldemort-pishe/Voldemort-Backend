@@ -111,6 +111,7 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
                     user.setLogin(memberDTO.getUserEmail());
                     user.setEmail(memberDTO.getUserEmail());
                     user.setInvitationKey(RandomUtil.generateInvitationKey());
+                    user.setActivated(false);
                     userEntity = userRepository.save(user);
                     register = true;
                 } else {

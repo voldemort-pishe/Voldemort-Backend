@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="locadData" author="pooya">
+
+        <loadData
+            tableName="authority"
+            file="config/liquibase/sample_data/authority_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="permission"
+            file="config/liquibase/sample_data/permission_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="authority_permission"
+            file="config/liquibase/sample_data/authority_permission_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="file"
+            file="config/liquibase/sample_data/file_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="plan"
+            file="config/liquibase/sample_data/plan_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="user"
+            separator=";"
+            file="config/liquibase/sample_data/user_entity.csv"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+            <column name="reset_date" type="timestamp"/>
+            <column name="activated" type="boolean"/>
+        </loadData>
+
+        <loadData
+            tableName="user_authority"
+            file="config/liquibase/sample_data/user_authority_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="company_contact"
+            file="config/liquibase/sample_data/company_contact_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
+            tableName="company"
+            file="config/liquibase/sample_data/company_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
+            tableName="company_member"
+            file="config/liquibase/sample_data/company_member_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="company_pipeline"
+            file="config/liquibase/sample_data/company_pipeline_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="invoice"
+            file="config/liquibase/sample_data/invoice_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
+            tableName="invoice_item"
+            file="config/liquibase/sample_data/invoice_item_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="company_plan"
+            file="config/liquibase/sample_data/company_plan_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+        <loadData
+            tableName="subscription"
+            file="config/liquibase/sample_data/subscription_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
+            tableName="job"
+            file="config/liquibase/sample_data/job_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
+            tableName="job_hire_team"
+            file="config/liquibase/sample_data/job_hire_team_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
+            tableName="candidate"
+            file="config/liquibase/sample_data/candidate_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
+            tableName="comment"
+            file="config/liquibase/sample_data/comment_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="status" type="boolean"/>
+        </loadData>
+
+        <loadData
+            tableName="feedback"
+            file="config/liquibase/sample_data/feedback_entity.csv"
+            separator=";"
+            encoding="UTF-8"/>
+
+    </changeSet>
+</databaseChangeLog>

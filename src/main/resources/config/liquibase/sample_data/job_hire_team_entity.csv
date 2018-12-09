@@ -1,0 +1,11 @@
+id;role;user_id;job_id;created_by;created_date;last_modified_by;last_modified_date
+1;ROLE_RECRUITER;2;1;ehdi.sh@gmail.com;2018-12-9 13:38:17;ehdi.sh@gmail.com;2018-12-9 13:38:17
+2;ROLE_HIRING_MANAGER;2;1;ehdi.sh@gmail.com;2018-12-9 13:38:17;ehdi.sh@gmail.com;2018-12-9 13:38:17
+3;ROLE_RECRUITER;2;2;ehdi.sh@gmail.com;2018-12-9 13:39:17;ehdi.sh@gmail.com;2018-12-9 13:39:17
+4;ROLE_HIRING_MANAGER;2;2;ehdi.sh@gmail.com;2018-12-9 13:39:17;ehdi.sh@gmail.com;2018-12-9 13:39:17
+5;ROLE_RECRUITER;2;3;ehdi.sh@gmail.com;2018-12-9 13:39:22;ehdi.sh@gmail.com;2018-12-9 13:39:22
+6;ROLE_HIRING_MANAGER;2;3;ehdi.sh@gmail.com;2018-12-9 13:39:22;ehdi.sh@gmail.com;2018-12-9 13:39:22
+7;ROLE_RECRUITER;2;4;ehdi.sh@gmail.com;2018-12-9 13:39:27;ehdi.sh@gmail.com;2018-12-9 13:39:27
+8;ROLE_HIRING_MANAGER;2;4;ehdi.sh@gmail.com;2018-12-9 13:39:27;ehdi.sh@gmail.com;2018-12-9 13:39:27
+9;ROLE_RECRUITER;2;5;ehdi.sh@gmail.com;2018-12-9 13:39:39;ehdi.sh@gmail.com;2018-12-9 13:39:39
+10;ROLE_HIRING_MANAGER;2;5;ehdi.sh@gmail.com;2018-12-9 13:39:39;ehdi.sh@gmail.com;2018-12-9 13:39:39

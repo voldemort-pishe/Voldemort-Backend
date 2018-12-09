@@ -1,8 +1,0 @@
-unique_id;name_en;description_en;name_fa;description_fa;language;type;location;department;hired_manager_id;hired_expert_id;company_id;created_by;created_date;last_modified_by;last_modified_date
-AslXArvtc69DShE;Android;AndroidAndroid;AndroidFa;AndroidAndroidFa;BOTH;FULL_TIME;Tehran;Technical;1;1;1;anonymousUser;2019-02-02 00:00:00;anonymousUser;2019-02-02 00:00:00
-dQseQ1YkizBsSNJ;Back-end;Back-endBack-end;Back-endFa;Back-endBack-endFa;BOTH;FULL_TIME;Tehran;Technical;1;1;1;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-2g2P544uMJ4RHbv;Front-end;Front-endFront-end;Front-endFa;Front-endFront-endFa;EN;PART_TIME;Tehran;Technical;1;1;1;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-n3xxEuRj13s7zlo;Front-end;Front-endFront-end;Front-endFa;Front-endFront-endFa;EN;PART_TIME;Tehran;Technical;1;1;3;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-dU6eaSLP6EsUm7h;Back-end;Back-endBack-end;Back-endFa;Back-endBack-endFa;FA;FULL_TIME;Tehran;Technical;1;1;3;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-BbxGGPeEkR195s1;Python developer;Python developerPython developer;Python developerFa;Python developerPython developerFa;FA;FULL_TIME;London;Technical;1;1;2;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00
-iA5tlspnfjpJbWd;Dev-Ops;Dev-OpsDev-Ops;Dev-OpsFa;Dev-OpsDev-OpsFa;BOTH;FULL_TIME;London;Technical;1;1;2;anonymousUser;2018-02-02 00:00:00;anonymousUser;2018-02-02 00:00:00

@@ -78,14 +78,6 @@
         </createTable>
         <dropDefaultValue tableName="job" columnName="created_date" columnDataType="datetime"/>
         <dropDefaultValue tableName="job" columnName="last_modified_date" columnDataType="datetime"/>
-
-        <!--<loadData tableName="job"-->
-                  <!--file="config/liquibase/job_entity.csv"-->
-                  <!--separator=";"-->
-                  <!--encoding="UTF-8">-->
-            <!--<column name="created_date" type="timestamp"/>-->
-            <!--<column name="last_modified_date" type="timestamp"/>-->
-        <!--</loadData>-->
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

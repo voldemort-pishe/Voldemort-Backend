@@ -26,6 +26,7 @@ public class SecurityACLService {
     private final EvaluationCriteriaRepository evaluationCriteriaRepository;
     private final JobRepository jobRepository;
     private final JobHireTeamRepository jobHireTeamRepository;
+    private final InvoiceRepository invoiceRepository;
 
     public SecurityACLService(CandidateRepository candidateRepository,
                               CandidateEvaluationCriteriaRepository candidateEvaluationCriteriaRepository,
@@ -38,7 +39,8 @@ public class SecurityACLService {
                               CompanyPipelineRepository pipelineRepository,
                               EvaluationCriteriaRepository evaluationCriteriaRepository,
                               JobRepository jobRepository,
-                              JobHireTeamRepository jobHireTeamRepository) {
+                              JobHireTeamRepository jobHireTeamRepository,
+                              InvoiceRepository invoiceRepository) {
         this.candidateRepository = candidateRepository;
         this.candidateEvaluationCriteriaRepository = candidateEvaluationCriteriaRepository;
         this.candidateMessageRepository = candidateMessageRepository;
@@ -51,6 +53,7 @@ public class SecurityACLService {
         this.evaluationCriteriaRepository = evaluationCriteriaRepository;
         this.jobRepository = jobRepository;
         this.jobHireTeamRepository = jobHireTeamRepository;
+        this.invoiceRepository = invoiceRepository;
     }
 
     boolean isJobMember(Authentication authentication, Long id, ClassType type, PermissionDTO permissionDTO) {
@@ -130,6 +133,8 @@ public class SecurityACLService {
                 case CRITERIA:
                     companyId = this.findCompanyByEvaluation(id);
                     break;
+                case INVOICE:
+                    companyId = this.findCompanyByInvoice(id);
             }
             if (companyId != null) {
                 return this.isSystemMember(authentication, companyId, permissionDTO);
@@ -254,6 +259,15 @@ public class SecurityACLService {
         if (criteriaEntity != null) {
             return criteriaEntity.getCompany().getId();
         } else {
+            throw new NotFoundException("NotFound");
+        }
+    }
+
+    private Long findCompanyByInvoice(Long id) throws NotFoundException{
+        InvoiceEntity invoiceEntity = invoiceRepository.findOne(id);
+        if (invoiceEntity!=null){
+            return invoiceEntity.getCompany().getId();
+        }else {
             throw new NotFoundException("NotFound");
         }
     }

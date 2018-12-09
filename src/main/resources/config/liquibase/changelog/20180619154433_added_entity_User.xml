@@ -91,16 +91,6 @@
         <dropDefaultValue tableName="user" columnName="reset_date" columnDataType="datetime"/>
         <dropDefaultValue tableName="user" columnName="created_date" columnDataType="datetime"/>
         <dropDefaultValue tableName="user" columnName="last_modified_date" columnDataType="datetime"/>
-        <!--<loadData-->
-            <!--tableName="user"-->
-            <!--separator=";"-->
-            <!--file="config/liquibase/user_entity.csv"-->
-            <!--encoding="UTF-8">-->
-            <!--<column name="created_date" type="timestamp"/>-->
-            <!--<column name="last_modified_date" type="timestamp"/>-->
-            <!--<column name="reset_date" type="timestamp"/>-->
-            <!--<column name="activated" type="boolean"/>-->
-        <!--</loadData>-->
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

@@ -72,19 +72,23 @@ public class AccountResource {
         Optional<UserDTO> userFound = userService.findByInvitationKey(userRegisterInviteVM.getInvitationKey());
 
         if (userFound.isPresent()) {
-            userService
-                .saveActive(
-                    userFound.get().getEmail(),
-                    userRegisterInviteVM.getFirstName(),
-                    userRegisterInviteVM.getLastName(),
-                    userFound.get().getEmail(),
-                    userRegisterInviteVM.getPassword(),
-                    userRegisterInviteVM.getCellphone(),
-                    true
-                );
-            ServerMessage serverMessage = new ServerMessage();
-            serverMessage.setMessage("اطلاعات شما با موفقیت ثبت شد");
-            return new ResponseEntity<>(serverMessage, HttpStatus.OK);
+            try {
+                userService
+                    .saveActive(
+                        userFound.get().getEmail(),
+                        userRegisterInviteVM.getFirstName(),
+                        userRegisterInviteVM.getLastName(),
+                        userFound.get().getEmail(),
+                        userRegisterInviteVM.getPassword(),
+                        userRegisterInviteVM.getCellphone(),
+                        true
+                    );
+                ServerMessage serverMessage = new ServerMessage();
+                serverMessage.setMessage("اطلاعات شما با موفقیت ثبت شد");
+                return new ResponseEntity<>(serverMessage, HttpStatus.OK);
+            }catch (NotFoundException e){
+                throw new ServerErrorException("مشکلی در ثبت اطلاعات بوجود آمده است لطفا مجدد تلاش نمایید");
+            }
         } else {
             throw new ServerErrorException(ServerErrorConstants.USER_NOT_FOUND);
         }

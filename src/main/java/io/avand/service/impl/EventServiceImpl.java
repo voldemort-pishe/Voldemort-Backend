@@ -8,6 +8,7 @@ import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.EventService;
 import io.avand.service.dto.EventDTO;
+import io.avand.service.dto.EventTypeCountDTO;
 import io.avand.service.mapper.EventMapper;
 import io.avand.web.rest.vm.EventFilterVM;
 import io.avand.web.specification.EventSpecification;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,6 +80,17 @@ public class EventServiceImpl implements EventService {
                 throw new NotFoundException("Event Not Found");
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<EventTypeCountDTO> countAllByStatus(EventStatus status) throws NotFoundException {
+        log.debug("Request to count all event by status : {}", status);
+        Optional<UserEntity> userEntity = userRepository.findById(securityUtils.getCurrentUserId());
+        if (userEntity.isPresent()) {
+            return eventRepository.countAllByStatus(userEntity.get(), status);
+        } else {
+            throw new NotFoundException("user Not Found");
         }
     }
 

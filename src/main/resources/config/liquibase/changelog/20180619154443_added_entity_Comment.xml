@@ -40,14 +40,6 @@
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
-
-        <!--<loadData tableName="comment"-->
-                  <!--file="config/liquibase/comment_entity.csv"-->
-                  <!--separator=";"-->
-                  <!--encoding="UTF-8">-->
-        <!--<column name="status" type="boolean"/>-->
-        <!--</loadData>-->
-
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

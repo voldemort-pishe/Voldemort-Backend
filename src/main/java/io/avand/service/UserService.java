@@ -13,7 +13,7 @@ public interface UserService {
 
     UserDTO save(String login,String firstName,String lastName,String email,String password,String cellphone);
 
-    UserDTO saveActive(String login,String firstName,String lastName,String email,String password,String cellphone, Boolean activated);
+    UserDTO saveActive(String login,String firstName,String lastName,String email,String password,String cellphone, Boolean activated) throws NotFoundException;
 
     UserDTO update(UserDTO userDTO) throws NotFoundException;
 

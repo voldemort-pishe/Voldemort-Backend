@@ -3,6 +3,7 @@ package io.avand.service.impl;
 import io.avand.aop.event.CustomEvent;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.FeedbackEntity;
+import io.avand.domain.entity.jpa.JobHireTeamEntity;
 import io.avand.domain.enumeration.EventType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FeedbackRepository;
@@ -63,14 +64,17 @@ public class FeedbackServiceImpl implements FeedbackService {
 
                 Optional<UserDTO> userDTO = userService.findById(userId);
                 String name = userDTO.map(userDTO1 -> userDTO1.getFirstName() + " " + userDTO1.getLastName()).orElse("ناشناس");
-
-                CustomEvent customEvent = new CustomEvent(this);
-                customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
-                customEvent.setDescription(String.format("نظر از %s - %s", name, feedbackEntity.getFeedbackText()));
-                customEvent.setExtra(feedbackEntity.getId().toString());
-                customEvent.setOwner(userId);
-                customEvent.setType(EventType.FEEDBACK);
-                eventPublisher.publishEvent(customEvent);
+                for (JobHireTeamEntity jobHireTeamEntity : candidateEntity.getJob().getJobHireTeam()) {
+                    if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
+                        CustomEvent customEvent = new CustomEvent(this);
+                        customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                        customEvent.setDescription(String.format("نظر از %s", name));
+                        customEvent.setExtra(feedbackEntity.getId().toString());
+                        customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                        customEvent.setType(EventType.FEEDBACK);
+                        eventPublisher.publishEvent(customEvent);
+                    }
+                }
 
                 return feedbackMapper.toDto(feedbackEntity);
             } else {

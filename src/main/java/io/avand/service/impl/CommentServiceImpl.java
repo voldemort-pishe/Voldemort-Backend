@@ -3,6 +3,7 @@ package io.avand.service.impl;
 import io.avand.aop.event.CustomEvent;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CommentEntity;
+import io.avand.domain.entity.jpa.JobHireTeamEntity;
 import io.avand.domain.enumeration.EventType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.CommentRepository;
@@ -62,14 +63,17 @@ public class CommentServiceImpl implements CommentService {
 
             Optional<UserDTO> userDTO = userService.findById(userId);
             String name = userDTO.map(userDTO1 -> userDTO1.getFirstName() + " " + userDTO1.getLastName()).orElse("ناشناس");
-
-            CustomEvent customEvent = new CustomEvent(this);
-            customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
-            customEvent.setDescription(String.format("اظهار نظر از %s - %s", name, commentEntity.getCommentText()));
-            customEvent.setOwner(userId);
-            customEvent.setType(EventType.COMMENT);
-            customEvent.setExtra(commentEntity.getId().toString());
-            eventPublisher.publishEvent(customEvent);
+            for (JobHireTeamEntity jobHireTeamEntity : candidateEntity.getJob().getJobHireTeam()) {
+                if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
+                    CustomEvent customEvent = new CustomEvent(this);
+                    customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                    customEvent.setDescription(String.format("اظهار نظر از %s", name));
+                    customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                    customEvent.setType(EventType.COMMENT);
+                    customEvent.setExtra(commentEntity.getId().toString());
+                    eventPublisher.publishEvent(customEvent);
+                }
+            }
 
             return commentMapper.toDto(commentEntity);
         } else {
@@ -81,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find comment by id : {}", id);
         CommentEntity commentEntity = commentRepository
-            .findByIdAndCandidate_Job_Company_Id(id,securityUtils.getCurrentUserId());
+            .findByIdAndCandidate_Job_Company_Id(id, securityUtils.getCurrentUserId());
         if (commentEntity != null) {
             return commentMapper.toDto(commentEntity);
         } else {

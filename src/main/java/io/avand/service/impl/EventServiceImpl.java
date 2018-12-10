@@ -57,6 +57,7 @@ public class EventServiceImpl implements EventService {
             eventEntity.setTitle(eventDTO.getTitle());
         } else {
             eventEntity = eventMapper.toEntity(eventDTO);
+            eventEntity.setFlag(false);
             eventEntity.setStatus(EventStatus.UNREAD);
         }
         Optional<UserEntity> userEntity = userRepository.findById(eventDTO.getOwnerId());

@@ -1,2 +1,2 @@
 id;payment_type;payment_date;amount;tax;discount;total;tracking_code;reference_id;status;company_id;created_by;created_date;last_modified_by;last_modified_date
-1;ZARINPAL;2018-12-9 17:14:30;1000;90;0;1090;000000000000000000000000000094892542;42630829328;SUCCESS;2;ehdi.sh@gmail.com;2018-12-9 17:13:31;anonymousUser;2018-12-9 17:14:30
+1;ZARINPAL;2018-12-9 17:14:30;1000;90;0;1090;000000000000000000000000000094892542;42630829328;SUCCESS;1;ehdi.sh@gmail.com;2018-12-9 17:13:31;anonymousUser;2018-12-9 17:14:30

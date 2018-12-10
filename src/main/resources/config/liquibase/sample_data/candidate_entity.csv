@@ -1,5 +1,5 @@
 id;first_name;last_name;state;cellphone;email;type;candidate_pipeline;employer;file_id;job_id;created_by;created_date;last_modified_by;last_modified_date
-1;Mohamad;Azhdary;PENDING;09102322588;mo.azhadary@gmail.com;APPLICANT;1;Pouya Ashna;3;1;;2018-12-8 18:01:39;ehdi.sh@gmail.com;2018-12-8 18:06:48
+1;Mohamad;Azhdary;PENDING;09102322588;mo.azhadary@gmail.com;APPLICANT;1;Pouya Ashna;3;1;ehdi.sh@gmail.com;2018-12-8 18:01:39;ehdi.sh@gmail.com;2018-12-8 18:06:48
 2;مهدی;رزمجو;PENDING;09373472601;i@ehdi.in;APPLICANT;1;پویا;4;1;ehdi.sh@gmail.com;2018-12-8 18:09:08;ehdi.sh@gmail.com;2018-12-8 18:09:08
 4;پویا;آشنا;PENDING;09102322588;pouyaashna@gmail.com;APPLICANT;1;Pouya Ashna;6;1;ehdi.sh@gmail.com;2018-12-9 13:12:41;ehdi.sh@gmail.com;2018-12-9 13:12:41
 6;پرهام خانلرخانی;آشنا;PENDING;09102322588;parham.contact@gmail.com;APPLICANT;1;Pouya Ashna;7;2;ehdi.sh@gmail.com;2018-12-9 13:13:04;ehdi.sh@gmail.com;2018-12-9 13:13:04

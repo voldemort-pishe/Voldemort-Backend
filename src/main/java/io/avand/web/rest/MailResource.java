@@ -76,7 +76,7 @@ public class MailResource {
                 String name = userDTO.map(userDTO1 -> userDTO1.getFirstName() + " " + userDTO1.getLastName()).orElse("ناشناس");
                 CustomEvent customEvent = new CustomEvent(this);
                 customEvent.setTitle(name);
-                customEvent.setDescription(String.format("ایمیل از %s %S", name, newMessage.getSubject()));
+                customEvent.setDescription(String.format("ایمیل از %s", name));
                 customEvent.setType(EventType.EMAIL);
                 customEvent.setExtra(newMessage.getId().toString());
                 customEvent.setOwner(newMessage.getToUserId());

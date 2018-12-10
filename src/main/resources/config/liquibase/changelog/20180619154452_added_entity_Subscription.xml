@@ -34,6 +34,10 @@
                 <constraints nullable="false"/>
             </column>
 
+            <column name="actual_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+
             <column name="end_date" type="timestamp">
                 <constraints nullable="false"/>
             </column>

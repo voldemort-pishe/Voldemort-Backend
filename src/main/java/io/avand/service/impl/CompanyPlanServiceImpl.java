@@ -60,6 +60,7 @@ public class CompanyPlanServiceImpl implements CompanyPlanService {
                     companyPlanEntity = new CompanyPlanEntity();
                 }
                 companyPlanEntity.setLength(planEntity.getLength());
+                companyPlanEntity.setExtraLength(planEntity.getExtraLength());
                 companyPlanEntity.setCompany(companyEntityOptional.get());
 
                 InvoiceEntity invoiceEntity = invoiceRepository.findOne(invoiceId);

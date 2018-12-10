@@ -57,9 +57,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         CompanyPlanEntity companyPlanEntity = companyPlanRepository.findOne(planId);
         subscriptionEntity.setCompanyPlan(companyPlanEntity);
-        subscriptionEntity.setStartDate(ZonedDateTime.now());
-        subscriptionEntity.setEndDate(ZonedDateTime.now().plusDays(companyPlanEntity.getLength()));
-
+        subscriptionEntity.setStartDate(ZonedDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0));
+        subscriptionEntity.setActualDate(subscriptionEntity.getStartDate().plusDays(companyPlanEntity.getLength() + 1));
+        subscriptionEntity.setEndDate(subscriptionEntity.getActualDate().plusDays(companyPlanEntity.getExtraLength()));
         subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
 
         return subscriptionMapper.toDto(subscriptionEntity);

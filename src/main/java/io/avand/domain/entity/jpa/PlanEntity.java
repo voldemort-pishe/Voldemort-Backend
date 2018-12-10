@@ -38,6 +38,9 @@ public class PlanEntity implements Serializable {
     @Column(name = "length")
     private Integer length;
 
+    @Column(name = "extra_length")
+    private Integer extraLength;
+
     @Column(name = "active")
     private Boolean active;
 
@@ -110,6 +113,14 @@ public class PlanEntity implements Serializable {
         this.length = length;
     }
 
+    public Integer getExtraLength() {
+        return extraLength;
+    }
+
+    public void setExtraLength(Integer extraLength) {
+        this.extraLength = extraLength;
+    }
+
     public Boolean isActive() {
         return active;
     }
@@ -157,6 +168,7 @@ public class PlanEntity implements Serializable {
             ", description='" + description + '\'' +
             ", amount=" + amount +
             ", length=" + length +
+            ", extraLength=" + extraLength +
             ", active=" + active +
             ", type=" + type +
             '}';

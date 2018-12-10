@@ -27,7 +27,10 @@ public class CompanyPlanEntity implements Serializable {
     @Column(name = "length")
     private Integer length;
 
-    @OneToMany(mappedBy = "plan",cascade = CascadeType.ALL,orphanRemoval = true)
+    @Column(name = "extra_length")
+    private Integer extraLength;
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<CompanyPlanConfigEntity> planConfig = new HashSet<>();
 
@@ -54,6 +57,14 @@ public class CompanyPlanEntity implements Serializable {
 
     public void setLength(Integer length) {
         this.length = length;
+    }
+
+    public Integer getExtraLength() {
+        return extraLength;
+    }
+
+    public void setExtraLength(Integer extraLength) {
+        this.extraLength = extraLength;
     }
 
     public Set<CompanyPlanConfigEntity> getPlanConfig() {
@@ -100,6 +111,7 @@ public class CompanyPlanEntity implements Serializable {
         return "CompanyPlanEntity{" +
             "id=" + id +
             ", length=" + length +
+            ", extraLength=" + extraLength +
             '}';
     }
 }

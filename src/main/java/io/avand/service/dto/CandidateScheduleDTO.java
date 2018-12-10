@@ -23,7 +23,7 @@ public class CandidateScheduleDTO implements Serializable {
     private ScheduleStatus status;
 
     private String description;
-
+    @NotNull
     private Set<CandidateScheduleMemberDTO> member = new HashSet<>();
 
     @NotNull

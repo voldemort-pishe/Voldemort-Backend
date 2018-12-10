@@ -1,10 +1,13 @@
 package io.avand.service.impl;
 
+import io.avand.aop.event.CustomEvent;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.FileEntity;
 import io.avand.domain.entity.jpa.JobEntity;
+import io.avand.domain.entity.jpa.JobHireTeamEntity;
 import io.avand.domain.enumeration.CandidateState;
 import io.avand.domain.enumeration.CandidateType;
+import io.avand.domain.enumeration.EventType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.JobRepository;
@@ -17,6 +20,7 @@ import io.avand.web.specification.CandidateSpecification;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,19 +35,22 @@ public class CandidateServiceImpl implements CandidateService {
     private final CandidateMapper candidateMapper;
     private final CandidateSpecification specification;
     private final SecurityUtils securityUtils;
+    private final ApplicationEventPublisher eventPublisher;
 
     public CandidateServiceImpl(CandidateRepository candidateRepository,
                                 JobRepository jobRepository,
                                 FileRepository fileRepository,
                                 CandidateMapper candidateMapper,
                                 CandidateSpecification specification,
-                                SecurityUtils securityUtils) {
+                                SecurityUtils securityUtils,
+                                ApplicationEventPublisher eventPublisher) {
         this.candidateRepository = candidateRepository;
         this.jobRepository = jobRepository;
         this.fileRepository = fileRepository;
         this.candidateMapper = candidateMapper;
         this.specification = specification;
         this.securityUtils = securityUtils;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -58,6 +65,23 @@ public class CandidateServiceImpl implements CandidateService {
                 candidateEntity.setFile(fileEntity);
                 candidateEntity.setEmployer(candidateDTO.getEmployer());
                 candidateEntity = candidateRepository.save(candidateEntity);
+
+                if (candidateDTO.getId() == null) {
+
+                    Long userId = securityUtils.getCurrentUserId();
+
+                    for (JobHireTeamEntity jobHireTeamEntity : jobEntity.getJobHireTeam()) {
+                        if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
+                            CustomEvent customEvent = new CustomEvent(this);
+                            customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                            customEvent.setDescription(String.format("%s جدید برای شغل %s", candidateEntity.getType() == CandidateType.APPLICANT ? "کارجو" : "فرد مستعد", jobEntity.getNameFa()));
+                            customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                            customEvent.setType(EventType.ALARM);
+                            customEvent.setExtra(candidateEntity.getId().toString());
+                            eventPublisher.publishEvent(customEvent);
+                        }
+                    }
+                }
                 return candidateMapper.toDto(candidateEntity);
             } else {
                 throw new NotFoundException("File Not Available");
@@ -81,6 +105,17 @@ public class CandidateServiceImpl implements CandidateService {
                     candidateEntity.setJob(jobEntity);
                     candidateEntity.setFile(fileEntity);
                     candidateEntity = candidateRepository.save(candidateEntity);
+
+                    for (JobHireTeamEntity jobHireTeamEntity : jobEntity.getJobHireTeam()) {
+                        CustomEvent customEvent = new CustomEvent(this);
+                        customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                        customEvent.setDescription(String.format("کارجو جدید برای شغل %s", jobEntity.getNameFa()));
+                        customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                        customEvent.setType(EventType.ALARM);
+                        customEvent.setExtra(candidateEntity.getId().toString());
+                        eventPublisher.publishEvent(customEvent);
+                    }
+
                     return candidateMapper.toDto(candidateEntity);
                 } else {
                     throw new NotFoundException("File Not Available");

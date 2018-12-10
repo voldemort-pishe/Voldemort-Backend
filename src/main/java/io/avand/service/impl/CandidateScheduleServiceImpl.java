@@ -1,13 +1,16 @@
 package io.avand.service.impl;
 
 import io.avand.aop.event.CustomEvent;
+import io.avand.config.ApplicationProperties;
+import io.avand.config.StorageProperties;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CandidateScheduleEntity;
-import io.avand.domain.entity.jpa.JobHireTeamEntity;
+import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.domain.enumeration.AttendeeRoleType;
 import io.avand.domain.enumeration.EventType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.CandidateScheduleRepository;
+import io.avand.repository.jpa.UserRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CalendarService;
 import io.avand.service.CandidateScheduleMemberService;
@@ -30,6 +33,7 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -44,6 +48,8 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
     private final ApplicationEventPublisher eventPublisher;
     private final MailService mailService;
     private final CalendarService calendarService;
+    private final UserRepository userRepository;
+    private final StorageProperties storageProperties;
 
     public CandidateScheduleServiceImpl(CandidateScheduleRepository candidateScheduleRepository,
                                         CandidateScheduleMapper candidateScheduleMapper,
@@ -52,7 +58,9 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
                                         CandidateRepository candidateRepository,
                                         ApplicationEventPublisher eventPublisher,
                                         MailService mailService,
-                                        CalendarService calendarService) {
+                                        CalendarService calendarService,
+                                        UserRepository userRepository,
+                                        StorageProperties storageProperties) {
         this.candidateScheduleRepository = candidateScheduleRepository;
         this.candidateScheduleMapper = candidateScheduleMapper;
         this.candidateScheduleMemberService = candidateScheduleMemberService;
@@ -61,6 +69,8 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
         this.eventPublisher = eventPublisher;
         this.mailService = mailService;
         this.calendarService = calendarService;
+        this.userRepository = userRepository;
+        this.storageProperties = storageProperties;
     }
 
     @Override
@@ -83,13 +93,15 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
             candidateScheduleMemberService.saveAll(candidateScheduleMemberDTOS);
 
             String name = candidateEntity.getFirstName() + " " + candidateEntity.getLastName();
-
-            CustomEvent customEvent = new CustomEvent(this);
-            customEvent.setTitle(name);
-            customEvent.setDescription("۱ رویداد زمان‌بندی شده");
-            customEvent.setType(EventType.SCHEDULE);
-            customEvent.setExtra(candidateScheduleEntity.getId().toString());
-            eventPublisher.publishEvent(customEvent);
+            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {
+                CustomEvent customEvent = new CustomEvent(this);
+                customEvent.setTitle(name);
+                customEvent.setDescription("۱ رویداد زمان‌بندی شده");
+                customEvent.setType(EventType.SCHEDULE);
+                customEvent.setExtra(candidateScheduleEntity.getId().toString());
+                customEvent.setOwner(candidateScheduleMemberDTO.getUserId());
+                eventPublisher.publishEvent(customEvent);
+            }
 
             CalendarICSDTO calendarICSDTO = new CalendarICSDTO();
             calendarICSDTO.setStartDate(candidateScheduleEntity.getStartDate());
@@ -103,12 +115,15 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
             calendarICSDTO.setCompany(calendarICSCompanyDTO);
 
             List<CalendarICSAttendeeDTO> calendarICSAttendeeDTOS = new ArrayList<>();
-            for (JobHireTeamEntity jobHireTeamEntity : candidateEntity.getJob().getJobHireTeam()) {
-                CalendarICSAttendeeDTO calendarICSAttendeeDTO = new CalendarICSAttendeeDTO();
-                calendarICSAttendeeDTO.setName(jobHireTeamEntity.getUser().getFirstName() + " " + jobHireTeamEntity.getUser().getLastName());
-                calendarICSAttendeeDTO.setEmail(jobHireTeamEntity.getUser().getEmail());
-                calendarICSAttendeeDTO.setRole(AttendeeRoleType.HIRE_TEAM);
-                calendarICSAttendeeDTOS.add(calendarICSAttendeeDTO);
+            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {
+                Optional<UserEntity> userEntity = userRepository.findById(candidateScheduleMemberDTO.getUserId());
+                if (userEntity.isPresent()) {
+                    CalendarICSAttendeeDTO calendarICSAttendeeDTO = new CalendarICSAttendeeDTO();
+                    calendarICSAttendeeDTO.setName(userEntity.get().getFirstName() + " " + userEntity.get().getLastName());
+                    calendarICSAttendeeDTO.setEmail(userEntity.get().getEmail());
+                    calendarICSAttendeeDTO.setRole(AttendeeRoleType.HIRE_TEAM);
+                    calendarICSAttendeeDTOS.add(calendarICSAttendeeDTO);
+                }
             }
 
             CalendarICSAttendeeDTO calendarICSAttendeeDTO = new CalendarICSAttendeeDTO();
@@ -120,7 +135,7 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
             calendarICSDTO.setAttendeeDTOList(calendarICSAttendeeDTOS);
             String fileName = calendarService.createICSFile(calendarICSDTO);
 
-            File attachment = new File("/Users/pouya/Project/Avand/voldemort-backend/" + fileName);
+            File attachment = new File(storageProperties.getLocation() + "/" + fileName);
 
             for (CalendarICSAttendeeDTO icsAttendeeDTO : calendarICSAttendeeDTOS) {
                 if (icsAttendeeDTO.getRole() == AttendeeRoleType.CANDIDATE) {

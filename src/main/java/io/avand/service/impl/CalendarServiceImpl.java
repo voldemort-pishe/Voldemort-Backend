@@ -1,8 +1,11 @@
 package io.avand.service.impl;
 
+import io.avand.config.StorageProperties;
 import io.avand.service.CalendarService;
+import io.avand.service.StorageService;
 import io.avand.service.dto.CalendarICSAttendeeDTO;
 import io.avand.service.dto.CalendarICSDTO;
+import io.avand.service.util.RandomUtil;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.TimeZone;
@@ -29,6 +32,11 @@ import java.util.Date;
 public class CalendarServiceImpl implements CalendarService {
 
     private final Logger log = LoggerFactory.getLogger(CalendarServiceImpl.class);
+    private final StorageProperties storageProperties;
+
+    public CalendarServiceImpl(StorageProperties storageProperties) {
+        this.storageProperties = storageProperties;
+    }
 
     @Override
     public String createICSFile(CalendarICSDTO calendarICSDTO) throws URISyntaxException, IOException {
@@ -73,12 +81,12 @@ public class CalendarServiceImpl implements CalendarService {
 
         icsCalendar.getComponents().add(meeting);
 
-        System.out.println(icsCalendar);
-
-        FileOutputStream fileOutputStream = new FileOutputStream(String.valueOf(calendarICSDTO.getStartDate().toEpochSecond()) + ".ics");
+        String fileName = RandomUtil.shortUUID();
+        FileOutputStream fileOutputStream = new FileOutputStream(storageProperties.getLocation() + "/" + fileName + ".ics");
         CalendarOutputter calendarOutputter = new CalendarOutputter();
+
         calendarOutputter.output(icsCalendar, fileOutputStream);
 
-        return String.valueOf(calendarICSDTO.getStartDate().toEpochSecond()) + ".ics";
+        return fileName + ".ics";
     }
 }

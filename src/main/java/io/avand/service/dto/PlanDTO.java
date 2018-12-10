@@ -21,6 +21,8 @@ public class PlanDTO implements Serializable {
 
     private Long length;
 
+    private Long extraLength;
+
     private Boolean active;
 
     private PlanType type;
@@ -68,6 +70,14 @@ public class PlanDTO implements Serializable {
         this.length = length;
     }
 
+    public Long getExtraLength() {
+        return extraLength;
+    }
+
+    public void setExtraLength(Long extraLength) {
+        this.extraLength = extraLength;
+    }
+
     public Boolean isActive() {
         return active;
     }
@@ -100,6 +110,7 @@ public class PlanDTO implements Serializable {
             ", description='" + description + '\'' +
             ", amount=" + amount +
             ", length=" + length +
+            ", extraLength=" + extraLength +
             ", active=" + active +
             ", type=" + type +
             '}';

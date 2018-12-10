@@ -27,6 +27,9 @@ public class SubscriptionEntity implements Serializable {
     @Column(name = "start_date")
     private ZonedDateTime startDate;
 
+    @Column(name = "actual_date")
+    private ZonedDateTime actualDate;
+
     @Column(name = "end_date")
     private ZonedDateTime endDate;
 
@@ -60,6 +63,14 @@ public class SubscriptionEntity implements Serializable {
 
     public void setStartDate(ZonedDateTime startDate) {
         this.startDate = startDate;
+    }
+
+    public ZonedDateTime getActualDate() {
+        return actualDate;
+    }
+
+    public void setActualDate(ZonedDateTime actualDate) {
+        this.actualDate = actualDate;
     }
 
     public ZonedDateTime getEndDate() {

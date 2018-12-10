@@ -14,6 +14,8 @@ public class SubscriptionDTO implements Serializable {
 
     private ZonedDateTime startDate;
 
+    private ZonedDateTime actualDate;
+
     private ZonedDateTime endDate;
 
     public Long getId() {
@@ -46,6 +48,14 @@ public class SubscriptionDTO implements Serializable {
 
     public void setStartDate(ZonedDateTime startDate) {
         this.startDate = startDate;
+    }
+
+    public ZonedDateTime getActualDate() {
+        return actualDate;
+    }
+
+    public void setActualDate(ZonedDateTime actualDate) {
+        this.actualDate = actualDate;
     }
 
     public ZonedDateTime getEndDate() {

@@ -14,6 +14,8 @@ public class CompanyPlanDTO implements Serializable {
 
     private Integer length;
 
+    private Integer extraLength;
+
     @JsonIgnore
     private Set<CompanyPlanConfigDTO> planConfig = new HashSet<>();
 
@@ -37,6 +39,14 @@ public class CompanyPlanDTO implements Serializable {
 
     public void setLength(Integer length) {
         this.length = length;
+    }
+
+    public Integer getExtraLength() {
+        return extraLength;
+    }
+
+    public void setExtraLength(Integer extraLength) {
+        this.extraLength = extraLength;
     }
 
     public Set<CompanyPlanConfigDTO> getPlanConfig() {
@@ -68,6 +78,7 @@ public class CompanyPlanDTO implements Serializable {
         return "CompanyPlanDTO{" +
             "id=" + id +
             ", length=" + length +
+            ", extraLength=" + extraLength +
             ", companyId=" + companyId +
             ", invoiceId=" + invoiceId +
             '}';

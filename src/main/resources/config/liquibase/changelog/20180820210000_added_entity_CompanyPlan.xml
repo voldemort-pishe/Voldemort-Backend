@@ -26,6 +26,10 @@
                 <constraints nullable="true"/>
             </column>
 
+            <column name="extra_length" type="integer">
+                <constraints nullable="true"/>
+            </column>
+
             <column name="company_id" type="bigint">
                 <constraints nullable="false" unique="true"/>
             </column>

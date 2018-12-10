@@ -42,6 +42,10 @@
                 <constraints nullable="true"/>
             </column>
 
+            <column name="extra_length" type="integer">
+                <constraints nullable="true"/>
+            </column>
+
             <column name="active" type="tinyint" defaultValue="true">
                 <constraints nullable="false"/>
             </column>

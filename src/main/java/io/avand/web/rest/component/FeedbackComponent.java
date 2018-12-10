@@ -14,7 +14,5 @@ public interface FeedbackComponent {
 
     ResponseVM<FeedbackDTO> findById(Long id) throws NotFoundException;
 
-    Page<ResponseVM<FeedbackDTO>> findAll(Pageable pageable) throws NotFoundException;
-
     Page<ResponseVM<FeedbackDTO>> findAllByCandidate(Long candidateId, Pageable pageable) throws NotFoundException;
 }

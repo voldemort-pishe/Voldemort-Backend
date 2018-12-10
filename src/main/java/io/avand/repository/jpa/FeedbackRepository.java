@@ -21,7 +21,7 @@ public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Long> 
 
     FeedbackEntity findByIdAndCandidate_Job_Company_Id(Long id,Long companyId);
 
-    Page<FeedbackEntity> findAllByCandidate_Job_Company_Id(Long companyId,Pageable pageable);
+    Boolean existsByUserIdAndCandidate_Id(Long userId,Long candidateId);
 
     Page<FeedbackEntity> findAllByCandidate_IdAndCandidate_Job_Company_Id(Long id,Long companyId,Pageable pageable);
 

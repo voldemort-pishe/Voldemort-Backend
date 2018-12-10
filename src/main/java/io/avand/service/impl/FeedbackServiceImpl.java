@@ -13,6 +13,7 @@ import io.avand.service.UserService;
 import io.avand.service.dto.FeedbackDTO;
 import io.avand.service.dto.UserDTO;
 import io.avand.service.mapper.FeedbackMapper;
+import io.avand.web.rest.util.PageMaker;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -109,25 +111,31 @@ public class FeedbackServiceImpl implements FeedbackService {
         FeedbackEntity feedbackEntity = feedbackRepository
             .findByIdAndCandidate_Job_Company_Id(id, securityUtils.getCurrentCompanyId());
         if (feedbackEntity != null) {
-            return feedbackMapper.toDto(feedbackEntity);
+            if (feedbackRepository.existsByUserIdAndCandidate_Id(securityUtils.getCurrentUserId(), feedbackEntity.getCandidate().getId())) {
+                return feedbackMapper.toDto(feedbackEntity);
+            } else {
+                throw new NotFoundException("شما هنوز برای این کارجو نظر نداده اید");
+            }
         } else {
             throw new NotFoundException("Feedback Not Found");
         }
     }
 
     @Override
-    public Page<FeedbackDTO> findAll(Pageable pageable) throws NotFoundException {
-        log.debug("Request to find all feedback");
-        return feedbackRepository.findAllByCandidate_Job_Company_Id(securityUtils.getCurrentCompanyId(), pageable)
-            .map(feedbackMapper::toDto);
-    }
-
-    @Override
     public Page<FeedbackDTO> findAllByCandidateId(Pageable pageable, Long id) throws NotFoundException {
         log.debug("Request to find all feedback by candidate id");
-        return feedbackRepository
+        Page<FeedbackDTO> feedbackDTOS = feedbackRepository
             .findAllByCandidate_IdAndCandidate_Job_Company_Id(id, securityUtils.getCurrentUserId(), pageable)
             .map(feedbackMapper::toDto);
+        if (feedbackRepository.existsByUserIdAndCandidate_Id(securityUtils.getCurrentUserId(), id)) {
+            return feedbackDTOS;
+        } else {
+            List<FeedbackDTO> filteredFeedback = feedbackDTOS.getContent();
+            for (FeedbackDTO feedbackDTO : filteredFeedback) {
+                feedbackDTO.setFeedbackText(null);
+            }
+            return new PageMaker<>(filteredFeedback, feedbackDTOS);
+        }
     }
 
     @Override

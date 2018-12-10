@@ -15,8 +15,6 @@ public interface FeedbackService {
 
     FeedbackDTO findById(Long id) throws NotFoundException;
 
-    Page<FeedbackDTO> findAll(Pageable pageable) throws NotFoundException;
-
     Page<FeedbackDTO> findAllByCandidateId(Pageable pageable, Long id) throws NotFoundException;
 
     void delete(Long id);

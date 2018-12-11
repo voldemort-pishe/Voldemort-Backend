@@ -129,6 +129,19 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
+    public CandidateDTO updateState(Long id, CandidateState state) throws NotFoundException {
+        log.debug("Request to update candidateState : {}, {}", id, state);
+        CandidateEntity candidateEntity = candidateRepository.findOne(id);
+        if (candidateEntity != null) {
+            candidateEntity.setState(state);
+            candidateEntity = candidateRepository.save(candidateEntity);
+            return candidateMapper.toDto(candidateEntity);
+        } else {
+            throw new NotFoundException("Candidate Not Found");
+        }
+    }
+
+    @Override
     public CandidateDTO findById(Long id) throws NotFoundException {
         log.debug("Request to find candidate by id : {}", id);
         CandidateEntity candidateEntity =

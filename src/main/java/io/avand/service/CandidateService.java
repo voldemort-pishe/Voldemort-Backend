@@ -1,5 +1,6 @@
 package io.avand.service;
 
+import io.avand.domain.enumeration.CandidateState;
 import io.avand.service.dto.CandidateDTO;
 import io.avand.web.rest.vm.CandidateFilterVM;
 import javassist.NotFoundException;
@@ -13,6 +14,8 @@ public interface CandidateService {
     CandidateDTO save(CandidateDTO candidateDTO) throws NotFoundException;
 
     CandidateDTO save(CandidateDTO candidateDTO,String companySubDomain) throws NotFoundException;
+
+    CandidateDTO updateState(Long id, CandidateState state) throws NotFoundException;
 
     CandidateDTO findById(Long id) throws NotFoundException;
 

@@ -127,6 +127,23 @@ public class CandidateResource {
         }
     }
 
+    @PutMapping("/pipeline")
+    @Timed
+    @PreAuthorize("isMember(#candidateDTO.id,'CANDIDATE','EDIT_CANDIDATE')")
+    public ResponseEntity<ResponseVM<CandidateDTO>> updateCandidatePipeline(@RequestBody CandidateDTO candidateDTO) {
+        log.debug("REST Request to update candidatePipeline : {}", candidateDTO);
+        if (candidateDTO.getId() != null) {
+            try {
+                ResponseVM<CandidateDTO> result = candidateComponent.updatePipeline(candidateDTO.getId(), candidateDTO.getCandidatePipeline());
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } catch (NotFoundException e) {
+                throw new ServerErrorException(e.getMessage());
+            }
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Candidate Id Required");
+        }
+    }
+
     /**
      * GET  /candidate/:id : get the "id" candidateEntity.
      *

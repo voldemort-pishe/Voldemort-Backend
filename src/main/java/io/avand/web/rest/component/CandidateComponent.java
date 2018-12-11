@@ -14,6 +14,8 @@ public interface CandidateComponent {
 
     ResponseVM<CandidateDTO> updateState(Long id, CandidateState state) throws NotFoundException;
 
+    ResponseVM<CandidateDTO> updatePipeline(Long id, Long pipelineId) throws NotFoundException;
+
     ResponseVM<CandidateDTO> findById(Long id) throws NotFoundException;
 
     Page<ResponseVM<CandidateDTO>> findByFilter(CandidateFilterVM filterVM, Pageable pageable) throws NotFoundException;

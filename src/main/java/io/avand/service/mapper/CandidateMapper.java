@@ -12,10 +12,15 @@ import org.mapstruct.Mapping;
         CandidateEvaluationCriteriaMapper.class,
         CandidateScheduleMapper.class,
         FileMapper.class})
-public interface CandidateMapper extends EntityMapper<CandidateDTO, CandidateEntity> , VmMapper<CandidateDTO,CandidateIncludeVM>{
+public interface CandidateMapper extends EntityMapper<CandidateDTO, CandidateEntity>, VmMapper<CandidateDTO, CandidateIncludeVM> {
 
     @Override
     @Mapping(source = "file.id", target = "fileId")
     @Mapping(source = "job.id", target = "jobId")
+    @Mapping(source = "candidatePipeline.id", target = "candidatePipeline")
     CandidateDTO toDto(CandidateEntity entity);
+
+    @Override
+    @Mapping(target = "candidatePipeline", ignore = true)
+    CandidateEntity toEntity(CandidateDTO dto);
 }

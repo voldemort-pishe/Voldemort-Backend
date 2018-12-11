@@ -20,5 +20,12 @@
                                  referencedColumnNames="id"
                                  referencedTableName="file"/>
 
+        <addForeignKeyConstraint baseColumnNames="candidate_pipeline_id"
+                                 baseTableName="candidate"
+                                 constraintName="fk_candidate_pipeline_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="company_pipeline"/>
+
+
     </changeSet>
 </databaseChangeLog>

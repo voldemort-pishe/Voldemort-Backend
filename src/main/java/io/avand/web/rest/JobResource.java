@@ -65,7 +65,7 @@ public class JobResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping
-    @PreAuthorize("isMember(#jobDTO.companyId,'COMPANY','ADD_JOB')")
+    @PreAuthorize("isMember('ADD_JOB')")
     @Timed
     public ResponseEntity<ResponseVM<JobDTO>> createJob(@Valid @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
@@ -96,7 +96,7 @@ public class JobResource {
      */
     @PutMapping
     @Timed
-    @PreAuthorize("isMember(#jobDTO.companyId,'COMPANY','EDIT_JOB')")
+    @PreAuthorize("isMember('EDIT_JOB')")
     public ResponseEntity<ResponseVM<JobDTO>> updateJob(@Valid @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
         log.debug("REST request to update Job : {}", jobDTO);

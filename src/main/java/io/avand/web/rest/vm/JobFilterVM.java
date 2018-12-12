@@ -6,13 +6,21 @@ import io.avand.domain.enumeration.JobStatus;
 import java.io.Serializable;
 
 public class JobFilterVM implements Serializable {
-
+    private String search;
     private JobStatus status;
     private Boolean hireTeam;
     @JsonIgnore
     private Long manager;
     @JsonIgnore
     private Long company;
+
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
 
     public JobStatus getStatus() {
         return status;

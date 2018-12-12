@@ -46,7 +46,7 @@
                 <constraints nullable="true" />
             </column>
 
-            <column name="candidate_pipeline" type="bigint">
+            <column name="candidate_pipeline_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <column name="employer" type="varchar(255)">

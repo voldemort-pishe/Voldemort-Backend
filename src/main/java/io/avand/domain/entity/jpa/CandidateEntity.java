@@ -48,9 +48,10 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     @Enumerated(EnumType.STRING)
     private CandidateType type;
 
-    @Column(name = "candidate_pipeline")
-    private Long candidatePipeline;
-    
+    @OneToOne
+    @JoinColumn(name = "candidate_pipeline_id")
+    private CompanyPipelineEntity candidatePipeline;
+
     @Column(name = "employer")
     private String employer;
 
@@ -168,16 +169,11 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
         this.type = type;
     }
 
-    public Long getCandidatePipeline() {
+    public CompanyPipelineEntity getCandidatePipeline() {
         return candidatePipeline;
     }
 
-    public CandidateEntity candidatePipeline(Long candidatePipeline) {
-        this.candidatePipeline = candidatePipeline;
-        return this;
-    }
-
-    public void setCandidatePipeline(Long candidatePipeline) {
+    public void setCandidatePipeline(CompanyPipelineEntity candidatePipeline) {
         this.candidatePipeline = candidatePipeline;
     }
 
@@ -301,15 +297,15 @@ public class CandidateEntity extends AbstractAuditingEntity implements Serializa
     public void setFile(FileEntity fileEntity) {
         this.file = fileEntity;
     }
-    
+
     public String getEmployer() {
         return employer;
     }
-    
+
     public void setEmployer(String employer) {
         this.employer = employer;
     }
-    
+
     public JobEntity getJob() {
         return job;
     }

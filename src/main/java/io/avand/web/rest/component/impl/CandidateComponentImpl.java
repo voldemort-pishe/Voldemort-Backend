@@ -1,5 +1,6 @@
 package io.avand.web.rest.component.impl;
 
+import io.avand.domain.enumeration.CandidateState;
 import io.avand.service.*;
 import io.avand.service.dto.CandidateDTO;
 import io.avand.service.dto.CompanyPipelineDTO;
@@ -50,6 +51,26 @@ public class CandidateComponentImpl implements CandidateComponent {
     public ResponseVM<CandidateDTO> save(CandidateDTO candidateDTO) throws NotFoundException {
         log.debug("Request to save candidateDTO via component : {}", candidateDTO);
         candidateDTO = candidateService.save(candidateDTO);
+        ResponseVM<CandidateDTO> responseVM = new ResponseVM<>();
+        responseVM.setData(candidateDTO);
+        responseVM.setInclude(this.createIncluded(candidateDTO));
+        return responseVM;
+    }
+
+    @Override
+    public ResponseVM<CandidateDTO> updateState(Long id, CandidateState state) throws NotFoundException {
+        log.debug("Request to update candidateState via component : {}, {}", id, state);
+        CandidateDTO candidateDTO = candidateService.updateState(id, state);
+        ResponseVM<CandidateDTO> responseVM = new ResponseVM<>();
+        responseVM.setData(candidateDTO);
+        responseVM.setInclude(this.createIncluded(candidateDTO));
+        return responseVM;
+    }
+
+    @Override
+    public ResponseVM<CandidateDTO> updatePipeline(Long id, Long pipelineId) throws NotFoundException {
+        log.debug("Request to update candidatePipeline via component : {}, {}", id, pipelineId);
+        CandidateDTO candidateDTO = candidateService.updatePipeline(id,pipelineId);
         ResponseVM<CandidateDTO> responseVM = new ResponseVM<>();
         responseVM.setData(candidateDTO);
         responseVM.setInclude(this.createIncluded(candidateDTO));

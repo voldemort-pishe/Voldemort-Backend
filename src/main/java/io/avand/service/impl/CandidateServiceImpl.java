@@ -1,14 +1,12 @@
 package io.avand.service.impl;
 
 import io.avand.aop.event.CustomEvent;
-import io.avand.domain.entity.jpa.CandidateEntity;
-import io.avand.domain.entity.jpa.FileEntity;
-import io.avand.domain.entity.jpa.JobEntity;
-import io.avand.domain.entity.jpa.JobHireTeamEntity;
+import io.avand.domain.entity.jpa.*;
 import io.avand.domain.enumeration.CandidateState;
 import io.avand.domain.enumeration.CandidateType;
 import io.avand.domain.enumeration.EventType;
 import io.avand.repository.jpa.CandidateRepository;
+import io.avand.repository.jpa.CompanyPipelineRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.JobRepository;
 import io.avand.security.SecurityUtils;
@@ -36,6 +34,7 @@ public class CandidateServiceImpl implements CandidateService {
     private final CandidateSpecification specification;
     private final SecurityUtils securityUtils;
     private final ApplicationEventPublisher eventPublisher;
+    private final CompanyPipelineRepository companyPipelineRepository;
 
     public CandidateServiceImpl(CandidateRepository candidateRepository,
                                 JobRepository jobRepository,
@@ -43,7 +42,8 @@ public class CandidateServiceImpl implements CandidateService {
                                 CandidateMapper candidateMapper,
                                 CandidateSpecification specification,
                                 SecurityUtils securityUtils,
-                                ApplicationEventPublisher eventPublisher) {
+                                ApplicationEventPublisher eventPublisher,
+                                CompanyPipelineRepository companyPipelineRepository) {
         this.candidateRepository = candidateRepository;
         this.jobRepository = jobRepository;
         this.fileRepository = fileRepository;
@@ -51,6 +51,7 @@ public class CandidateServiceImpl implements CandidateService {
         this.specification = specification;
         this.securityUtils = securityUtils;
         this.eventPublisher = eventPublisher;
+        this.companyPipelineRepository = companyPipelineRepository;
     }
 
     @Override
@@ -60,29 +61,34 @@ public class CandidateServiceImpl implements CandidateService {
         if (jobEntity != null) {
             FileEntity fileEntity = fileRepository.findOne(candidateDTO.getFileId());
             if (fileEntity != null) {
-                CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
-                candidateEntity.setJob(jobEntity);
-                candidateEntity.setFile(fileEntity);
-                candidateEntity.setEmployer(candidateDTO.getEmployer());
-                candidateEntity = candidateRepository.save(candidateEntity);
+                CompanyPipelineEntity pipelineEntity = companyPipelineRepository.findOne(candidateDTO.getCandidatePipeline());
+                if (pipelineEntity != null) {
+                    CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
+                    candidateEntity.setJob(jobEntity);
+                    candidateEntity.setFile(fileEntity);
+                    candidateEntity.setCandidatePipeline(pipelineEntity);
+                    candidateEntity = candidateRepository.save(candidateEntity);
 
-                if (candidateDTO.getId() == null) {
+                    if (candidateDTO.getId() == null) {
 
-                    Long userId = securityUtils.getCurrentUserId();
+                        Long userId = securityUtils.getCurrentUserId();
 
-                    for (JobHireTeamEntity jobHireTeamEntity : jobEntity.getJobHireTeam()) {
-                        if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
-                            CustomEvent customEvent = new CustomEvent(this);
-                            customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
-                            customEvent.setDescription(String.format("%s جدید برای شغل %s", candidateEntity.getType() == CandidateType.APPLICANT ? "کارجو" : "فرد مستعد", jobEntity.getNameFa()));
-                            customEvent.setOwner(jobHireTeamEntity.getUser().getId());
-                            customEvent.setType(EventType.ALARM);
-                            customEvent.setExtra(candidateEntity.getId().toString());
-                            eventPublisher.publishEvent(customEvent);
+                        for (JobHireTeamEntity jobHireTeamEntity : jobEntity.getJobHireTeam()) {
+                            if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
+                                CustomEvent customEvent = new CustomEvent(this);
+                                customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                                customEvent.setDescription(String.format("%s جدید برای شغل %s", candidateEntity.getType() == CandidateType.APPLICANT ? "کارجو" : "فرد مستعد", jobEntity.getNameFa()));
+                                customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                                customEvent.setType(EventType.ALARM);
+                                customEvent.setExtra(candidateEntity.getId().toString());
+                                eventPublisher.publishEvent(customEvent);
+                            }
                         }
                     }
+                    return candidateMapper.toDto(candidateEntity);
+                } else {
+                    throw new NotFoundException("Company Pipeline Not Available");
                 }
-                return candidateMapper.toDto(candidateEntity);
             } else {
                 throw new NotFoundException("File Not Available");
             }
@@ -99,24 +105,30 @@ public class CandidateServiceImpl implements CandidateService {
             if (jobEntity.getCompany().getSubDomain().equals(companySubDomain)) {
                 FileEntity fileEntity = fileRepository.findOne(candidateDTO.getFileId());
                 if (fileEntity != null) {
-                    CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
-                    candidateEntity.setType(CandidateType.APPLICANT);
-                    candidateEntity.setState(CandidateState.PENDING);
-                    candidateEntity.setJob(jobEntity);
-                    candidateEntity.setFile(fileEntity);
-                    candidateEntity = candidateRepository.save(candidateEntity);
+                    CompanyPipelineEntity pipelineEntity = companyPipelineRepository.findOne(candidateDTO.getCandidatePipeline());
+                    if (pipelineEntity != null) {
+                        CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
+                        candidateEntity.setType(CandidateType.APPLICANT);
+                        candidateEntity.setState(CandidateState.PENDING);
+                        candidateEntity.setJob(jobEntity);
+                        candidateEntity.setFile(fileEntity);
+                        candidateEntity.setCandidatePipeline(pipelineEntity);
+                        candidateEntity = candidateRepository.save(candidateEntity);
 
-                    for (JobHireTeamEntity jobHireTeamEntity : jobEntity.getJobHireTeam()) {
-                        CustomEvent customEvent = new CustomEvent(this);
-                        customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
-                        customEvent.setDescription(String.format("کارجو جدید برای شغل %s", jobEntity.getNameFa()));
-                        customEvent.setOwner(jobHireTeamEntity.getUser().getId());
-                        customEvent.setType(EventType.ALARM);
-                        customEvent.setExtra(candidateEntity.getId().toString());
-                        eventPublisher.publishEvent(customEvent);
+                        for (JobHireTeamEntity jobHireTeamEntity : jobEntity.getJobHireTeam()) {
+                            CustomEvent customEvent = new CustomEvent(this);
+                            customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                            customEvent.setDescription(String.format("کارجو جدید برای شغل %s", jobEntity.getNameFa()));
+                            customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                            customEvent.setType(EventType.ALARM);
+                            customEvent.setExtra(candidateEntity.getId().toString());
+                            eventPublisher.publishEvent(customEvent);
+                        }
+
+                        return candidateMapper.toDto(candidateEntity);
+                    } else {
+                        throw new NotFoundException("CompanyPipeline Not Found");
                     }
-
-                    return candidateMapper.toDto(candidateEntity);
                 } else {
                     throw new NotFoundException("File Not Available");
                 }
@@ -125,6 +137,67 @@ public class CandidateServiceImpl implements CandidateService {
             }
         } else {
             throw new NotFoundException("Job Not Available");
+        }
+    }
+
+    @Override
+    public CandidateDTO updateState(Long id, CandidateState state) throws NotFoundException {
+        log.debug("Request to update candidateState : {}, {}", id, state);
+        CandidateEntity candidateEntity = candidateRepository.findOne(id);
+        if (candidateEntity != null) {
+            candidateEntity.setState(state);
+            candidateEntity = candidateRepository.save(candidateEntity);
+
+            Long userId = securityUtils.getCurrentUserId();
+
+            for (JobHireTeamEntity jobHireTeamEntity : candidateEntity.getJob().getJobHireTeam()) {
+                if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
+                    CustomEvent customEvent = new CustomEvent(this);
+                    customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                    customEvent.setDescription(String.format("تغییر وضعیت کارجو به %s", state.toString()));
+                    customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                    customEvent.setType(EventType.ALARM);
+                    customEvent.setExtra(candidateEntity.getId().toString());
+                    eventPublisher.publishEvent(customEvent);
+                }
+            }
+
+            return candidateMapper.toDto(candidateEntity);
+        } else {
+            throw new NotFoundException("Candidate Not Found");
+        }
+    }
+
+    @Override
+    public CandidateDTO updatePipeline(Long id, Long pipelineId) throws NotFoundException {
+        log.debug("Request to update candidatePipeline : {}, {}", id, pipelineId);
+        CandidateEntity candidateEntity = candidateRepository.findOne(id);
+        if (candidateEntity != null) {
+            CompanyPipelineEntity pipelineEntity = companyPipelineRepository.findOne(pipelineId);
+            if (pipelineEntity != null) {
+                candidateEntity.setCandidatePipeline(pipelineEntity);
+                candidateEntity = candidateRepository.save(candidateEntity);
+
+                Long userId = securityUtils.getCurrentUserId();
+
+                for (JobHireTeamEntity jobHireTeamEntity : candidateEntity.getJob().getJobHireTeam()) {
+                    if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
+                        CustomEvent customEvent = new CustomEvent(this);
+                        customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                        customEvent.setDescription(String.format("تغییر وضعیت استخدام کارجو به %s", pipelineEntity.getTitle()));
+                        customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                        customEvent.setType(EventType.ALARM);
+                        customEvent.setExtra(candidateEntity.getId().toString());
+                        eventPublisher.publishEvent(customEvent);
+                    }
+                }
+
+                return candidateMapper.toDto(candidateEntity);
+            } else {
+                throw new NotFoundException("CompanyPipeline Not Found");
+            }
+        } else {
+            throw new NotFoundException("Candidate Not Found");
         }
     }
 

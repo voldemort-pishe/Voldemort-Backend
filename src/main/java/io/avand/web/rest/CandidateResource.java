@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -105,6 +106,41 @@ public class CandidateResource {
                 .body(result);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
+        }
+    }
+
+    @PutMapping("/state")
+    @Timed
+    @PreAuthorize("isMember(#candidateDTO.id,'CANDIDATE','EDIT_CANDIDATE')")
+    public ResponseEntity<ResponseVM<CandidateDTO>> updateCandidateState(@RequestBody CandidateDTO candidateDTO) {
+        log.debug("REST Request to update candidateState : {}", candidateDTO);
+        if (candidateDTO.getId() != null) {
+            try {
+                ResponseVM<CandidateDTO> result = candidateComponent.updateState(candidateDTO.getId(), candidateDTO.getState());
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } catch (NotFoundException e) {
+                throw new ServerErrorException(e.getMessage());
+            }
+
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Candidate Id Required");
+        }
+    }
+
+    @PutMapping("/pipeline")
+    @Timed
+    @PreAuthorize("isMember(#candidateDTO.id,'CANDIDATE','EDIT_CANDIDATE')")
+    public ResponseEntity<ResponseVM<CandidateDTO>> updateCandidatePipeline(@RequestBody CandidateDTO candidateDTO) {
+        log.debug("REST Request to update candidatePipeline : {}", candidateDTO);
+        if (candidateDTO.getId() != null) {
+            try {
+                ResponseVM<CandidateDTO> result = candidateComponent.updatePipeline(candidateDTO.getId(), candidateDTO.getCandidatePipeline());
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } catch (NotFoundException e) {
+                throw new ServerErrorException(e.getMessage());
+            }
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Candidate Id Required");
         }
     }
 

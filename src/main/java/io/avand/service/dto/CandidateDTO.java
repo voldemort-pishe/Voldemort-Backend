@@ -45,7 +45,6 @@ public class CandidateDTO extends AbstractAuditingDTO implements Serializable {
 
     private String employer;
 
-
     private Long jobId;
 
     public String getFirstName() {

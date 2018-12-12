@@ -18,8 +18,24 @@ public class JobSpecification extends BaseSpecification<JobEntity, JobFilterVM> 
     public Specification<JobEntity> getFilter(JobFilterVM request) {
         return where(
             where(statusContains(request.getStatus()))
-                .or(managerContains(request.getManager())))
+                .or(managerContains(request.getManager()))
+                .and(where(nameContains(request.getSearch()))
+                    .or(descriptionContains(request.getSearch()))
+                    .or(departmentContains(request.getSearch()))))
             .and(companyContains(request.getCompany()));
+    }
+
+
+    private Specification<JobEntity> nameContains(String search) {
+        return nameAttributeContains("nameFa", search);
+    }
+
+    private Specification<JobEntity> descriptionContains(String search) {
+        return nameAttributeContains("descriptionFa", search);
+    }
+
+    private Specification<JobEntity> departmentContains(String search) {
+        return nameAttributeContains("department", search);
     }
 
     private Specification<JobEntity> statusContains(JobStatus value) {

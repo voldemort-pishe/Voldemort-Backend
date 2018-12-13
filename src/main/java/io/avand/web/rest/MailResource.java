@@ -5,7 +5,9 @@ import io.avand.aop.event.CustomEvent;
 import io.avand.domain.enumeration.CandidateMessageOwnerType;
 import io.avand.domain.enumeration.EventType;
 import io.avand.service.CandidateMessageService;
+import io.avand.service.CandidateService;
 import io.avand.service.UserService;
+import io.avand.service.dto.CandidateDTO;
 import io.avand.service.dto.CandidateMessageDTO;
 import io.avand.service.dto.UserDTO;
 import javassist.NotFoundException;
@@ -31,12 +33,16 @@ public class MailResource {
     private final CandidateMessageService candidateMessageService;
     private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
+    private final CandidateService candidateService;
 
     public MailResource(CandidateMessageService candidateMessageService,
-                        ApplicationEventPublisher eventPublisher, UserService userService) {
+                        ApplicationEventPublisher eventPublisher,
+                        UserService userService,
+                        CandidateService candidateService) {
         this.candidateMessageService = candidateMessageService;
         this.eventPublisher = eventPublisher;
         this.userService = userService;
+        this.candidateService = candidateService;
     }
 
     @PostMapping("/income")
@@ -71,9 +77,12 @@ public class MailResource {
                 newMessage.setMessageId(this.getValue(mail, "Message-Id").replace("[", "").replace("]", ""));
                 newMessage = candidateMessageService.saveInReply(newMessage);
 
-                Optional<UserDTO> userDTO = userService.findById(newMessage.getFromUserId());
+                CandidateDTO candidateDTO = candidateService.findById(newMessage.getFromUserId());
 
-                String name = userDTO.map(userDTO1 -> userDTO1.getFirstName() + " " + userDTO1.getLastName()).orElse("ناشناس");
+//                Optional<UserDTO> userDTO = userService.findById(newMessage.getFromUserId());
+
+                String name = candidateDTO != null ? candidateDTO.getFirstName() + " " + candidateDTO.getLastName() : "ناشناس";
+                ;
                 CustomEvent customEvent = new CustomEvent(this);
                 customEvent.setTitle(name);
                 customEvent.setDescription(String.format("ایمیل از %s", name));

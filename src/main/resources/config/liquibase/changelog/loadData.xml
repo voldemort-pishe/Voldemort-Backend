@@ -143,6 +143,24 @@
         </loadData>
 
         <loadData
+            tableName="candidate_schedule"
+            file="config/liquibase/sample_data/candidate_schedule_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
+            tableName="candidate_schedule_member"
+            file="config/liquibase/sample_data/candidate_schedule_member_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+
+        <loadData
             tableName="comment"
             file="config/liquibase/sample_data/comment_entity.csv"
             separator=";"
@@ -155,6 +173,15 @@
             file="config/liquibase/sample_data/feedback_entity.csv"
             separator=";"
             encoding="UTF-8"/>
+
+        <loadData
+            tableName="event"
+            file="config/liquibase/sample_data/event_entity.csv"
+            separator=";"
+            encoding="UTF-8">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
 
     </changeSet>
 </databaseChangeLog>

@@ -1,6 +1,7 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.*;
+import io.avand.domain.enumeration.UserStateType;
 import io.avand.repository.jpa.AuthorityRepository;
 import io.avand.repository.jpa.FileRepository;
 import io.avand.repository.jpa.UserRepository;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserAuthorityService userAuthorityService;
     private final SmsService smsService;
+    private final UserStateService userStateService;
 
     public UserServiceImpl(UserRepository userRepository,
                            AuthorityRepository authorityRepository,
@@ -53,7 +55,8 @@ public class UserServiceImpl implements UserService {
                            TokenService tokenService,
                            FileRepository fileRepository,
                            UserAuthorityService userAuthorityService,
-                           SmsService smsService) {
+                           SmsService smsService,
+                           UserStateService userStateService) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.userMapper = userMapper;
@@ -63,6 +66,7 @@ public class UserServiceImpl implements UserService {
         this.fileRepository = fileRepository;
         this.userAuthorityService = userAuthorityService;
         this.smsService = smsService;
+        this.userStateService = userStateService;
     }
 
     @Override
@@ -106,6 +110,14 @@ public class UserServiceImpl implements UserService {
             userAuthorityEntities.add(adminAuthority);
 
             userEntity.setUserAuthorities(userAuthorityEntities);
+            try {
+                UserStateDTO userStateDTO = new UserStateDTO();
+                userStateDTO.setUserId(userEntity.getId());
+                userStateDTO.setState(UserStateType.COMPANY);
+                userStateService.save(userStateDTO);
+            } catch (NotFoundException ignore) {
+            }
+
         }
 
         userEntity = userRepository.save(userEntity);

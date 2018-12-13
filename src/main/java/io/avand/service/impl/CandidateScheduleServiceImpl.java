@@ -5,12 +5,14 @@ import io.avand.config.ApplicationProperties;
 import io.avand.config.StorageProperties;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CandidateScheduleEntity;
+import io.avand.domain.entity.jpa.CandidateScheduleMemberEntity;
 import io.avand.domain.entity.jpa.UserEntity;
 import io.avand.domain.enumeration.AttendeeRoleType;
 import io.avand.domain.enumeration.EventType;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.repository.jpa.CandidateScheduleRepository;
 import io.avand.repository.jpa.UserRepository;
+import io.avand.security.AuthoritiesConstants;
 import io.avand.security.SecurityUtils;
 import io.avand.service.CalendarService;
 import io.avand.service.CandidateScheduleMemberService;
@@ -160,17 +162,19 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
         previousSchedule.setLocation(candidateScheduleDTO.getLocation());
         previousSchedule.setDescription(candidateScheduleDTO.getDescription());
         previousSchedule.setStatus(candidateScheduleDTO.getStatus());
+        previousSchedule = candidateScheduleRepository.save(previousSchedule);
 
         String name = previousSchedule.getCandidate().getFirstName() + " " + previousSchedule.getCandidate().getLastName();
+        for (CandidateScheduleMemberEntity candidateScheduleMemberEntity : previousSchedule.getMember()) {
+            CustomEvent customEvent = new CustomEvent(this);
+            customEvent.setTitle(name);
+            customEvent.setDescription("تغییر زمان رویداد");
+            customEvent.setType(EventType.SCHEDULE);
+            customEvent.setExtra(previousSchedule.getId().toString());
+            customEvent.setOwner(candidateScheduleMemberEntity.getUser().getId());
+            eventPublisher.publishEvent(customEvent);
+        }
 
-        CustomEvent customEvent = new CustomEvent(this);
-        customEvent.setTitle(name);
-        customEvent.setDescription("تغییر زمان رویداد");
-        customEvent.setType(EventType.SCHEDULE);
-        customEvent.setExtra(previousSchedule.getId().toString());
-        eventPublisher.publishEvent(customEvent);
-
-        previousSchedule = candidateScheduleRepository.save(previousSchedule);
         return candidateScheduleMapper.toDto(previousSchedule);
     }
 
@@ -188,19 +192,33 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
     @Override
     public Page<CandidateScheduleDTO> findAll(Pageable pageable) throws NotFoundException {
         log.debug("Request to find schedules of candidates by owner");
-        return candidateScheduleRepository
-            .findAllByCandidate_Job_Company_Id(securityUtils.getCurrentCompanyId(), pageable)
-            .map(candidateScheduleMapper::toDto);
+        return this.findByDate(ZonedDateTime.now(), ZonedDateTime.now().plusYears(10), pageable);
     }
 
     @Override
     public Page<CandidateScheduleDTO> findByDate(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable)
         throws NotFoundException {
         log.debug("Request to find schedule of candidate by ownerId and dates : {}, {}", startDate, endDate);
-        return candidateScheduleRepository
-            .findAllByCandidate_Job_Company_IdAndStartDateBeforeAndEndDateAfter
-                (securityUtils.getCurrentCompanyId(), startDate, endDate, pageable)
-            .map(candidateScheduleMapper::toDto);
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            return
+                candidateScheduleRepository
+                    .findAllByCandidate_Job_Company_IdAndStartDateAfterAndEndDateBefore(
+                        securityUtils.getCurrentCompanyId(), startDate, endDate, pageable
+                    )
+                    .map(candidateScheduleMapper::toDto);
+        } else {
+            List<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS =
+                candidateScheduleMemberService.findByUserId(securityUtils.getCurrentUserId());
+            List<Long> scheduleId = new ArrayList<>();
+            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {
+                scheduleId.add(candidateScheduleMemberDTO.getCandidateScheduleId());
+            }
+            return candidateScheduleRepository
+                .findAllByIdInAndStartDateAfterAndEndDateBefore(
+                    scheduleId, startDate, endDate, pageable
+                )
+                .map(candidateScheduleMapper::toDto);
+        }
     }
 
     @Override

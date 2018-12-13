@@ -1,5 +1,6 @@
 package io.avand.service;
 
+import io.avand.domain.enumeration.CandidateScheduleMemberStatus;
 import io.avand.service.dto.CandidateScheduleMemberDTO;
 import javassist.NotFoundException;
 
@@ -11,9 +12,13 @@ public interface CandidateScheduleMemberService {
 
     Set<CandidateScheduleMemberDTO> saveAll(Set<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS) throws NotFoundException;
 
+    CandidateScheduleMemberDTO changeStatus(Long scheduleId, CandidateScheduleMemberStatus status) throws NotFoundException;
+
     CandidateScheduleMemberDTO findById(Long id) throws NotFoundException;
 
     List<CandidateScheduleMemberDTO> findByScheduleId(Long id);
+
+    List<CandidateScheduleMemberDTO> findByUserId(Long userId) throws NotFoundException;
 
     void delete(Long id) throws NotFoundException;
 }

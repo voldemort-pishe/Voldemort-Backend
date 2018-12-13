@@ -21,7 +21,7 @@ public class CandidateSpecification extends BaseSpecification<CandidateEntity, C
                     .or(employerContains(request.getSearch()))
                     .or(typeContains(request.getType()))
                     .or(pipelineContains(request.getPipeline()))
-                    .or(jobContains(request.getJob())))
+                    .and(jobContains(request.getJob())))
                 .and(
                     where(companyContains(request.getCompany())));
     }

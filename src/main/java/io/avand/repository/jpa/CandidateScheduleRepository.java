@@ -24,10 +24,16 @@ public interface CandidateScheduleRepository extends JpaRepository<CandidateSche
         Pageable pageable
     );
 
-    Page<CandidateScheduleEntity> findAllByCandidate_Job_Company_Id(Long companyId, Pageable pageable);
+    Page<CandidateScheduleEntity>
+    findAllByIdInAndStartDateAfterAndEndDateBefore(
+        List<Long> ids,
+        ZonedDateTime startDate,
+        ZonedDateTime endDate,
+        Pageable pageable
+    );
 
     Page<CandidateScheduleEntity>
-    findAllByCandidate_Job_Company_IdAndStartDateBeforeAndEndDateAfter(
+    findAllByCandidate_Job_Company_IdAndStartDateAfterAndEndDateBefore(
         Long companyId,
         ZonedDateTime startDate,
         ZonedDateTime endDate,

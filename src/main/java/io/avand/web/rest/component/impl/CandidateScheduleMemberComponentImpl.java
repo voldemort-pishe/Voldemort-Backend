@@ -1,5 +1,6 @@
 package io.avand.web.rest.component.impl;
 
+import io.avand.domain.enumeration.CandidateScheduleMemberStatus;
 import io.avand.service.CandidateScheduleMemberService;
 import io.avand.service.UserService;
 import io.avand.service.dto.CandidateScheduleMemberDTO;
@@ -38,6 +39,17 @@ public class CandidateScheduleMemberComponentImpl implements CandidateScheduleMe
         throws NotFoundException {
         log.debug("Request to save candidateScheduleMember via component : {}", candidateScheduleMemberDTO);
         candidateScheduleMemberDTO = candidateScheduleMemberService.save(candidateScheduleMemberDTO);
+        ResponseVM<CandidateScheduleMemberDTO> responseVM = new ResponseVM<>();
+        responseVM.setData(candidateScheduleMemberDTO);
+        responseVM.setInclude(this.createIncluded(candidateScheduleMemberDTO));
+        return responseVM;
+    }
+
+    @Override
+    public ResponseVM<CandidateScheduleMemberDTO> changeStatue(Long scheduleId, CandidateScheduleMemberStatus status) throws NotFoundException {
+        log.debug("Request to change candidateScheduleMember Status : {}, {}", scheduleId, scheduleId);
+        CandidateScheduleMemberDTO candidateScheduleMemberDTO =
+            candidateScheduleMemberService.changeStatus(scheduleId, status);
         ResponseVM<CandidateScheduleMemberDTO> responseVM = new ResponseVM<>();
         responseVM.setData(candidateScheduleMemberDTO);
         responseVM.setInclude(this.createIncluded(candidateScheduleMemberDTO));

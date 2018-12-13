@@ -51,12 +51,9 @@ public class CandidateScheduleMemberResource {
     public ResponseEntity<ResponseVM<CandidateScheduleMemberDTO>> update(
         @RequestBody CandidateScheduleMemberDTO candidateScheduleMemberDTO) {
         log.debug("REST Request to save candidateScheduleMember : {}", candidateScheduleMemberDTO);
-        if (candidateScheduleMemberDTO.getId() == null) {
-            this.save(candidateScheduleMemberDTO);
-        }
         try {
             ResponseVM<CandidateScheduleMemberDTO> responseVM =
-                candidateScheduleMemberComponent.save(candidateScheduleMemberDTO);
+                candidateScheduleMemberComponent.changeStatue(candidateScheduleMemberDTO.getCandidateScheduleId(), candidateScheduleMemberDTO.getStatus());
             return new ResponseEntity<>(responseVM, HttpStatus.OK);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Service
@@ -37,6 +36,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final InvoiceService invoiceService;
     private final CompanyPlanService companyPlanService;
     private final SubscriptionService subscriptionService;
+    private final CloudflareService cloudflareService;
 
     public CompanyServiceImpl(CompanyRepository companyRepository,
                               CompanyMapper companyMapper,
@@ -48,7 +48,8 @@ public class CompanyServiceImpl implements CompanyService {
                               PlanService planService,
                               InvoiceService invoiceService,
                               CompanyPlanService companyPlanService,
-                              SubscriptionService subscriptionService) {
+                              SubscriptionService subscriptionService,
+                              CloudflareService cloudflareService) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.userRepository = userRepository;
@@ -60,6 +61,7 @@ public class CompanyServiceImpl implements CompanyService {
         this.invoiceService = invoiceService;
         this.companyPlanService = companyPlanService;
         this.subscriptionService = subscriptionService;
+        this.cloudflareService = cloudflareService;
     }
 
     @Override
@@ -72,26 +74,35 @@ public class CompanyServiceImpl implements CompanyService {
         companyEntity.setUser(userEntity);
         FileEntity fileEntity = fileRepository.getOne(companyDTO.getFileId());
         if (fileEntity != null) {
+            CompanyMemberDTO companyMemberDTO = companyMemberService.findByUserId(userId);
+            if (companyMemberDTO == null) {
+                CompanyContactEntity companyContactEntity = companyEntity.getContact();
+                companyContactEntity = companyContactRepository.save(companyContactEntity);
 
-            CompanyContactEntity companyContactEntity = companyEntity.getContact();
-            companyContactEntity = companyContactRepository.save(companyContactEntity);
+                companyEntity.setFile(fileEntity);
+                companyEntity.setContact(companyContactEntity);
+                companyEntity = companyRepository.save(companyEntity);
 
-            companyEntity.setFile(fileEntity);
-            companyEntity.setContact(companyContactEntity);
-            companyEntity = companyRepository.save(companyEntity);
-
-            if (companyDTO.getId() == null) {
-                CompanyMemberDTO companyMemberDTO = new CompanyMemberDTO();
+                companyMemberDTO = new CompanyMemberDTO();
                 companyMemberDTO.setCompanyId(companyEntity.getId());
                 companyMemberDTO.setUserEmail(userEntity.getEmail());
                 companyMemberDTO.setDepartment("منابع انسانی");
                 companyMemberDTO.setPosition("رییس شرکت");
                 companyMemberService.save(companyMemberDTO);
+
+                this.addSubscription(companyEntity);
+
+                CloudflareRequestDTO requestDTO = new CloudflareRequestDTO();
+                requestDTO.setType("CNAME");
+                requestDTO.setName(companyDTO.getSubDomain() + ".avand.hr");
+                requestDTO.setContent("avand.hr");
+                requestDTO.setProxied(false);
+                cloudflareService.createDNSRecord(requestDTO);
+
+                return companyMapper.toDto(companyEntity);
+            } else {
+                throw new NotFoundException("شما عضو شرکت دیگری هستید");
             }
-
-            this.addSubscription(companyEntity);
-
-            return companyMapper.toDto(companyEntity);
         } else {
             throw new NotFoundException("File Not Found By Id");
         }

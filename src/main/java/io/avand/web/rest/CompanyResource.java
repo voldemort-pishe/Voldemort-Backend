@@ -71,19 +71,10 @@ public class CompanyResource {
             throw new BadRequestAlertException("A new companyEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            CloudflareRequestDTO requestDTO = new CloudflareRequestDTO();
-            requestDTO.setType("CNAME");
-            requestDTO.setName(companyDTO.getSubDomain() + ".avand.hr");
-            requestDTO.setContent("avand.hr");
-            requestDTO.setProxied(false);
-            if (cloudflareService.createDNSRecord(requestDTO)) {
-                ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
-                return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))
-                    .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
-                    .body(result);
-            } else {
-                throw new ServerErrorException("مشگلی در ایجاد دامنه پیش آمده است لطفا مجدد تلاش نمایید");
-            }
+            ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
+            return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
+                .body(result);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         } catch (HttpClientErrorException e) {

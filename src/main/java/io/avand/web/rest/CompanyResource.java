@@ -71,19 +71,10 @@ public class CompanyResource {
             throw new BadRequestAlertException("A new companyEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         try {
-            CloudflareRequestDTO requestDTO = new CloudflareRequestDTO();
-            requestDTO.setType("CNAME");
-            requestDTO.setName(companyDTO.getSubDomain() + ".avand.hr");
-            requestDTO.setContent("avand.hr");
-            requestDTO.setProxied(false);
-            if (cloudflareService.createDNSRecord(requestDTO)) {
-                ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
-                return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))
-                    .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
-                    .body(result);
-            } else {
-                throw new ServerErrorException("مشگلی در ایجاد دامنه پیش آمده است لطفا مجدد تلاش نمایید");
-            }
+            ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
+            return ResponseEntity.created(new URI("/api/company/" + result.getData().getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
+                .body(result);
         } catch (NotFoundException e) {
             throw new ServerErrorException(e.getMessage());
         } catch (HttpClientErrorException e) {
@@ -91,34 +82,6 @@ public class CompanyResource {
         }
     }
 
-    /**
-     * PUT  /company : Updates an existing companyEntity.
-     *
-     * @param companyDTO the companyEntity to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated companyEntity,
-     * or with status 400 (Bad Request) if the companyEntity is not valid,
-     * or with status 500 (Internal Server Error) if the companyEntity couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
-    @PutMapping
-    @Timed
-    @PreAuthorize("isMember(#companyDTO.id,'COMPANY','EDIT_COMPANY')")
-    public ResponseEntity<ResponseVM<CompanyDTO>> updateCompany(@Valid @RequestBody CompanyDTO companyDTO)
-        throws URISyntaxException {
-        log.debug("REST request to update Company : {}", companyDTO);
-        if (companyDTO.getId() == null) {
-            return createCompany(companyDTO);
-        }
-        try {
-            ResponseVM<CompanyDTO> result = companyComponent.save(companyDTO);
-            return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, companyDTO.getId().toString()))
-                .body(result);
-        } catch (NotFoundException e) {
-            throw new ServerErrorException(e.getMessage());
-        }
-
-    }
 
     /**
      * GET  /company/:id : get the "id" companyEntity.

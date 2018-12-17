@@ -154,14 +154,10 @@ public class CompanyMemberServiceImpl implements CompanyMemberService {
     }
 
     @Override
-    public CompanyMemberDTO findByUserId(Long userId) throws NotFoundException {
+    public CompanyMemberDTO findByUserId(Long userId) {
         log.debug("Request to find companyMember by userId : {}", userId);
         CompanyMemberEntity companyMemberEntity = companyMemberRepository.findByUser_Id(userId);
-        if (companyMemberEntity != null) {
-            return companyMemberMapper.toDto(companyMemberEntity);
-        } else {
-            throw new NotFoundException("Company Member Not Found");
-        }
+        return companyMemberMapper.toDto(companyMemberEntity);
     }
 
     @Override

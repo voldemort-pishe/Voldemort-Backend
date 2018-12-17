@@ -38,6 +38,9 @@ public class JobHireTeamResource {
     public ResponseEntity<List<ResponseVM<JobHireTeamDTO>>> save(@Valid @RequestBody JobHireTeamVM jobHireTeamVM) {
         log.debug("REST Request to save jobHireTeams");
         try {
+            for (JobHireTeamDTO team : jobHireTeamVM.getTeams()) {
+                team.setJobId(jobHireTeamVM.getJobId());
+            }
             List<ResponseVM<JobHireTeamDTO>> responseVMS = jobHireTeamComponent.saveAll(jobHireTeamVM.getTeams());
             return new ResponseEntity<>(responseVMS, HttpStatus.OK);
         } catch (NotFoundException e) {

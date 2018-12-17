@@ -30,7 +30,7 @@ public class CloudflareServiceImpl implements CloudflareService {
     private final String BASE_URL = "https://api.cloudflare.com/client/v4/";
 
     @Override
-    public Boolean createDNSRecord(CloudflareRequestDTO requestDTO) {
+    public void createDNSRecord(CloudflareRequestDTO requestDTO) {
         log.debug("Request to create dns record : {}", requestDTO);
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -46,7 +46,8 @@ public class CloudflareServiceImpl implements CloudflareService {
                 httpEntity,
                 CloudflareResponseDTO.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            return responseEntity.getBody().getSuccess();
+            if (!responseEntity.getBody().getSuccess())
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "DNS Record Don't Create");
         } else {
             throw new HttpClientErrorException(responseEntity.getStatusCode());
         }

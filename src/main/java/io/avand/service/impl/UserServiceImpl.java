@@ -28,27 +28,17 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
-
     private final UserRepository userRepository;
-
-    private final AuthorityRepository authorityRepository;
-
     private final UserMapper userMapper;
-
     private final PasswordEncoder passwordEncoder;
-
     private final MailService mailService;
-
     private final TokenService tokenService;
-
     private final FileRepository fileRepository;
-
     private final UserAuthorityService userAuthorityService;
     private final SmsService smsService;
     private final UserStateService userStateService;
 
     public UserServiceImpl(UserRepository userRepository,
-                           AuthorityRepository authorityRepository,
                            UserMapper userMapper,
                            PasswordEncoder passwordEncoder,
                            MailService mailService,
@@ -58,7 +48,6 @@ public class UserServiceImpl implements UserService {
                            SmsService smsService,
                            UserStateService userStateService) {
         this.userRepository = userRepository;
-        this.authorityRepository = authorityRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
@@ -77,50 +66,28 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity;
         if (userEntityOptional.isPresent()) {
             userEntity = userEntityOptional.get();
-            userEntity.setFirstName(firstName);
-            userEntity.setLastName(lastName);
-            userEntity.setEmail(email);
-            userEntity.setCellphone(cellphone);
         } else {
             userEntity = new UserEntity();
             userEntity.setLogin(login);
             userEntity.setPasswordHash(passwordEncoder.encode(password));
-            userEntity.setFirstName(firstName);
-            userEntity.setLastName(lastName);
-            userEntity.setEmail(email);
-            userEntity.setCellphone(cellphone);
             userEntity.setActivationKey(RandomUtil.generateActivationKey());
             userEntity.setActivated(false);
+        }
+        userEntity.setFirstName(firstName);
+        userEntity.setLastName(lastName);
+        userEntity.setEmail(email);
+        userEntity.setCellphone(cellphone);
+        userEntity = userRepository.save(userEntity);
 
-            UserAuthorityEntity userAuthority = new UserAuthorityEntity();
-            AuthorityEntity userAuthorityEntity = authorityRepository.findByName(AuthoritiesConstants.USER);
-
-            userAuthority.setAuthority(userAuthorityEntity);
-            userAuthority.setUser(userEntity);
-
-            UserAuthorityEntity adminAuthority = new UserAuthorityEntity();
-            AuthorityEntity userAdminAuthority = authorityRepository.findByName(AuthoritiesConstants.ADMIN);
-
-            adminAuthority.setAuthority(userAdminAuthority);
-            adminAuthority.setUser(userEntity);
-
-
-            Set<UserAuthorityEntity> userAuthorityEntities = new HashSet<>();
-            userAuthorityEntities.add(userAuthority);
-            userAuthorityEntities.add(adminAuthority);
-
-            userEntity.setUserAuthorities(userAuthorityEntities);
-            try {
-                UserStateDTO userStateDTO = new UserStateDTO();
-                userStateDTO.setUserId(userEntity.getId());
-                userStateDTO.setState(UserStateType.COMPANY);
-                userStateService.save(userStateDTO);
-            } catch (NotFoundException ignore) {
-            }
-
+        try {
+            List<String> authorities = new ArrayList<>();
+            authorities.add(AuthoritiesConstants.ADMIN);
+            authorities.add(AuthoritiesConstants.USER);
+            userAuthorityService.grantAuthority(authorities, userEntity.getId());
+        } catch (NotFoundException ignore) {
         }
 
-        userEntity = userRepository.save(userEntity);
+        userStateService.updateState(UserStateType.COMPANY, userEntity.getId());
 
         boolean bool = smsService.send(userEntity.getCellphone(), userEntity.getActivationKey());
         if (!bool) {
@@ -144,11 +111,9 @@ public class UserServiceImpl implements UserService {
         userEntity.setCellphone(cellphone);
         userEntity.setActivated(active);
         userEntity.setInvitationKey(null);
-        userAuthorityService.grantAuthority(AuthoritiesConstants.USER, userEntity.getId());
         userEntity = userRepository.save(userEntity);
+        userAuthorityService.grantAuthority(AuthoritiesConstants.USER, userEntity.getId());
         return userMapper.toDto(userEntity);
-
-
     }
 
     @Override

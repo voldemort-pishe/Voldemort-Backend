@@ -1,6 +1,7 @@
 package io.avand.service.impl;
 
 import io.avand.domain.entity.jpa.UserStateEntity;
+import io.avand.domain.enumeration.UserStateType;
 import io.avand.repository.jpa.UserStateRepository;
 import io.avand.security.SecurityUtils;
 import io.avand.service.UserStateService;
@@ -38,6 +39,20 @@ public class UserStateServiceImpl implements UserStateService {
         } else {
             userStateEntity = userStateMapper.toEntity(userStateDTO);
         }
+        userStateEntity = userStateRepository.save(userStateEntity);
+        return userStateMapper.toDto(userStateEntity);
+
+    }
+
+    @Override
+    public UserStateDTO updateState(UserStateType stateType, Long userId) {
+        log.debug("Request to save userState : {}", stateType);
+        UserStateEntity userStateEntity = userStateRepository.findByUserId(userId);
+        if (userStateEntity == null) {
+            userStateEntity = new UserStateEntity();
+        }
+        userStateEntity.setState(stateType);
+        userStateEntity.setUserId(userId);
         userStateEntity = userStateRepository.save(userStateEntity);
         return userStateMapper.toDto(userStateEntity);
 

@@ -23,23 +23,42 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <column name="comment_text" type="clob">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <column name="status" type="bit">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <column name="candidate_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="created_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="created_date" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_modified_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="true"/>
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
+        <dropDefaultValue tableName="comment" columnName="created_date" columnDataType="datetime"/>
+        <dropDefaultValue tableName="comment" columnName="last_modified_date" columnDataType="datetime"/>
+
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

@@ -82,6 +82,29 @@ public class UserAuthorityServiceImpl implements UserAuthorityService {
     }
 
     @Override
+    public void grantAuthority(List<String> authorities, Long userId) throws NotFoundException {
+        log.debug("Request to grant authority to user : {}", userId);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if (userEntityOptional.isPresent()) {
+            for (String authority : authorities) {
+                Optional<UserAuthorityEntity> userAuthorityEntityOptional =
+                    userAuthorityRepository.findByAuthority_NameAndUser_Id(authority, userId);
+                if (!userAuthorityEntityOptional.isPresent()) {
+                    AuthorityEntity authorityEntity = authorityRepository.findByName(authority);
+                    if (authorityEntity != null) {
+                        UserAuthorityEntity userAuthorityEntity = new UserAuthorityEntity();
+                        userAuthorityEntity.setAuthority(authorityEntity);
+                        userAuthorityEntity.setUser(userEntityOptional.get());
+                        userAuthorityRepository.save(userAuthorityEntity);
+                    }
+                }
+            }
+        } else {
+            throw new NotFoundException("User Not Found");
+        }
+    }
+
+    @Override
     public void removeAuthority(String authority, Long userId) throws NotFoundException {
         log.debug("Request to remove authority from user : {}", userId);
         Optional<UserEntity> userEntityOptional = userRepository.findById(userId);

@@ -14,7 +14,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "comment")
 @Cache(usage = CacheConcurrencyStrategy.NONE)
-public class CommentEntity implements Serializable {
+public class CommentEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

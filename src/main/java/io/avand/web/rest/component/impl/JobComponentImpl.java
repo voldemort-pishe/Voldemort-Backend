@@ -47,6 +47,16 @@ public class JobComponentImpl implements JobComponent {
     }
 
     @Override
+    public ResponseVM<JobDTO> update(JobDTO jobDTO) throws NotFoundException {
+        log.debug("Request to update jobDTO via component : {}", jobDTO);
+        jobDTO = jobService.update(jobDTO);
+        ResponseVM<JobDTO> responseVM = new ResponseVM<>();
+        responseVM.setData(jobDTO);
+        responseVM.setInclude(this.createIncluded(jobDTO));
+        return responseVM;
+    }
+
+    @Override
     public ResponseVM<JobDTO> findById(Long id) throws NotFoundException {
         log.debug("Request to find jobDTO by id via component : {}", id);
         JobDTO jobDTO = jobService.findById(id);

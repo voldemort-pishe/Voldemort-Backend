@@ -13,6 +13,7 @@ import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
 import io.avand.web.rest.util.HeaderUtil;
 import io.avand.web.rest.vm.JobFilterVM;
+import io.avand.web.rest.vm.JobStatusVM;
 import io.avand.web.rest.vm.response.ResponseVM;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -75,7 +76,7 @@ public class JobResource {
         }
         try {
             jobDTO.setUniqueId(RandomUtil.getUniqueId());
-            jobDTO.setStatus(JobStatus.OPEN);
+            jobDTO.setStatus(JobStatus.CLOSE);
             ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
             return ResponseEntity.created(new URI("/api/job/" + result.getData().getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
@@ -104,7 +105,7 @@ public class JobResource {
             return createJob(jobDTO);
         }
         try {
-            ResponseVM<JobDTO> result = jobComponent.save(jobDTO);
+            ResponseVM<JobDTO> result = jobComponent.update(jobDTO);
             return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, jobDTO.getId().toString()))
                 .body(result);
@@ -112,6 +113,20 @@ public class JobResource {
             throw new ServerErrorException(e.getMessage());
         }
     }
+
+    @PutMapping("/publish")
+    @Timed
+    @PreAuthorize("isMember(#jobStatusVM.id,'JOB','EDIT_JOB_STATUS')")
+    public ResponseEntity publishJob(@Valid @RequestBody JobStatusVM jobStatusVM) {
+        log.debug("REST Request to publish job : {}", jobStatusVM);
+        try {
+            jobService.publish(jobStatusVM.getId(), jobStatusVM.getStatus());
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
 
     /**
      * GET  /job/:id : get the "id" jobEntity.

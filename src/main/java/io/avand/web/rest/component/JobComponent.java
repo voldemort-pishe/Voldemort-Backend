@@ -11,6 +11,8 @@ public interface JobComponent {
 
     ResponseVM<JobDTO> save(JobDTO jobDTO) throws NotFoundException;
 
+    ResponseVM<JobDTO> update(JobDTO jobDTO) throws NotFoundException;
+
     ResponseVM<JobDTO> findById(Long id) throws NotFoundException;
 
     Page<ResponseVM<JobDTO>> findAllByFilter(JobFilterVM filterVM, Pageable pageable) throws NotFoundException;

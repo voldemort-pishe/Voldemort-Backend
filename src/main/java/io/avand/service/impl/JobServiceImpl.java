@@ -3,6 +3,7 @@ package io.avand.service.impl;
 import io.avand.domain.entity.jpa.CompanyEntity;
 import io.avand.domain.entity.jpa.JobEntity;
 import io.avand.domain.entity.jpa.UserEntity;
+import io.avand.domain.enumeration.JobStatus;
 import io.avand.repository.jpa.CompanyRepository;
 import io.avand.repository.jpa.JobRepository;
 import io.avand.repository.jpa.UserRepository;
@@ -56,6 +57,51 @@ public class JobServiceImpl implements JobService {
             return jobMapper.toDto(jobEntity);
         } else {
             throw new NotFoundException("Company Not Available");
+        }
+    }
+
+    @Override
+    public JobDTO update(JobDTO jobDTO) throws NotFoundException {
+        log.debug("Request to update job : {}", jobDTO);
+        JobEntity jobEntity = jobRepository.findOne(jobDTO.getId());
+        if (jobEntity != null) {
+            jobEntity.setDepartment(jobDTO.getDepartment());
+            jobEntity.setDescriptionEn(jobDTO.getDescriptionEn());
+            jobEntity.setDescriptionFa(jobDTO.getDescriptionFa());
+            jobEntity.setLanguage(jobDTO.getLanguage());
+            jobEntity.setLocation(jobDTO.getLocation());
+            jobEntity.setNameEn(jobDTO.getNameEn());
+            jobEntity.setNameFa(jobDTO.getNameFa());
+            jobEntity.setType(jobDTO.getType());
+            jobEntity = jobRepository.save(jobEntity);
+            return jobMapper.toDto(jobEntity);
+        } else {
+            throw new NotFoundException("Job NotFound");
+        }
+    }
+
+    @Override
+    public void publish(Long jobId, JobStatus status) throws NotFoundException {
+        log.debug("Request to publish job : {}, {}", jobId, status);
+        JobEntity jobEntity = jobRepository.findOne(jobId);
+        if (jobEntity != null) {
+            if (status == JobStatus.OPEN) {
+                if (jobEntity.getStatus() != JobStatus.OPEN) {
+                    if (jobEntity.getJobHireTeam() != null && jobEntity.getJobHireTeam().size() != 0) {
+                        jobEntity.setStatus(status);
+                        jobRepository.save(jobEntity);
+                    } else {
+                        throw new NotFoundException("لطفا ابتدا تیم استخدام شغل خود را معلوم کنید");
+                    }
+                } else {
+                    throw new NotFoundException("شغل مورد نظر در حال حاضر در حال انتشار است");
+                }
+            } else {
+                jobEntity.setStatus(status);
+                jobRepository.save(jobEntity);
+            }
+        } else {
+            throw new NotFoundException("Job Not Found");
         }
     }
 

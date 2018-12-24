@@ -17,6 +17,7 @@ public class SecurityACLService {
     private final CandidateRepository candidateRepository;
     private final CandidateEvaluationCriteriaRepository candidateEvaluationCriteriaRepository;
     private final CandidateMessageRepository candidateMessageRepository;
+    private final CandidateSocialRepository candidateSocialRepository;
     private final CandidateScheduleMemberRepository scheduleMemberRepository;
     private final CandidateScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
@@ -31,6 +32,7 @@ public class SecurityACLService {
     public SecurityACLService(CandidateRepository candidateRepository,
                               CandidateEvaluationCriteriaRepository candidateEvaluationCriteriaRepository,
                               CandidateMessageRepository candidateMessageRepository,
+                              CandidateSocialRepository candidateSocialRepository,
                               CandidateScheduleMemberRepository scheduleMemberRepository,
                               CandidateScheduleRepository scheduleRepository,
                               CommentRepository commentRepository,
@@ -44,6 +46,7 @@ public class SecurityACLService {
         this.candidateRepository = candidateRepository;
         this.candidateEvaluationCriteriaRepository = candidateEvaluationCriteriaRepository;
         this.candidateMessageRepository = candidateMessageRepository;
+        this.candidateSocialRepository = candidateSocialRepository;
         this.scheduleMemberRepository = scheduleMemberRepository;
         this.scheduleRepository = scheduleRepository;
         this.commentRepository = commentRepository;
@@ -74,6 +77,9 @@ public class SecurityACLService {
                     break;
                 case CANDIDATE_MESSAGE:
                     jobId = this.findJobByCandidateMessage(id);
+                    break;
+                case CANDIDATE_SOCIAL:
+                    jobId = this.findJobByCandidateSocial(id);
                     break;
                 case SCHEDULE_MEMBER:
                     jobId = this.findJobByScheduleMember(id);
@@ -191,6 +197,16 @@ public class SecurityACLService {
         }
     }
 
+    private Long findJobByCandidateSocial(Long id) throws NotFoundException {
+        CandidateSocialEntity candidateSocialEntity = candidateSocialRepository
+            .findOne(id);
+        if (candidateSocialEntity != null) {
+            return candidateSocialEntity.getCandidate().getJob().getId();
+        } else {
+            throw new NotFoundException("NotFound");
+        }
+    }
+
     private Long findJobByScheduleMember(Long id) throws NotFoundException {
         CandidateScheduleMemberEntity scheduleMemberEntity = scheduleMemberRepository.findOne(id);
         if (scheduleMemberEntity != null) {
@@ -263,11 +279,11 @@ public class SecurityACLService {
         }
     }
 
-    private Long findCompanyByInvoice(Long id) throws NotFoundException{
+    private Long findCompanyByInvoice(Long id) throws NotFoundException {
         InvoiceEntity invoiceEntity = invoiceRepository.findOne(id);
-        if (invoiceEntity!=null){
+        if (invoiceEntity != null) {
             return invoiceEntity.getCompany().getId();
-        }else {
+        } else {
             throw new NotFoundException("NotFound");
         }
     }

@@ -2,10 +2,12 @@ package io.avand.service.dto;
 
 import io.avand.domain.enumeration.SocialType;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class CandidateSocialDTO implements Serializable {
     private Long id;
+    @NotNull
     private Long candidateId;
     private SocialType type;
     private String url;

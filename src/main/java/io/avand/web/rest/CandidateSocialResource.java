@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,6 +32,7 @@ public class CandidateSocialResource {
 
     @PostMapping
     @Timed
+    @PreAuthorize("isMember(#candidateSocialDTO.candidateId,'CANDIDATE','EDIT_CANDIDATE')")
     public ResponseEntity<ResponseVM<CandidateSocialDTO>> save(@RequestBody @Valid CandidateSocialDTO candidateSocialDTO) {
         log.debug("REST Request to save candidateSocial : {}", candidateSocialDTO);
         try {
@@ -43,6 +45,7 @@ public class CandidateSocialResource {
 
     @PutMapping
     @Timed
+    @PreAuthorize("isMember(#candidateSocialDTO.candidateId,'CANDIDATE','EDIT_CANDIDATE')")
     public ResponseEntity<ResponseVM<CandidateSocialDTO>> update(@RequestBody @Valid CandidateSocialDTO candidateSocialDTO) {
         log.debug("REST Request to update candidateSocial : {}", candidateSocialDTO);
         if (candidateSocialDTO.getId() == null) {
@@ -58,6 +61,7 @@ public class CandidateSocialResource {
 
     @GetMapping("/{id}")
     @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE_SOCIAL','EDIT_CANDIDATE')")
     public ResponseEntity<ResponseVM<CandidateSocialDTO>> findById(@PathVariable("id") Long id) {
         log.debug("REST Request to find candidateSocial by id : {}", id);
         try {
@@ -70,6 +74,7 @@ public class CandidateSocialResource {
 
     @GetMapping("/candidate/{id}")
     @Timed
+    @PreAuthorize("isMember(#candidateId,'CANDIDATE','EDIT_CANDIDATE')")
     public ResponseEntity<List<ResponseVM<CandidateSocialDTO>>> findAll(@PathVariable("id") Long candidateId) {
         log.debug("REST Request to findAll candidateSocial by candidateId : {}", candidateId);
         try {
@@ -81,6 +86,7 @@ public class CandidateSocialResource {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("isMember(#id,'CANDIDATE_SOCIAL','EDIT_CANDIDATE')")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         log.debug("REST Request to delete candidateSocial : {}", id);
         try {

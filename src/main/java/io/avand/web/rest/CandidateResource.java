@@ -1,12 +1,11 @@
 package io.avand.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-
 import io.avand.domain.enumeration.CandidateState;
-import io.avand.security.AuthoritiesConstants;
-import io.avand.security.SecurityUtils;
 import io.avand.service.CandidateService;
+import io.avand.service.GoogleService;
 import io.avand.service.dto.CandidateDTO;
+import io.avand.service.dto.GoogleSearchItemDTO;
 import io.avand.web.rest.component.CandidateComponent;
 import io.avand.web.rest.errors.BadRequestAlertException;
 import io.avand.web.rest.errors.ServerErrorException;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -30,7 +28,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -46,11 +45,15 @@ public class CandidateResource {
 
     private final CandidateService candidateService;
     private final CandidateComponent candidateComponent;
+    private final GoogleService googleService;
+
 
     public CandidateResource(CandidateService candidateService,
-                             CandidateComponent candidateComponent) {
+                             CandidateComponent candidateComponent,
+                             GoogleService googleService) {
         this.candidateService = candidateService;
         this.candidateComponent = candidateComponent;
+        this.googleService = googleService;
     }
 
 
@@ -190,5 +193,19 @@ public class CandidateResource {
         log.debug("REST request to delete CandidateDto : {}", id);
         candidateService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    @GetMapping("/search-engine/{id}")
+    @Timed
+    @PreAuthorize("isMember(#id,'CANDIDATE','VIEW_CANDIDATE')")
+    public ResponseEntity<Map<String, List<GoogleSearchItemDTO>>> searchCandidate(@PathVariable("id") Long id) {
+        log.debug("REST Request to search candidate in google");
+        try {
+            CandidateDTO candidateDTO = candidateService.findById(id);
+            Map<String, List<GoogleSearchItemDTO>> listMap = googleService.search(candidateDTO.getFirstName() + "" + candidateDTO.getLastName());
+            return new ResponseEntity<>(listMap, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException("کارجو مورد نظر یافت نشد");
+        }
     }
 }

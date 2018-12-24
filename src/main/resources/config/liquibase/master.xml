@@ -63,6 +63,8 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181203204236_added_entity_UserState.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181224162200_added_entity_CandidateSocial.xml"
+             relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20180619154433_added_entity_constraints_User.xml"
              relativeToChangelogFile="false"/>
@@ -110,6 +112,8 @@
     <include file="config/liquibase/changelog/20181123152304_added_entity_constraints_CandidateScheduleMember.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181202175736_added_entity_constraints_AuthorityPermission.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181224162200_added_entity_constraints_CandidateSocial.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/loadData.xml"
              relativeToChangelogFile="false"/>

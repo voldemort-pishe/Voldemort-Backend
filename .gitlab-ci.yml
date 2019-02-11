@@ -36,7 +36,7 @@ k8s-deploy:
   - gcloud config set project pishe-231414
   - gcloud config set container/use_client_certificate True
   - gcloud container clusters get-credentials pishe-cluster-1
-  - kubectl create secret docker-registry registry.gitlab.com --docker-server=CI_REGISTRY --docker-username="$CI_REGISTRY_USER" --docker-password="$CI_REGISTRY_PASSWORD" --docker-email=i@ehdi.in
+  - kubectl create secret docker-registry registry.gitlab.com --docker-server="$CI_REGISTRY" --docker-username="$CI_REGISTRY_USER" --docker-password="$CI_REGISTRY_PASSWORD" --docker-email=i@ehdi.in
   - kubectl create -f mariadb.yaml
   - kubectl apply -f deployment.yml
 

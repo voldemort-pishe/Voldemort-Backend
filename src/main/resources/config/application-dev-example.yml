@@ -143,6 +143,8 @@ jhipster:
 # http://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+payment:
+    callbackUrl: http://localhost:8080/api/payment/callback
 application:
   base:
     url: http://localhost:8080/

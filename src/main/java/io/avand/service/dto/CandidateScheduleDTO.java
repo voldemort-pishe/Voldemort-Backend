@@ -1,6 +1,5 @@
 package io.avand.service.dto;
 
-import io.avand.domain.entity.jpa.CandidateScheduleMemberEntity;
 import io.avand.domain.enumeration.ScheduleStatus;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 public class CandidateScheduleDTO implements Serializable {
 
-    @NotNull
     private Long id;
 
     private ZonedDateTime startDate;

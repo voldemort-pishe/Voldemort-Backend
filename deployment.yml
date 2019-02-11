@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: voldemort-backend
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: voldemort-backend
+    spec:
+      containers:
+      - name: voldemort-backend
+        image: registry.gitlab.com/voldemortapp/voldemort-backend
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+        - name: registry.gitlab.com

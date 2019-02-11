@@ -1,13 +1,13 @@
 package io.avand.service.impl;
 
+import hr.pishe.mailgun.service.MailGunMessageService;
+import hr.pishe.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
+import hr.pishe.mailgun.service.dto.response.MailGunSendMessageResponseDTO;
+import hr.pishe.mailgun.service.error.MailGunException;
 import io.avand.config.ApplicationProperties;
 import io.avand.domain.entity.jpa.CandidateEntity;
 import io.avand.domain.entity.jpa.CandidateMessageEntity;
 import io.avand.domain.enumeration.CandidateMessageOwnerType;
-import io.avand.mailgun.service.MailGunMessageService;
-import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
-import io.avand.mailgun.service.dto.response.MailGunSendMessageResponseDTO;
-import io.avand.mailgun.service.error.MailGunException;
 import io.avand.repository.jpa.CandidateMessageRepository;
 import io.avand.repository.jpa.CandidateRepository;
 import io.avand.security.SecurityUtils;

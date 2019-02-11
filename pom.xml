@@ -343,14 +343,14 @@
             <version>58.2</version>
         </dependency>
         <dependency>
-            <groupId>io.avand</groupId>
+            <groupId>com.github.ehdi</groupId>
             <artifactId>mailgun</artifactId>
-            <version>0.0.5-RELEASE</version>
+            <version>0.0.6</version>
         </dependency>
         <dependency>
-            <groupId>io.avand</groupId>
+            <groupId>com.github.ehdi</groupId>
             <artifactId>payment</artifactId>
-            <version>0.0.1-RELEASE</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>

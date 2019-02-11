@@ -1,16 +1,16 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: voldemort-backend
+  name: pishe
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        app: voldemort-backend
+        app: pishe
     spec:
       containers:
-      - name: voldemort-sample
+      - name: pishe
         image: registry.gitlab.com/voldemortapp/voldemort-backend
         imagePullPolicy: Always
         ports:

@@ -33,9 +33,9 @@ k8s-deploy:
   - echo "$GOOGLE_KEY" > key.json
   - gcloud auth activate-service-account --key-file key.json
   - gcloud config set compute/zone europe-west1-c
-  - gcloud config set project voldemort-backend
+  - gcloud config set project pishe
   - gcloud config set container/use_client_certificate True
-  - gcloud container clusters get-credentials voldemort-backend
+  - gcloud container clusters get-credentials pishe
   - kubectl delete secret registry.gitlab.com
   - kubectl create secret docker-registry registry.gitlab.com --docker-server=https://registry.gitlab.com --docker-username=voldemortapp --docker-password=$REGISTRY_PASSWD --docker-email=i@ehdi.in
   - kubectl apply -f deployment.yml

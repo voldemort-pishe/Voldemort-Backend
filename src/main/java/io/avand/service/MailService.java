@@ -1,12 +1,12 @@
 package io.avand.service;
 
+import hr.pishe.mailgun.service.MailGunMessageService;
+import hr.pishe.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
+import hr.pishe.mailgun.service.error.MailGunException;
 import io.avand.config.ApplicationProperties;
 import io.avand.domain.entity.jpa.CandidateScheduleEntity;
 import io.avand.domain.entity.jpa.CompanyMemberEntity;
 import io.avand.domain.entity.jpa.UserEntity;
-import io.avand.mailgun.service.MailGunMessageService;
-import io.avand.mailgun.service.dto.request.MailGunSendMessageRequestDTO;
-import io.avand.mailgun.service.error.MailGunException;
 import io.avand.service.util.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

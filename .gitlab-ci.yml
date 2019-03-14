@@ -1,11 +1,3 @@
-image: docker:latest
-services:
-  - docker:dind
-
-variables:
-  DOCKER_DRIVER: overlay
-  SPRING_PROFILES_ACTIVE: gitlab-ci
-
 stages:
   - build
   - package

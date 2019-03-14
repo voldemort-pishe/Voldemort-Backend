@@ -7,7 +7,3 @@ spec:
   env:
     - name: DEBUG
       value: 1
-
-  domains:
-     - name: api.pishehr.ir
-     - name: hw.pishehr.ir

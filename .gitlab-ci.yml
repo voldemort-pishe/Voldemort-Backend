@@ -9,6 +9,7 @@ variables:
 stages:
   - build
   - package
+  - push
   - deploy
 
 maven-build:
@@ -26,19 +27,28 @@ docker-build:
   - docker login -u "$CI_DEPLOY_USER" -p "$CI_DEPLOY_PASSWORD" $CI_REGISTRY
   - docker push registry.gitlab.com/voldemortapp/voldemort-backend
 
-k8s-deploy:
-  image: google/cloud-sdk
-  stage: deploy
-  script:
-  - echo "$GOOGLE_KEY" > key.json
-  - gcloud auth activate-service-account --key-file key.json
-  - gcloud config set compute/zone us-central1-a
-  - gcloud config set project pishe-231414
-  - gcloud config set container/use_client_certificate True
-  - gcloud container clusters get-credentials pishe-cluster-1
-  - kubectl create secret docker-registry registry.gitlab.com --docker-server=https://registry.gitlab.com --docker-username="$CI_DEPLOY_USER" --docker-password="$CI_DEPLOY_PASSWORD" --docker-email=i@ehdi.in
-  - kubectl create -f mariadb.yaml
-  - kubectl apply -f deployment.yml
+push:
+	stage: push
+	image: docker:latest
+	services:
+		- docker:dind
+	script:
+		- docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY
+		- docker build --pull -t $IMAGE_URL:$TAG .
+		- docker push $IMAGE_URL:$TAG
+  only:
+		- master
 
+deploy:
+	stage: deploy
+	image: python:3.5
+	variables:
+		COLLECT_ERROR: 1
+	script:
+		- pip install fandogh_cli --upgrade
+		- fandogh login --username $FAN_USR --password $FAN_PASS
+		- ./deployment/scripts/deploy-to-fandogh.sh
+	only:
+        - master
 
 

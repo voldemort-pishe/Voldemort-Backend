@@ -9,7 +9,6 @@ variables:
 stages:
   - build
   - package
-  - push
   - deploy
 
 maven-build:
@@ -22,13 +21,6 @@ maven-build:
 
 docker-build:
   stage: package
-  script:
-  - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY
-  - docker build -t registry.gitlab.com/voldemortapp/voldemort-backend .
-  - docker push $IMAGE_URL:$TAG
-
-push:
-  stage: push
   image: docker:latest
   services:
   - docker:dind
@@ -36,10 +28,8 @@ push:
   - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY
   - docker build --pull -t $IMAGE_URL:$TAG .
   - docker push $IMAGE_URL:$TAG
-  only:
-  - master
 
-deploy:
+deploy-fandogh:
   stage: deploy
   image: python:3.5
   variables:
@@ -48,5 +38,3 @@ deploy:
   - pip install fandogh_cli --upgrade
   - fandogh login --username $FAN_USR --password $FAN_PASS
   - ./deployment/scripts/deploy-to-fandogh.sh
-  only:
-  - master

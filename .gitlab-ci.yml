@@ -17,7 +17,7 @@ docker-build:
   services:
   - docker:dind
   script:
-  - docker login -u i@ehdi.in -p 52337MEHDI1366 $CI_REGISTRY
+  - docker login -u $PISHE_USER -p $PISHE_PASS $CI_REGISTRY
   - docker build --pull -t $IMAGE_URL:$TAG .
   - docker push $IMAGE_URL:$TAG
 

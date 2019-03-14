@@ -7,8 +7,6 @@ spec:
   env:
     - name: DEBUG
       value: 1
-    - name: API_KEY
-      value: ${API_KEY}
 
   domains:
      - name: api.pishehr.ir

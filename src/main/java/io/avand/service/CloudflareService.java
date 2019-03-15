@@ -1,7 +1,0 @@
-package io.avand.service;
-
-import io.avand.service.dto.CloudflareRequestDTO;
-
-public interface CloudflareService {
-    void createDNSRecord(CloudflareRequestDTO requestDTO);
-}

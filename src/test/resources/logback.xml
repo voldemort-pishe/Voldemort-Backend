@@ -5,7 +5,7 @@
 
     <property name="LOG_TEMP" value="./logs"/>
 
-    <logger name="io.avand" level="INFO"/>
+    <logger name="hr.pishe" level="INFO"/>
 
     <logger name="io.github.jhipster" level="WARN"/>
 

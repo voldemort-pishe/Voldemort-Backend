@@ -11,7 +11,7 @@ public interface CandidateService {
 
     CandidateDTO save(CandidateDTO candidateDTO) throws NotFoundException;
 
-    CandidateDTO save(CandidateDTO candidateDTO, String companySubDomain) throws NotFoundException;
+    CandidateDTO save(CandidateDTO candidateDTO, String companySubDomain, Long companyId) throws NotFoundException;
 
     CandidateDTO updateState(Long id, CandidateState state) throws NotFoundException;
 

@@ -115,7 +115,6 @@ public class CareerPageResource {
         try {
 
             JobDTO jobDTO = jobService.findByJobUniqueIdAndCompanySubDomain(careerPageCandidateDTO.getJobUniqueId(), subDomain);
-
             CandidateDTO candidateDTO = new CandidateDTO();
             candidateDTO.setFirstName(careerPageCandidateDTO.getFirstName());
             candidateDTO.setLastName(careerPageCandidateDTO.getLastName());
@@ -125,8 +124,9 @@ public class CareerPageResource {
             candidateDTO.setFileId(careerPageCandidateDTO.getFileId());
             candidateDTO.setJobId(jobDTO.getId());
             candidateDTO.setType(CandidateType.APPLICANT);
+            candidateDTO.setCandidatePipeline(1L);
 
-            CandidateDTO result = candidateService.save(candidateDTO, subDomain);
+            CandidateDTO result = candidateService.save(candidateDTO, subDomain, jobDTO.getCompanyId());
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {
             throw new ServerErrorException(e.getMessage());

@@ -5,10 +5,7 @@ import hr.pishe.domain.entity.jpa.*;
 import hr.pishe.domain.enumeration.CandidateState;
 import hr.pishe.domain.enumeration.CandidateType;
 import hr.pishe.domain.enumeration.EventType;
-import hr.pishe.repository.jpa.CandidateRepository;
-import hr.pishe.repository.jpa.CompanyPipelineRepository;
-import hr.pishe.repository.jpa.FileRepository;
-import hr.pishe.repository.jpa.JobRepository;
+import hr.pishe.repository.jpa.*;
 import hr.pishe.security.SecurityUtils;
 import hr.pishe.service.CandidateService;
 import hr.pishe.service.dto.CandidateDTO;
@@ -23,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CandidateServiceImpl implements CandidateService {
 
@@ -35,6 +34,7 @@ public class CandidateServiceImpl implements CandidateService {
     private final SecurityUtils securityUtils;
     private final ApplicationEventPublisher eventPublisher;
     private final CompanyPipelineRepository companyPipelineRepository;
+    private final CompanyRepository companyRepository;
 
     public CandidateServiceImpl(CandidateRepository candidateRepository,
                                 JobRepository jobRepository,
@@ -43,7 +43,7 @@ public class CandidateServiceImpl implements CandidateService {
                                 CandidateSpecification specification,
                                 SecurityUtils securityUtils,
                                 ApplicationEventPublisher eventPublisher,
-                                CompanyPipelineRepository companyPipelineRepository) {
+                                CompanyPipelineRepository companyPipelineRepository, CompanyRepository companyRepository) {
         this.candidateRepository = candidateRepository;
         this.jobRepository = jobRepository;
         this.fileRepository = fileRepository;
@@ -52,6 +52,7 @@ public class CandidateServiceImpl implements CandidateService {
         this.securityUtils = securityUtils;
         this.eventPublisher = eventPublisher;
         this.companyPipelineRepository = companyPipelineRepository;
+        this.companyRepository = companyRepository;
     }
 
     @Override
@@ -98,14 +99,20 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public CandidateDTO save(CandidateDTO candidateDTO, String companySubDomain) throws NotFoundException {
+    public CandidateDTO save(CandidateDTO candidateDTO, String companySubDomain, Long companyId) throws NotFoundException {
         log.debug("Request to save candidate by subDomain : {}, {}", candidateDTO, companySubDomain);
         JobEntity jobEntity = jobRepository.findOne(candidateDTO.getJobId());
         if (jobEntity != null) {
             if (jobEntity.getCompany().getSubDomain().equals(companySubDomain)) {
                 FileEntity fileEntity = fileRepository.findOne(candidateDTO.getFileId());
                 if (fileEntity != null) {
-                    CompanyPipelineEntity pipelineEntity = companyPipelineRepository.findOne(candidateDTO.getCandidatePipeline());
+                    CompanyEntity company = companyRepository.findById(companyId)
+                        .orElseThrow(() -> new NotFoundException("CompanyPipeline Not Found"));
+
+                    CompanyPipelineEntity pipelineEntity = companyPipelineRepository.findOne(
+                        company.getCompanyPipelines().iterator().next().getId()
+                    );
+
                     if (pipelineEntity != null) {
                         CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
                         candidateEntity.setType(CandidateType.APPLICANT);

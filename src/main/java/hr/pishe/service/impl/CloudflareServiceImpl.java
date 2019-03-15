@@ -25,8 +25,8 @@ public class CloudflareServiceImpl implements CloudflareService {
         this.restTemplate = restTemplate;
     }
 
-    private final String ZONE_ID = "08b90316fb474eac3054040dc54a0e4b";
-    private final String API_KEY = "e755afbbea1b14a5b570539f1b39a18935c7c";
+    private final String ZONE_ID = "3b1af3d36f68a3379a11b0235a590525";
+    private final String API_KEY = "011f1fcd6c189c2432380bce939be0defcdeb";
     private final String BASE_URL = "https://api.cloudflare.com/client/v4/";
 
     @Override
@@ -34,7 +34,7 @@ public class CloudflareServiceImpl implements CloudflareService {
         log.debug("Request to create dns record : {}", requestDTO);
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("X-Auth-Email", "parham.contact@gmail.com");
+        headers.add("X-Auth-Email", "i@ehdi.in");
         headers.add("X-Auth-Key", API_KEY);
         headers.add("Content-Type", "application/json");
 

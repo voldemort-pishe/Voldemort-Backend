@@ -145,7 +145,7 @@ payment:
     callbackUrl: http://testbed.avand.io:8080/api/payment/callback
 application:
   base:
-    url: http://testbed.avand.io:8080/
-    panel: http://testbed.avand.io:8081
+    url: http://api.pishehr.ir:8080/
+    panel: http://panel.pishehr.ir:8081
 storage:
-  location: /home/avand/static-files
+  location: /files

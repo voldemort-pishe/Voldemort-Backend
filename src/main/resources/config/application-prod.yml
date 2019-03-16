@@ -32,7 +32,7 @@ spring:
         type: com.zaxxer.hikari.HikariDataSource
         url: jdbc:mariadb://docker-mariadb:3306/voldemort
         username: root
-        password: root
+        password: r@52337@t
         hikari:
             data-source-properties:
                 cachePrepStmts: true

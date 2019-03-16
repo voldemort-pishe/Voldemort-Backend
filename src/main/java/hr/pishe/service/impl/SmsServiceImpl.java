@@ -14,14 +14,14 @@ public class SmsServiceImpl implements SmsService {
 
     private final Logger log = LoggerFactory.getLogger(SmsServiceImpl.class);
 
-    private final String API_KEY = "4F426F766F584A2F4155385A6D7177713345414230436E3465447749472F4D79";
+    private final String API_KEY = "6168782F3368713965576C4E76634F524C4E4F7259506236732B4C796A476A67";
 
     @Override
     public Boolean send(String cellphone, String key) {
         log.debug("Request to send sms : {}, {}", cellphone, key);
         KavenegarApi kavenegarApi = new KavenegarApi(API_KEY);
         try {
-            kavenegarApi.verifyLookup(cellphone, key, "AvandVerify");
+            kavenegarApi.verifyLookup(cellphone, key, "PisheVerify");
             return true;
         } catch (ApiException | HttpException ex) {
             return false;

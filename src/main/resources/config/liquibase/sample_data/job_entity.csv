@@ -1,6 +1,6 @@
 id;unique_id;name_fa;description_fa;name_en;description_en;language;type;location;department;company_id;status;created_by;created_date;last_modified_by;last_modified_date
-1;PJxSOMOq9RkvhbN;اندروید;به یک برنامه نویس اندروید نیازمندیم;Android;null;null;FULL_TIME;تهران;فنی;1;OPEN;ehdi.sh@gmail.com;2018-12-8 17:59:13;ehdi.sh@gmail.com;2018-12-8 17:59:13
-2;BX0NTjCzNyei1xb;جاوا;به یک برنامه نویس جاوا نیازمندیم;Java;null;null;FULL_TIME;تهران;فنی;1;OPEN;ehdi.sh@gmail.com;2018-12-9 13:10:44;ehdi.sh@gmail.com;2018-12-9 13:10:44
-3;u8VWnXXDBGsokuX;فرانت اند;به یک برنامه نویس فرانت اند نیازمندیم;Front-End;null;null;FULL_TIME;تهران;فنی;1;OPEN;ehdi.sh@gmail.com;2018-12-9 13:11:00;ehdi.sh@gmail.com;2018-12-9 13:11:00
-4;0RHTNcmGacSqqmm;منشی;به یک منشی نیازمندیم;Secretery;null;null;FULL_TIME;تهران;منابع انسانی;1;OPEN;ehdi.sh@gmail.com;2018-12-9 13:11:21;ehdi.sh@gmail.com;2018-12-9 13:11:21
-5;DUqj4DpQvUAOuER;مستخدم;به یک مستخدم نیازمندیم;Servant;null;null;FULL_TIME;تهران;منابع انسانی;1;OPEN;ehdi.sh@gmail.com;2018-12-9 13:11:33;ehdi.sh@gmail.com;2018-12-9 13:11:33
+1;PJxSOMOq9RkvhbN;اندروید;به یک برنامه نویس اندروید نیازمندیم;Android;null;null;FULL_TIME;تهران;فنی;1;OPEN;ehdi.sh@gmail.com;2019-12-8 17:59:13;ehdi.sh@gmail.com;2019-12-8 17:59:13
+2;BX0NTjCzNyei1xb;جاوا;به یک برنامه نویس جاوا نیازمندیم;Java;null;null;FULL_TIME;تهران;فنی;1;OPEN;ehdi.sh@gmail.com;2019-12-9 13:10:44;ehdi.sh@gmail.com;2019-12-9 13:10:44
+3;u8VWnXXDBGsokuX;فرانت اند;به یک برنامه نویس فرانت اند نیازمندیم;Front-End;null;null;FULL_TIME;تهران;فنی;1;OPEN;ehdi.sh@gmail.com;2019-12-9 13:11:00;ehdi.sh@gmail.com;2019-12-9 13:11:00
+4;0RHTNcmGacSqqmm;منشی;به یک منشی نیازمندیم;Secretery;null;null;FULL_TIME;تهران;منابع انسانی;1;OPEN;ehdi.sh@gmail.com;2019-12-9 13:11:21;ehdi.sh@gmail.com;2019-12-9 13:11:21
+5;DUqj4DpQvUAOuER;مستخدم;به یک مستخدم نیازمندیم;Servant;null;null;FULL_TIME;تهران;منابع انسانی;1;OPEN;ehdi.sh@gmail.com;2019-12-9 13:11:33;ehdi.sh@gmail.com;2019-12-9 13:11:33

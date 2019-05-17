@@ -115,6 +115,9 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181224162200_added_entity_constraints_CandidateSocial.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181122132304_added_entity_constraints_CompanyContact.xml"
+             relativeToChangelogFile="false"/>
+
     <include file="config/liquibase/changelog/loadData.xml"
              relativeToChangelogFile="false"/>
 

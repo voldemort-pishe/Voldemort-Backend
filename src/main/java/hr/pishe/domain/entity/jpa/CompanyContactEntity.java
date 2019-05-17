@@ -1,6 +1,7 @@
 package hr.pishe.domain.entity.jpa;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -25,6 +26,9 @@ public class CompanyContactEntity extends AbstractAuditingEntity implements Seri
 
     @Column(name = "email")
     private String email;
+
+    @OneToOne
+    private CompanyEntity company;
 
     public Long getId() {
         return id;
@@ -72,6 +76,14 @@ public class CompanyContactEntity extends AbstractAuditingEntity implements Seri
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public CompanyEntity getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyEntity company) {
+        this.company = company;
     }
 
     @Override

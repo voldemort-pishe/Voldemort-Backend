@@ -54,8 +54,8 @@
             encoding="UTF-8"/>
 
         <loadData
-            tableName="company_contact"
-            file="config/liquibase/sample_data/company_contact_entity.csv"
+            tableName="company"
+            file="config/liquibase/sample_data/company_entity.csv"
             separator=";"
             encoding="UTF-8">
             <column name="created_date" type="timestamp"/>
@@ -63,8 +63,8 @@
         </loadData>
 
         <loadData
-            tableName="company"
-            file="config/liquibase/sample_data/company_entity.csv"
+            tableName="company_contact"
+            file="config/liquibase/sample_data/company_contact_entity.csv"
             separator=";"
             encoding="UTF-8">
             <column name="created_date" type="timestamp"/>

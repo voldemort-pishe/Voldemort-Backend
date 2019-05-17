@@ -19,6 +19,8 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
 
     Optional<CompanyEntity> findById(Long companyId);
 
+    Optional<CompanyEntity> findByUser_Id(Long userId);
+
     Page<CompanyEntity> findAllByUser_Id(Long userId, Pageable pageable);
 
     List<CompanyEntity> findAllByUser_Id(Long userId);

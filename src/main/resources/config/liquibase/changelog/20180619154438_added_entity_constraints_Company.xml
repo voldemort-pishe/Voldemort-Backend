@@ -20,11 +20,6 @@
                                  referencedColumnNames="id"
                                  referencedTableName="file"/>
 
-        <addForeignKeyConstraint baseColumnNames="contact_id"
-                                 baseTableName="company"
-                                 constraintName="fk_company_contact_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="company_contact"/>
 
     </changeSet>
 </databaseChangeLog>

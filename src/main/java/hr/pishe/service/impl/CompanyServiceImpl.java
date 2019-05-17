@@ -1,9 +1,6 @@
 package hr.pishe.service.impl;
 
-import hr.pishe.domain.entity.jpa.CompanyContactEntity;
-import hr.pishe.domain.entity.jpa.CompanyEntity;
-import hr.pishe.domain.entity.jpa.FileEntity;
-import hr.pishe.domain.entity.jpa.UserEntity;
+import hr.pishe.domain.entity.jpa.*;
 import hr.pishe.repository.jpa.CompanyContactRepository;
 import hr.pishe.repository.jpa.CompanyRepository;
 import hr.pishe.repository.jpa.FileRepository;
@@ -11,6 +8,7 @@ import hr.pishe.repository.jpa.UserRepository;
 import hr.pishe.security.SecurityUtils;
 import hr.pishe.service.*;
 import hr.pishe.service.dto.*;
+import hr.pishe.service.mapper.CompanyContactMapper;
 import hr.pishe.service.mapper.CompanyMapper;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -37,6 +35,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyPlanService companyPlanService;
     private final SubscriptionService subscriptionService;
     private final CloudflareService cloudflareService;
+    private final CompanyContactMapper companyContactMapper;
 
     public CompanyServiceImpl(CompanyRepository companyRepository,
                               CompanyMapper companyMapper,
@@ -49,7 +48,7 @@ public class CompanyServiceImpl implements CompanyService {
                               InvoiceService invoiceService,
                               CompanyPlanService companyPlanService,
                               SubscriptionService subscriptionService,
-                              CloudflareService cloudflareService) {
+                              CloudflareService cloudflareService, CompanyContactMapper companyContactMapper) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.userRepository = userRepository;
@@ -62,6 +61,7 @@ public class CompanyServiceImpl implements CompanyService {
         this.companyPlanService = companyPlanService;
         this.subscriptionService = subscriptionService;
         this.cloudflareService = cloudflareService;
+        this.companyContactMapper = companyContactMapper;
     }
 
     @Override
@@ -106,6 +106,33 @@ public class CompanyServiceImpl implements CompanyService {
         } else {
             throw new NotFoundException("File Not Found By Id");
         }
+    }
+
+    @Override
+    public CompanyDTO update(CompanyDTO companyDTO) throws NotFoundException{
+        log.debug("Request to update company : {}", companyDTO);
+        Long userId = securityUtils.getCurrentUserId();
+
+        CompanyEntity foundCompany = companyRepository.findByUser_Id(userId)
+            .orElseThrow(() -> new NotFoundException("Company Not Found By Id"));
+
+        CompanyEntity updateCompany = companyMapper.toEntity(companyDTO);
+        foundCompany.setNameEn(updateCompany.getNameEn());
+        foundCompany.setNameFa(updateCompany.getNameFa());
+        foundCompany.setDescriptionEn(updateCompany.getDescriptionEn());
+        foundCompany.setDescriptionFa(updateCompany.getDescriptionFa());
+        foundCompany.setLanguage(updateCompany.getLanguage());
+        foundCompany.setSubDomain(updateCompany.getSubDomain());
+
+        foundCompany.getContact().setAddress(updateCompany.getContact().getAddress());
+        foundCompany.getContact().setLatitude(updateCompany.getContact().getLatitude());
+        foundCompany.getContact().setLongitude(updateCompany.getContact().getLongitude());
+        foundCompany.getContact().setPhone(updateCompany.getContact().getPhone());
+        foundCompany.getContact().setEmail(updateCompany.getContact().getEmail());
+
+        CompanyEntity updatedCompany = companyRepository.save(foundCompany);
+
+        return companyMapper.toDto(updatedCompany);
     }
 
     @Override

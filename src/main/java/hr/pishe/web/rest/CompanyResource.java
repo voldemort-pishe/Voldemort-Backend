@@ -97,6 +97,26 @@ public class CompanyResource {
         }
     }
 
+
+    /**
+     * PUT  /company/:id : update the companyEntity.
+     *
+     * @return the ResponseEntity with status 200 (OK) and with body the companyEntity, or with status 404 (Not Found)
+     */
+    @PutMapping("/{id}")
+    @Timed
+    @PreAuthorize("isMember(#id,'COMPANY','EDIT_COMPANY')")
+    public ResponseEntity<CompanyDTO> updateCompany(@PathVariable Long id,
+                                                    @Valid @RequestBody CompanyDTO companyDTO){
+        log.debug("REST request to get CompanyEntity");
+        try {
+            CompanyDTO update = companyService.update(companyDTO);
+            return new ResponseEntity<>(update, HttpStatus.OK);
+        } catch (NotFoundException | SecurityException e) {
+            throw new ServerErrorException(e.getMessage());
+        }
+    }
+
     /**
      * DELETE  /company/:id : delete the "id" companyEntity.
      *

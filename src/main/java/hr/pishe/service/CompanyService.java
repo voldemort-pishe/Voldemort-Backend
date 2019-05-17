@@ -7,6 +7,8 @@ public interface CompanyService {
 
     CompanyDTO save(CompanyDTO companyDTO) throws NotFoundException;
 
+    CompanyDTO update(CompanyDTO companyDTO) throws NotFoundException;
+
     CompanyDTO findById(Long id) throws NotFoundException;
 
     CompanyDTO findBySubDomain(String subDomain) throws NotFoundException;

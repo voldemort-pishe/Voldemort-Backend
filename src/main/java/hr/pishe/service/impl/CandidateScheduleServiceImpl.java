@@ -32,10 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CandidateScheduleServiceImpl implements CandidateScheduleService {
@@ -81,7 +78,7 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
         CandidateEntity candidateEntity = candidateRepository.findOne(candidateScheduleDTO.getCandidateId());
         if (candidateEntity != null) {
 
-            Set<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS = candidateScheduleDTO.getMember();
+            Set<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS = new HashSet<CandidateScheduleMemberDTO>(candidateScheduleDTO.getMember());
             candidateScheduleDTO.setMember(null);
 
             CandidateScheduleEntity candidateScheduleEntity = candidateScheduleMapper.toEntity(candidateScheduleDTO);

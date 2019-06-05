@@ -2,11 +2,14 @@ package hr.pishe.web.rest.component.impl;
 
 import hr.pishe.service.CandidateScheduleService;
 import hr.pishe.service.CandidateService;
+import hr.pishe.service.UserService;
 import hr.pishe.service.dto.CandidateScheduleDTO;
 import hr.pishe.service.mapper.CandidateMapper;
+import hr.pishe.service.mapper.UserMapper;
 import hr.pishe.web.rest.component.CandidateScheduleComponent;
 import hr.pishe.web.rest.util.PageMaker;
 import hr.pishe.web.rest.vm.response.ResponseVM;
+import hr.pishe.web.rest.vm.response.UserIncludeVM;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +20,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class CandidateScheduleComponentImpl implements CandidateScheduleComponent {
@@ -30,13 +31,17 @@ public class CandidateScheduleComponentImpl implements CandidateScheduleComponen
     private final CandidateScheduleService candidateScheduleService;
     private final CandidateService candidateService;
     private final CandidateMapper candidateMapper;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     public CandidateScheduleComponentImpl(CandidateScheduleService candidateScheduleService,
                                           CandidateService candidateService,
-                                          CandidateMapper candidateMapper) {
+                                          CandidateMapper candidateMapper, UserService userService, UserMapper userMapper) {
         this.candidateScheduleService = candidateScheduleService;
         this.candidateService = candidateService;
         this.candidateMapper = candidateMapper;
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -105,6 +110,14 @@ public class CandidateScheduleComponentImpl implements CandidateScheduleComponen
         Map<String, Object> included = new HashMap<>();
 
         included.put("candidate", candidateMapper.dtoToVm(candidateService.findById(candidateScheduleDTO.getCandidateId())));
+        List<UserIncludeVM> memberUsers = candidateScheduleDTO
+            .getMember()
+            .stream()
+            .map(candidateScheduleMemberDTO -> userMapper.dtoToVm(
+                userService.findById(candidateScheduleMemberDTO.getUserId()).get()
+            ))
+            .collect(Collectors.toList());
+        included.put("memberUsers", memberUsers);
 
         return included;
     }

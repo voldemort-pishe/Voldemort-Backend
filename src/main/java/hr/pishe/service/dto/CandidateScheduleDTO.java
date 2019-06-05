@@ -5,7 +5,9 @@ import hr.pishe.domain.enumeration.ScheduleStatus;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CandidateScheduleDTO implements Serializable {
@@ -22,7 +24,7 @@ public class CandidateScheduleDTO implements Serializable {
 
     private String description;
     @NotNull
-    private Set<CandidateScheduleMemberDTO> member = new HashSet<>();
+    private List<CandidateScheduleMemberDTO> member = new ArrayList<>();
 
     @NotNull
     private Long candidateId;
@@ -75,11 +77,11 @@ public class CandidateScheduleDTO implements Serializable {
         this.description = description;
     }
 
-    public Set<CandidateScheduleMemberDTO> getMember() {
+    public List<CandidateScheduleMemberDTO> getMember() {
         return member;
     }
 
-    public void setMember(Set<CandidateScheduleMemberDTO> member) {
+    public void setMember(List<CandidateScheduleMemberDTO> member) {
         this.member = member;
     }
 

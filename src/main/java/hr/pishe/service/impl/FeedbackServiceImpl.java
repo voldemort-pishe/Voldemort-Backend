@@ -125,7 +125,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     public Page<FeedbackDTO> findAllByCandidateId(Pageable pageable, Long id) throws NotFoundException {
         log.debug("Request to find all feedback by candidate id");
         Page<FeedbackDTO> feedbackDTOS = feedbackRepository
-            .findAllByCandidate_IdAndCandidate_Job_Company_Id(id, securityUtils.getCurrentUserId(), pageable)
+            .findAllByCandidate_IdAndCandidate_Job_Company_Id(id, securityUtils.getCurrentCompanyId(), pageable)
             .map(feedbackMapper::toDto);
         if (feedbackRepository.existsByUserIdAndCandidate_Id(securityUtils.getCurrentUserId(), id)) {
             return feedbackDTOS;

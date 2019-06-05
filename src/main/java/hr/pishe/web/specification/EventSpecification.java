@@ -13,10 +13,12 @@ import static org.springframework.data.jpa.domain.Specifications.where;
 public class EventSpecification extends BaseSpecification<EventEntity, EventFilterVM> {
     @Override
     public Specification<EventEntity> getFilter(EventFilterVM request) {
-        return where(where(typeContains(request == null ? null : request.getType()))
-            .or(statusContains(request == null ? null : request.getStatus()))
-            .or(flagContains(request == null ? null : request.getFlag())))
-            .and(ownerContains(request == null ? null : request.getOwnerId()));
+        return where(
+            where(typeContains(request == null ? null : request.getType()))
+                .and(statusContains(request == null ? null : request.getStatus()))
+                .and(flagContains(request == null ? null : request.getFlag()))
+                .and(ownerContains(request == null ? null : request.getOwnerId()))
+        );
     }
 
     private Specification<EventEntity> typeContains(EventType value) {

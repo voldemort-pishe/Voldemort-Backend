@@ -31,10 +31,10 @@ docker-deploy:
         - docker:dind
     before_script:
         - mkdir -p ~/.ssh
-        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - echo "g" | tr -d '\r' > ~/.ssh/id_rsa
         - chmod 700 ~/.ssh/id_rsa
         - eval "$(ssh-agent -s)"
         - ssh-add ~/.ssh/id_rsa
         - ssh-keyscan -H 'pishehr.ir' >> ~/.ssh/known_hosts
     script:
-        - ssh pishe@pishehr.ir 'cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit'
+        - ssh root@pishehr.ir 'cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit'

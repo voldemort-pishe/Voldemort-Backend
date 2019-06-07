@@ -74,7 +74,7 @@ public class CandidateScheduleMemberServiceImpl implements CandidateScheduleMemb
     }
 
     @Override
-    public Set<CandidateScheduleMemberDTO> saveAll(Set<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS) throws NotFoundException {
+    public Set<CandidateScheduleMemberDTO> saveAll(List<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS) throws NotFoundException {
         log.debug("Request to save candidateScheduleMembers");
         Set<CandidateScheduleMemberDTO> results = new HashSet<>();
         for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {

@@ -10,7 +10,7 @@ import java.util.Set;
 public interface CandidateScheduleMemberService {
     CandidateScheduleMemberDTO save(CandidateScheduleMemberDTO candidateScheduleMemberDTO) throws NotFoundException;
 
-    Set<CandidateScheduleMemberDTO> saveAll(Set<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS) throws NotFoundException;
+    Set<CandidateScheduleMemberDTO> saveAll(List<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS) throws NotFoundException;
 
     CandidateScheduleMemberDTO changeStatus(Long scheduleId, CandidateScheduleMemberStatus status) throws NotFoundException;
 

@@ -8,9 +8,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * A CandidateScheduleEntity.
@@ -45,12 +45,11 @@ public class CandidateScheduleEntity implements Serializable {
     @OneToMany(mappedBy = "candidateSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONE)
-    private Set<CandidateScheduleMemberEntity> member = new HashSet<>();
+    private List<CandidateScheduleMemberEntity> member = new ArrayList<>();
 
     @ManyToOne
     private CandidateEntity candidate;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -99,11 +98,11 @@ public class CandidateScheduleEntity implements Serializable {
         this.description = description;
     }
 
-    public Set<CandidateScheduleMemberEntity> getMember() {
+    public List<CandidateScheduleMemberEntity> getMember() {
         return member;
     }
 
-    public void setMember(Set<CandidateScheduleMemberEntity> member) {
+    public void setMember(List<CandidateScheduleMemberEntity> member) {
         this.member = member;
     }
 

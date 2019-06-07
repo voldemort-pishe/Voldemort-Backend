@@ -23,16 +23,18 @@ docker-build:
 
 docker-deploy:
     stage: deploy
-    image: alpine:latest
-    before_script:
-        - whoami
-        - apk update && apk add openssh-client bash
     environment:
         name: production
         url: http://pishehr.ir
-    script:
-        - eval $(ssh-agent -s)
-        - bash -c 'ssh-add <(echo "${SSH_PRIVATE_KEY}")'
+    image: docker:git
+    services:
+        - docker:dind
+    before_script:
         - mkdir -p ~/.ssh
-        - echo "${SSH_HOST_KEY}" > ~/.ssh/known_hosts
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 700 ~/.ssh/id_rsa
+        - eval "$(ssh-agent -s)"
+        - ssh-add ~/.ssh/id_rsa
+        - ssh-keyscan -H 'gitlab.com' >> ~/.ssh/known_hosts
+    script:
         - ssh pishe@pishehr.ir 'cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit'

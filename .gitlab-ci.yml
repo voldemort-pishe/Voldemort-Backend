@@ -23,6 +23,10 @@ docker-build:
 
 docker-deploy:
     stage: deploy
+    image: alpine:latest
+    before_script:
+        - whoami
+        - apk update && apk add openssh-client bash
     environment:
         name: production
         url: http://pishehr.ir
@@ -31,5 +35,4 @@ docker-deploy:
         - bash -c 'ssh-add <(echo "${SSH_PRIVATE_KEY}")'
         - mkdir -p ~/.ssh
         - echo "${SSH_HOST_KEY}" > ~/.ssh/known_hosts
-        - ssh-add <(echo "$SSH_PRIVATE_KEY")
         - ssh pishe@pishehr.ir 'cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit'

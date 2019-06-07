@@ -25,20 +25,12 @@ docker-deploy:
     stage: deploy
     environment:
         name: production
-        url: pishehr.ir
+        url: http://pishehr.ir
     before_script:
-        - apt-get update -qq
-        - apt-get install -qq git
-        # Setup SSH deploy keys
-        - 'which ssh-agent || ( apt-get install -qq openssh-client )'
-        - eval $(ssh-agent -s)
-        - ssh-add <(echo "$SSH_PRIVATE_KEY")
+        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         - mkdir -p ~/.ssh
+        - eval $(ssh-agent -s)
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     script:
-        - ssh root@pishehr.ir "cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit"
-
-
-
-
-
+        - ssh-add <(echo "$SSH_PRIVATE_KEY")
+        - ssh -o StrictHostKeyChecking=no root@pishehr.ir 'cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit'

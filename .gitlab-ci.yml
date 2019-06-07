@@ -1,6 +1,7 @@
 stages:
   - build
   - package
+  - deploy
 
 maven-build:
   image: maven:3-jdk-8
@@ -19,4 +20,25 @@ docker-build:
   - docker login -u $PISHE_USER -p $PISHE_PASS $CI_REGISTRY
   - docker build --pull -t $IMAGE_URL:$TAG .
   - docker push $IMAGE_URL:$TAG
+
+docker-deploy:
+    stage: deploy
+    environment:
+        name: production
+        url: pishehr.ir
+    before_script:
+        - apt-get update -qq
+        - apt-get install -qq git
+        # Setup SSH deploy keys
+        - 'which ssh-agent || ( apt-get install -qq openssh-client )'
+        - eval $(ssh-agent -s)
+        - ssh-add <(echo "$SSH_PRIVATE_KEY")
+        - mkdir -p ~/.ssh
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    script:
+        - ssh pishe@pishehr.ir "cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit"
+
+
+
+
 

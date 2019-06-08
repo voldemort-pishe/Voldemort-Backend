@@ -1,6 +1,7 @@
 stages:
   - build
   - package
+  - deploy
 
 maven-build:
   image: maven:3-jdk-8
@@ -20,3 +21,20 @@ docker-build:
   - docker build --pull -t $IMAGE_URL:$TAG .
   - docker push $IMAGE_URL:$TAG
 
+docker-deploy:
+    stage: deploy
+    environment:
+        name: production
+        url: http://pishehr.ir
+    image: docker:git
+    services:
+        - docker:dind
+    before_script:
+        - mkdir -p ~/.ssh
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 700 ~/.ssh/id_rsa
+        - eval "$(ssh-agent -s)"
+        - ssh-add ~/.ssh/id_rsa
+        - ssh-keyscan -H 'pishehr.ir' >> ~/.ssh/known_hosts
+    script:
+        - ssh root@pishehr.ir 'cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit'

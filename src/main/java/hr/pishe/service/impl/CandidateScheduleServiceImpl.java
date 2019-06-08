@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CandidateScheduleServiceImpl implements CandidateScheduleService {
@@ -78,20 +81,31 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
         CandidateEntity candidateEntity = candidateRepository.findOne(candidateScheduleDTO.getCandidateId());
         if (candidateEntity != null) {
 
-            Set<CandidateScheduleMemberDTO> candidateScheduleMemberDTOS = new HashSet<CandidateScheduleMemberDTO>(candidateScheduleDTO.getMember());
-            candidateScheduleDTO.setMember(null);
-
             CandidateScheduleEntity candidateScheduleEntity = candidateScheduleMapper.toEntity(candidateScheduleDTO);
             candidateScheduleEntity.setCandidate(candidateEntity);
+
+            List<CandidateScheduleMemberEntity> memberList = new ArrayList<>();
+            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleDTO.getMember()) {
+                Optional<UserEntity> userMember = userRepository.findById(candidateScheduleMemberDTO.getUserId());
+
+                CandidateScheduleMemberEntity memberSchedule = new CandidateScheduleMemberEntity();
+                memberSchedule.setUser(userMember.orElseThrow(
+                    () -> new UsernameNotFoundException("User not found"))
+                );
+                memberSchedule.setCandidateSchedule(candidateScheduleEntity);
+                memberList.add(memberSchedule);
+            }
+
+            candidateScheduleEntity.setMember(memberList);
             candidateScheduleEntity = candidateScheduleRepository.save(candidateScheduleEntity);
 
-            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {
+            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleDTO.getMember()) {
                 candidateScheduleMemberDTO.setCandidateScheduleId(candidateScheduleEntity.getId());
             }
-            candidateScheduleMemberService.saveAll(candidateScheduleMemberDTOS);
+            candidateScheduleMemberService.saveAll(candidateScheduleDTO.getMember());
 
             String name = candidateEntity.getFirstName() + " " + candidateEntity.getLastName();
-            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {
+            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleDTO.getMember()) {
                 CustomEvent customEvent = new CustomEvent(this);
                 customEvent.setTitle(name);
                 customEvent.setDescription("۱ رویداد زمان‌بندی شده");
@@ -113,7 +127,7 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
             calendarICSDTO.setCompany(calendarICSCompanyDTO);
 
             List<CalendarICSAttendeeDTO> calendarICSAttendeeDTOS = new ArrayList<>();
-            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleMemberDTOS) {
+            for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleDTO.getMember()) {
                 Optional<UserEntity> userEntity = userRepository.findById(candidateScheduleMemberDTO.getUserId());
                 if (userEntity.isPresent()) {
                     CalendarICSAttendeeDTO calendarICSAttendeeDTO = new CalendarICSAttendeeDTO();

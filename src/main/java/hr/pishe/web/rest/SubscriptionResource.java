@@ -34,7 +34,7 @@ public class SubscriptionResource {
             SubscriptionDTO subscriptionDTO = subscriptionService.checkSubscription(securityUtils.getCurrentCompanyId());
             return new ResponseEntity<>(subscriptionDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
 }

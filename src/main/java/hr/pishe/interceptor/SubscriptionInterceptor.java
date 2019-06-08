@@ -3,6 +3,7 @@ package hr.pishe.interceptor;
 import hr.pishe.security.SecurityUtils;
 import hr.pishe.service.SubscriptionService;
 import javassist.NotFoundException;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,7 +26,7 @@ public class SubscriptionInterceptor implements HandlerInterceptor {
             subscriptionService.checkSubscription(companyId);
             return true;
         } catch (NotFoundException e) {
-            httpServletResponse.sendError(402, "Subscription Needed");
+            httpServletResponse.sendError(HttpStatus.SC_PAYMENT_REQUIRED, "اشتراک شما منقضی شده است.");
             return false;
         }
     }

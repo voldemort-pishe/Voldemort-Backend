@@ -111,9 +111,9 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDTO update(CompanyDTO companyDTO) throws NotFoundException{
         log.debug("Request to update company : {}", companyDTO);
-        Long userId = securityUtils.getCurrentUserId();
+        Long companyId = securityUtils.getCurrentCompanyId();
 
-        CompanyEntity foundCompany = companyRepository.findByUser_Id(userId)
+        CompanyEntity foundCompany = companyRepository.findById(companyId)
             .orElseThrow(() -> new NotFoundException("Company Not Found By Id"));
 
         CompanyEntity updateCompany = companyMapper.toEntity(companyDTO);

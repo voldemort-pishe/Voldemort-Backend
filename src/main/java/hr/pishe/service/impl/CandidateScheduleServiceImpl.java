@@ -102,7 +102,6 @@ public class CandidateScheduleServiceImpl implements CandidateScheduleService {
             for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleDTO.getMember()) {
                 candidateScheduleMemberDTO.setCandidateScheduleId(candidateScheduleEntity.getId());
             }
-            candidateScheduleMemberService.saveAll(candidateScheduleDTO.getMember());
 
             String name = candidateEntity.getFirstName() + " " + candidateEntity.getLastName();
             for (CandidateScheduleMemberDTO candidateScheduleMemberDTO : candidateScheduleDTO.getMember()) {

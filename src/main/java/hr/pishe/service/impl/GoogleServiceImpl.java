@@ -22,8 +22,8 @@ public class GoogleServiceImpl implements GoogleService {
 
     private final RestTemplate restTemplate;
 
-    private final String API_KEY = "AIzaSyD2qSwYhPy1-JJoiSE94Dpyneklfx1Zz0M";
-    private final String SEARCH_ENGINE_ID = "018233006496906383928:jjvmxlghxgm";
+    private final String API_KEY = "AIzaSyBv0dXtHuYKM4BsOD-d3aY6mnF77Wu3tm0";
+    private final String SEARCH_ENGINE_ID = "005868684725551804703:m9zc2hl4e4o";
 
     public GoogleServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;

@@ -61,6 +61,19 @@ public class JobHireTeamResource {
         }
     }
 
+    @PutMapping
+    @Timed
+    @PreAuthorize("isMember(#jobHireTeamDTO.jobId,'JOB_HIRE_TEAM','EDIT_JOB_MEMBER')")
+    public ResponseEntity<ResponseVM<JobHireTeamDTO>> update(
+        @RequestBody JobHireTeamDTO jobHireTeamDTO) throws NotFoundException {
+        log.debug("REST Request to update jobHireTeam : {}", jobHireTeamDTO);
+        if (jobHireTeamDTO.getId() == null) {
+            throw new NotFoundException("عضو مورد نظر پیدا نشد.");
+        }
+        ResponseVM<JobHireTeamDTO> result = jobHireTeamComponent.save(jobHireTeamDTO);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     @Timed
     @PreAuthorize("isMember(#id,'JOB_HIRE_TEAM','DELETE_JOB_MEMBER')")

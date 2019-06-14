@@ -127,7 +127,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public List<JobDTO> findAllByCompanySubDomain(String subDomain) {
         log.debug("Request to find job by company subDomain : {}", subDomain);
-        return jobRepository.findAllByCompany_SubDomain(subDomain)
+        return jobRepository.findAllByCompany_SubDomainAndStatus(subDomain, JobStatus.OPEN)
             .stream()
             .map(jobMapper::toDto)
             .collect(Collectors.toList());

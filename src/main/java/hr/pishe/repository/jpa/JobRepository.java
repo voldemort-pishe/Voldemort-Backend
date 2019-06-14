@@ -1,6 +1,7 @@
 package hr.pishe.repository.jpa;
 
 import hr.pishe.domain.entity.jpa.JobEntity;
+import hr.pishe.domain.enumeration.JobStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +24,6 @@ public interface JobRepository extends JpaRepository<JobEntity, Long>, JpaSpecif
 
     JobEntity findByUniqueIdAndCompany_SubDomain(String uniqueId, String subDomain);
 
-    List<JobEntity> findAllByCompany_SubDomain(String subDomain);
+    List<JobEntity> findAllByCompany_SubDomainAndStatus(String subDomain, JobStatus status);
 
 }

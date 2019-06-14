@@ -12,9 +12,7 @@ public interface CandidateComponent {
 
     ResponseVM<CandidateDTO> save(CandidateDTO candidateDTO) throws NotFoundException;
 
-    ResponseVM<CandidateDTO> updateState(Long id, CandidateState state) throws NotFoundException;
-
-    ResponseVM<CandidateDTO> updatePipeline(Long id, Long pipelineId) throws NotFoundException;
+    ResponseVM<CandidateDTO> updateState(Long id, CandidateState state, Long pipelineId) throws NotFoundException;
 
     ResponseVM<CandidateDTO> findById(Long id) throws NotFoundException;
 

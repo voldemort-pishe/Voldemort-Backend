@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import hr.pishe.domain.enumeration.CandidateState;
 import hr.pishe.service.CandidateService;
 import hr.pishe.service.GoogleService;
+import hr.pishe.service.dto.CandidateChangeStateDTO;
 import hr.pishe.service.dto.CandidateDTO;
 import hr.pishe.service.dto.GoogleSearchItemDTO;
 import hr.pishe.web.rest.component.CandidateComponent;
@@ -75,6 +76,7 @@ public class CandidateResource {
         }
         try {
             candidateDTO.setState(CandidateState.PENDING);
+            candidateDTO.setCandidatePipeline(null);
             ResponseVM<CandidateDTO> result = candidateComponent.save(candidateDTO);
             return ResponseEntity.created(new URI("/api/candidate/" + result.getData().getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getData().getId().toString()))
@@ -112,38 +114,18 @@ public class CandidateResource {
         }
     }
 
-    @PutMapping("/state")
+    @PutMapping("/{id}/state")
     @Timed
-    @PreAuthorize("isMember(#candidateDTO.id,'CANDIDATE','EDIT_CANDIDATE')")
-    public ResponseEntity<ResponseVM<CandidateDTO>> updateCandidateState(@RequestBody CandidateDTO candidateDTO) {
-        log.debug("REST Request to update candidateState : {}", candidateDTO);
-        if (candidateDTO.getId() != null) {
-            try {
-                ResponseVM<CandidateDTO> result = candidateComponent.updateState(candidateDTO.getId(), candidateDTO.getState());
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            } catch (NotFoundException e) {
-                throw new ServerErrorException(e.getMessage());
-            }
-
-        } else {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Candidate Id Required");
-        }
-    }
-
-    @PutMapping("/pipeline")
-    @Timed
-    @PreAuthorize("isMember(#candidateDTO.id,'CANDIDATE','EDIT_CANDIDATE')")
-    public ResponseEntity<ResponseVM<CandidateDTO>> updateCandidatePipeline(@RequestBody CandidateDTO candidateDTO) {
-        log.debug("REST Request to update candidatePipeline : {}", candidateDTO);
-        if (candidateDTO.getId() != null) {
-            try {
-                ResponseVM<CandidateDTO> result = candidateComponent.updatePipeline(candidateDTO.getId(), candidateDTO.getCandidatePipeline());
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            } catch (NotFoundException e) {
-                throw new ServerErrorException(e.getMessage());
-            }
-        } else {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Candidate Id Required");
+    @PreAuthorize("isMember(#id,'CANDIDATE','EDIT_CANDIDATE')")
+    public ResponseEntity<ResponseVM<CandidateDTO>> updateCandidateState(
+        @PathVariable Long id,
+        @Valid @RequestBody CandidateChangeStateDTO stateDTO) {
+        log.debug("REST Request to update candidate state : {}", stateDTO);
+        try {
+            ResponseVM<CandidateDTO> result = candidateComponent.updateState(id, stateDTO.getState(), stateDTO.getPipeline());
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new ServerErrorException(e.getMessage());
         }
     }
 

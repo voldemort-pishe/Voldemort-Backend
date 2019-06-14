@@ -60,19 +60,9 @@ public class CandidateComponentImpl implements CandidateComponent {
     }
 
     @Override
-    public ResponseVM<CandidateDTO> updateState(Long id, CandidateState state) throws NotFoundException {
-        log.debug("Request to update candidateState via component : {}, {}", id, state);
-        CandidateDTO candidateDTO = candidateService.updateState(id, state);
-        ResponseVM<CandidateDTO> responseVM = new ResponseVM<>();
-        responseVM.setData(candidateDTO);
-        responseVM.setInclude(this.createIncluded(candidateDTO));
-        return responseVM;
-    }
-
-    @Override
-    public ResponseVM<CandidateDTO> updatePipeline(Long id, Long pipelineId) throws NotFoundException {
-        log.debug("Request to update candidatePipeline via component : {}, {}", id, pipelineId);
-        CandidateDTO candidateDTO = candidateService.updatePipeline(id,pipelineId);
+    public ResponseVM<CandidateDTO> updateState(Long id, CandidateState state, Long pipelineId) throws NotFoundException {
+        log.debug("Request to update candidate state via component : {}, {}", id, state);
+        CandidateDTO candidateDTO = candidateService.updateState(id, state, pipelineId);
         ResponseVM<CandidateDTO> responseVM = new ResponseVM<>();
         responseVM.setData(candidateDTO);
         responseVM.setInclude(this.createIncluded(candidateDTO));

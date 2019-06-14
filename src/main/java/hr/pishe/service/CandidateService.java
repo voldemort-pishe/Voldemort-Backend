@@ -13,9 +13,7 @@ public interface CandidateService {
 
     CandidateDTO save(CandidateDTO candidateDTO, String companySubDomain, Long companyId) throws NotFoundException;
 
-    CandidateDTO updateState(Long id, CandidateState state) throws NotFoundException;
-
-    CandidateDTO updatePipeline(Long id, Long pipelineId) throws NotFoundException;
+    CandidateDTO updateState(Long id, CandidateState state, Long pipelineId) throws NotFoundException;
 
     CandidateDTO findById(Long id) throws NotFoundException;
 

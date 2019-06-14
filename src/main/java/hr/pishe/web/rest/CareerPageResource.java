@@ -124,8 +124,8 @@ public class CareerPageResource {
             candidateDTO.setFileId(careerPageCandidateDTO.getFileId());
             candidateDTO.setJobId(jobDTO.getId());
             candidateDTO.setType(CandidateType.APPLICANT);
-            candidateDTO.setCandidatePipeline(1L);
-
+            candidateDTO.setCandidatePipeline(null);
+            // TODO: all of these values are set also in the service
             CandidateDTO result = candidateService.save(candidateDTO, subDomain, jobDTO.getCompanyId());
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (NotFoundException | SecurityException e) {

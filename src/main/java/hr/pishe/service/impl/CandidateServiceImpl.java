@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -62,6 +63,7 @@ public class CandidateServiceImpl implements CandidateService {
         if (jobEntity != null) {
             FileEntity fileEntity = fileRepository.findOne(candidateDTO.getFileId());
             if (fileEntity != null) {
+                // TODO: handle if pipeline is null (it's a valid state)
                 CompanyPipelineEntity pipelineEntity = companyPipelineRepository.findOne(candidateDTO.getCandidatePipeline());
                 if (pipelineEntity != null) {
                     CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
@@ -109,33 +111,25 @@ public class CandidateServiceImpl implements CandidateService {
                     CompanyEntity company = companyRepository.findById(companyId)
                         .orElseThrow(() -> new NotFoundException("CompanyPipeline Not Found"));
 
-                    CompanyPipelineEntity pipelineEntity = companyPipelineRepository.findOne(
-                        company.getCompanyPipelines().iterator().next().getId()
-                    );
+                    CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
+                    candidateEntity.setType(CandidateType.APPLICANT);
+                    candidateEntity.setState(CandidateState.PENDING);
+                    candidateEntity.setJob(jobEntity);
+                    candidateEntity.setFile(fileEntity);
+                    candidateEntity.setCandidatePipeline(null);
+                    candidateEntity = candidateRepository.save(candidateEntity);
 
-                    if (pipelineEntity != null) {
-                        CandidateEntity candidateEntity = candidateMapper.toEntity(candidateDTO);
-                        candidateEntity.setType(CandidateType.APPLICANT);
-                        candidateEntity.setState(CandidateState.PENDING);
-                        candidateEntity.setJob(jobEntity);
-                        candidateEntity.setFile(fileEntity);
-                        candidateEntity.setCandidatePipeline(pipelineEntity);
-                        candidateEntity = candidateRepository.save(candidateEntity);
-
-                        for (JobHireTeamEntity jobHireTeamEntity : jobEntity.getJobHireTeam()) {
-                            CustomEvent customEvent = new CustomEvent(this);
-                            customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
-                            customEvent.setDescription(String.format("کارجو جدید برای شغل %s", jobEntity.getNameFa()));
-                            customEvent.setOwner(jobHireTeamEntity.getUser().getId());
-                            customEvent.setType(EventType.ALARM);
-                            customEvent.setExtra(candidateEntity.getId().toString());
-                            eventPublisher.publishEvent(customEvent);
-                        }
-
-                        return candidateMapper.toDto(candidateEntity);
-                    } else {
-                        throw new NotFoundException("CompanyPipeline Not Found");
+                    for (JobHireTeamEntity jobHireTeamEntity : jobEntity.getJobHireTeam()) {
+                        CustomEvent customEvent = new CustomEvent(this);
+                        customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+                        customEvent.setDescription(String.format("کارجو جدید برای شغل %s", jobEntity.getNameFa()));
+                        customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+                        customEvent.setType(EventType.ALARM);
+                        customEvent.setExtra(candidateEntity.getId().toString());
+                        eventPublisher.publishEvent(customEvent);
                     }
+
+                    return candidateMapper.toDto(candidateEntity);
                 } else {
                     throw new NotFoundException("File Not Available");
                 }
@@ -148,64 +142,49 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public CandidateDTO updateState(Long id, CandidateState state) throws NotFoundException {
+    public CandidateDTO updateState(Long id, CandidateState state, Long pipelineId) throws NotFoundException {
         log.debug("Request to update candidateState : {}, {}", id, state);
         CandidateEntity candidateEntity = candidateRepository.findOne(id);
-        if (candidateEntity != null) {
-            candidateEntity.setState(state);
-            candidateEntity = candidateRepository.save(candidateEntity);
+        if (Objects.isNull(candidateEntity))
+            throw new NotFoundException("کاندیدای مورد نظر پیدا نشد.");
 
-            Long userId = securityUtils.getCurrentUserId();
+        candidateEntity.setState(state);
+        CompanyPipelineEntity pipelineEntity = null;
+        if (state == CandidateState.IN_PROCESS) {
+            if (Objects.isNull(pipelineId))
+                throw new IllegalStateException("برای تغییر وضعیت کاندیدای در جریان باید فرآیند انتخاب شود.");
 
-            for (JobHireTeamEntity jobHireTeamEntity : candidateEntity.getJob().getJobHireTeam()) {
-                if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
-                    CustomEvent customEvent = new CustomEvent(this);
-                    customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
-                    customEvent.setDescription(String.format("تغییر وضعیت کارجو به %s", state.toString()));
-                    customEvent.setOwner(jobHireTeamEntity.getUser().getId());
-                    customEvent.setType(EventType.ALARM);
-                    customEvent.setExtra(candidateEntity.getId().toString());
-                    eventPublisher.publishEvent(customEvent);
-                }
-            }
+            pipelineEntity = companyPipelineRepository.findOne(pipelineId);
+            if (Objects.isNull(pipelineEntity))
+                throw new NotFoundException("فرآیند انتخاب شده یافت نشد.");
 
-            return candidateMapper.toDto(candidateEntity);
+            candidateEntity.setCandidatePipeline(pipelineEntity);
         } else {
-            throw new NotFoundException("Candidate Not Found");
+            candidateEntity.setCandidatePipeline(null);
         }
-    }
+        candidateEntity = candidateRepository.save(candidateEntity);
 
-    @Override
-    public CandidateDTO updatePipeline(Long id, Long pipelineId) throws NotFoundException {
-        log.debug("Request to update candidatePipeline : {}, {}", id, pipelineId);
-        CandidateEntity candidateEntity = candidateRepository.findOne(id);
-        if (candidateEntity != null) {
-            CompanyPipelineEntity pipelineEntity = companyPipelineRepository.findOne(pipelineId);
-            if (pipelineEntity != null) {
-                candidateEntity.setCandidatePipeline(pipelineEntity);
-                candidateEntity = candidateRepository.save(candidateEntity);
+        Long userId = securityUtils.getCurrentUserId();
 
-                Long userId = securityUtils.getCurrentUserId();
+        for (JobHireTeamEntity jobHireTeamEntity : candidateEntity.getJob().getJobHireTeam()) {
+            if (jobHireTeamEntity.getUser().getId().equals(userId))
+                continue;
 
-                for (JobHireTeamEntity jobHireTeamEntity : candidateEntity.getJob().getJobHireTeam()) {
-                    if (!jobHireTeamEntity.getUser().getId().equals(userId)) {
-                        CustomEvent customEvent = new CustomEvent(this);
-                        customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
-                        customEvent.setDescription(String.format("تغییر وضعیت استخدام کارجو به %s", pipelineEntity.getTitle()));
-                        customEvent.setOwner(jobHireTeamEntity.getUser().getId());
-                        customEvent.setType(EventType.ALARM);
-                        customEvent.setExtra(candidateEntity.getId().toString());
-                        eventPublisher.publishEvent(customEvent);
-                    }
-                }
-
-                return candidateMapper.toDto(candidateEntity);
-            } else {
-                throw new NotFoundException("CompanyPipeline Not Found");
-            }
-        } else {
-            throw new NotFoundException("Candidate Not Found");
+            CustomEvent customEvent = new CustomEvent(this);
+            customEvent.setTitle(candidateEntity.getFirstName() + " " + candidateEntity.getLastName());
+            String desc;
+            if (Objects.nonNull(pipelineEntity))
+                desc = String.format("تغییر فرآیند استخدام کارجو به %s", pipelineEntity.getTitle());
+            else
+                desc = String.format("تغییر وضعیت کارجو به %s", state.toString());
+            customEvent.setDescription(desc);
+            customEvent.setOwner(jobHireTeamEntity.getUser().getId());
+            customEvent.setType(EventType.ALARM);
+            customEvent.setExtra(candidateEntity.getId().toString());
+            eventPublisher.publishEvent(customEvent);
         }
+
+        return candidateMapper.toDto(candidateEntity);
     }
 
     @Override

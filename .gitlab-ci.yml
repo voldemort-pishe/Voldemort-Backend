@@ -1,11 +1,3 @@
-image: docker:latest
-services:
-  - docker:dind
-
-variables:
-  DOCKER_DRIVER: overlay
-  SPRING_PROFILES_ACTIVE: gitlab-ci
-
 stages:
   - build
   - package
@@ -21,24 +13,28 @@ maven-build:
 
 docker-build:
   stage: package
+  image: docker:latest
+  services:
+  - docker:dind
   script:
-  - docker build -t registry.gitlab.com/voldemortapp/voldemort-backend .
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-  - docker push registry.gitlab.com/voldemortapp/voldemort-backend
+  - docker login -u $PISHE_USER -p $PISHE_PASS $CI_REGISTRY
+  - docker build --pull -t $IMAGE_URL:$TAG .
+  - docker push $IMAGE_URL:$TAG
 
-k8s-deploy:
-  image: google/cloud-sdk
-  stage: deploy
-  script:
-  - echo "$GOOGLE_KEY" > key.json
-  - gcloud auth activate-service-account --key-file key.json
-  - gcloud config set compute/zone us-central1-a
-  - gcloud config set project pishe-231414
-  - gcloud config set container/use_client_certificate True
-  - gcloud container clusters get-credentials pishe-cluster-1
-  - kubectl create secret docker-registry registry.gitlab.com --docker-server="$CI_REGISTRY" --docker-username="$CI_REGISTRY_USER" --docker-password="$CI_REGISTRY_PASSWORD" --docker-email=i@ehdi.in
-  - kubectl create -f mariadb.yaml
-  - kubectl apply -f deployment.yml
-
-
-
+docker-deploy:
+    stage: deploy
+    environment:
+        name: production
+        url: http://pishehr.ir
+    image: docker:git
+    services:
+        - docker:dind
+    before_script:
+        - mkdir -p ~/.ssh
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 700 ~/.ssh/id_rsa
+        - eval "$(ssh-agent -s)"
+        - ssh-add ~/.ssh/id_rsa
+        - ssh-keyscan -H 'pishehr.ir' >> ~/.ssh/known_hosts
+    script:
+        - ssh root@pishehr.ir 'cd /home/pishe/ && docker-compose down && docker-compose pull && docker-compose up -d && exit'

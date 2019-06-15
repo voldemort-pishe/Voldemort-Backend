@@ -1,9 +1,0 @@
-package io.avand.service.mapper;
-
-import io.avand.domain.entity.jpa.PlanEntity;
-import io.avand.service.dto.PlanDTO;
-import org.mapstruct.Mapper;
-
-@Mapper(componentModel = "spring", uses = {PlanConfigMapper.class})
-public interface PlanMapper extends EntityMapper<PlanDTO, PlanEntity> {
-}

@@ -62,10 +62,10 @@ info:
         version: #project.version#
 
 mailgun:
-    from: postmaster@mg.avand.io
-    domain: mg.avand.io
+    from: postmaster@mg.pishehr.ir
+    domain: mg.pishehr.ir
     username: api
-    apiKey: f066257be5bee16639b8cb420426711d-a5d1a068-3f41d055
+    apiKey: 429a97bb8837920c7bd33f9261d056fa-de7062c6-a7f7a13d
 payment:
     merchantId: cb812188-aea2-11e8-b869-000c295eb8fc
 

@@ -16,10 +16,13 @@
 logging:
     level:
         ROOT: INFO
-        io.avand: INFO
+        hr.pishe: INFO
         io.github.jhipster: INFO
 
 spring:
+    profiles:
+        active: prod
+        include: swagger
     devtools:
         restart:
             enabled: false
@@ -27,9 +30,9 @@ spring:
             enabled: false
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mariadb://some-mariadb.host:3306/voldemort
+        url: jdbc:mariadb://docker-mariadb:3306/voldemort
         username: root
-        password: root
+        password: r@52337@t
         hikari:
             data-source-properties:
                 cachePrepStmts: true
@@ -47,6 +50,10 @@ spring:
             hibernate.generate_statistics: false
             hibernate.enable_lazy_load_no_trans: true
             hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.NoDefaultJCacheRegionFactory
+    http:
+        multipart:
+            max-file-size: 10MB
+            max-request-size: 10MB
     mail:
         host: smtp.mailgun.org
         port: 25
@@ -142,7 +149,7 @@ payment:
     callbackUrl: http://testbed.avand.io:8080/api/payment/callback
 application:
   base:
-    url: http://testbed.avand.io:8080/
-    panel: http://testbed.avand.io:8081
+    url: http://api.pishehr.ir:8080/
+    panel: http://panel.pishehr.ir:8081
 storage:
-  location: /home/avand/static-files
+  location: /files

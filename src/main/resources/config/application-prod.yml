@@ -57,8 +57,8 @@ spring:
     mail:
         host: smtp.mailgun.org
         port: 25
-        username: postmaster@mg.avand.io
-        password: 025becb64d426871948efb2c23491ed1-a5d1a068-69368402
+        username: postmaster@mg.pishehr.ir
+        password: ac2d506519c22e7d19e8a6e913274142-29b7488f-39541aef
     thymeleaf:
         cache: true
 
@@ -114,8 +114,8 @@ jhipster:
                 token-validity-in-seconds: 86400
                 token-validity-in-seconds-for-remember-me: 2592000
     mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: team@avand.io
-        base-url: http://testbed.avand.io:8080 # Modify according to your server's URL
+        from: team@pishehr.ir
+        base-url: http://pishehr.ir:8080 # Modify according to your server's URL
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx.enabled: true
         graphite:
@@ -146,10 +146,11 @@ jhipster:
 # http://www.jhipster.tech/common-application-properties/
 # ===================================================================
 payment:
-    callbackUrl: http://testbed.avand.io:8080/api/payment/callback
+    callbackUrl: http://pishehr.ir:8080/api/payment/callback
 application:
   base:
     url: http://api.pishehr.ir:8080/
-    panel: http://panel.pishehr.ir:8081
+    panel: http://pishehr.ir:8081
+    register-email-url: /auth/register-invitation
 storage:
   location: /files

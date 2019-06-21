@@ -1,5 +1,6 @@
 package hr.pishe.service;
 
+import hr.pishe.config.ApplicationProperties;
 import hr.pishe.domain.entity.jpa.CandidateScheduleEntity;
 import hr.pishe.domain.entity.jpa.CompanyMemberEntity;
 import hr.pishe.domain.entity.jpa.UserEntity;
@@ -33,15 +34,18 @@ public class MailService {
     private static final String COMPANY_MEMBER = "companyMember";
     private static final String CANDIDATE_SCHEDULE = "candidateSchedule";
     private static final String PANEL_URL = "panelUrl";
+    private static final String REGISTER_EMAIL_URL = "registerEmailUrl";
     private final Locale locale = Locale.forLanguageTag("fa");
 
     private final SpringTemplateEngine templateEngine;
     private final MailGunMessageService mailGunMessageService;
+    private final ApplicationProperties applicationProperties;
 
     public MailService(MailGunMessageService mailGunMessageService,
-                       SpringTemplateEngine templateEngine) {
+                       SpringTemplateEngine templateEngine, ApplicationProperties applicationProperties) {
         this.mailGunMessageService = mailGunMessageService;
         this.templateEngine = templateEngine;
+        this.applicationProperties = applicationProperties;
     }
 
 
@@ -105,6 +109,8 @@ public class MailService {
         log.debug("Sending activation email to '{}'", companyMemberEntity);
         Context context = new Context(locale);
         context.setVariable(COMPANY_MEMBER, companyMemberEntity);
+        context.setVariable(REGISTER_EMAIL_URL,
+            applicationProperties.getBase().getPanel() + applicationProperties.getBase().getRegisterEmailUrl());
         String content = templateEngine.process("invitationMemberEmailWithRegister", context);
         MailGunSendMessageRequestDTO sendMessageRequestDTO = new MailGunSendMessageRequestDTO();
         sendMessageRequestDTO.setTo(companyMemberEntity.getUser().getEmail());

@@ -12,6 +12,10 @@
 </p>
 <p th:text="#{email.invitationMember.register}">
 </p>
+<p>جهت تکمیل فرآیند ثبت نام خود روی لینک زیر کنید</p>
+<p>
+    <a th:href="@{${registerEmailUrl}(key=${companyMember.user.invitationKey})}">تکمیل ثبت نام</a>
+</p>
 <p>
     <span th:text="#{email.bestRegards}"></span>
     <br/>

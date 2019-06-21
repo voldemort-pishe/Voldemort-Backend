@@ -54,10 +54,10 @@ spring:
             max-file-size: 10MB
             max-request-size: 10MB
     mail:
-        host: mail.ehdi.in
+        host: smtp.mailgun.org
         port: 25
-        username: devel@ehdi.in
-        password: 2&x7NEMhl=*h
+        username: postmaster@mg.pishehr.ir
+        password: ac2d506519c22e7d19e8a6e913274142-29b7488f-39541aef
     messages:
         cache-seconds: 1
     thymeleaf:
@@ -153,5 +153,6 @@ application:
   base:
     url: http://localhost:8080/
     panel: http://localhost:4200
+    register-email-url: /auth/register-invitation
 storage:
   location: /path-to/static-files

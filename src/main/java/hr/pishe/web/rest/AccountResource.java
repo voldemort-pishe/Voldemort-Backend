@@ -66,14 +66,17 @@ public class AccountResource {
     }
 
     @PostMapping("/register-by-invite")
-    public ResponseEntity registerByInvite(@RequestBody @Valid UserRegisterInviteVM userRegisterInviteVM) {
+    public ResponseEntity registerByInvite(
+        @RequestBody @Valid UserRegisterInviteVM userRegisterInviteVM,
+        HttpServletResponse response
+        ) {
         log.debug("REST Request to register user : {}", userRegisterInviteVM);
 
         Optional<UserDTO> userFound = userService.findByInvitationKey(userRegisterInviteVM.getInvitationKey());
 
         if (userFound.isPresent()) {
             try {
-                userService
+                UserDTO activatedUser = userService
                     .saveActive(
                         userFound.get().getEmail(),
                         userRegisterInviteVM.getFirstName(),
@@ -83,10 +86,10 @@ public class AccountResource {
                         userRegisterInviteVM.getCellphone(),
                         true
                     );
-                ServerMessage serverMessage = new ServerMessage();
-                serverMessage.setMessage("اطلاعات شما با موفقیت ثبت شد");
-                return new ResponseEntity<>(serverMessage, HttpStatus.OK);
-            }catch (NotFoundException e){
+                TokenDTO tokenDTO = userService.authorizeWithoutPassword(activatedUser);
+                response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
+                return new ResponseEntity<>(tokenDTO, HttpStatus.OK);
+            } catch (NotFoundException e) {
                 throw new ServerErrorException("مشکلی در ثبت اطلاعات بوجود آمده است لطفا مجدد تلاش نمایید");
             }
         } else {

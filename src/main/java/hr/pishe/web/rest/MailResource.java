@@ -78,10 +78,7 @@ public class MailResource {
 
                 CandidateDTO candidateDTO = candidateService.findById(newMessage.getFromUserId());
 
-//                Optional<UserDTO> userDTO = userService.findById(newMessage.getFromUserId());
-
                 String name = candidateDTO != null ? candidateDTO.getFirstName() + " " + candidateDTO.getLastName() : "ناشناس";
-                ;
                 CustomEvent customEvent = new CustomEvent(this);
                 customEvent.setTitle(name);
                 customEvent.setDescription(String.format("ایمیل از %s", name));
@@ -94,7 +91,7 @@ public class MailResource {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public String getValue(MultiValueMap mail, String key) {
+    private String getValue(MultiValueMap mail, String key) {
         LinkedList<String> linkedList = (LinkedList<String>) mail.get(key);
         return linkedList.getFirst();
     }

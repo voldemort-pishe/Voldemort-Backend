@@ -20,6 +20,7 @@ public class ApplicationProperties {
     public static class Base {
         private String url = "";
         private String panel = "";
+        private String registerEmailUrl = "";
 
         public Base() {
 
@@ -39,6 +40,14 @@ public class ApplicationProperties {
 
         public void setPanel(String panel) {
             this.panel = panel;
+        }
+
+        public String getRegisterEmailUrl() {
+            return registerEmailUrl;
+        }
+
+        public void setRegisterEmailUrl(String registerEmailUrl) {
+            this.registerEmailUrl = registerEmailUrl;
         }
     }
 

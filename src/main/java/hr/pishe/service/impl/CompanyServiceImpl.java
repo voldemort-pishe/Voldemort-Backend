@@ -76,8 +76,9 @@ public class CompanyServiceImpl implements CompanyService {
         if (fileEntity != null) {
             CompanyMemberDTO companyMemberDTO = companyMemberService.findByUserId(userId);
             if (companyMemberDTO == null) {
+
                 CompanyContactEntity companyContactEntity = companyEntity.getContact();
-                companyContactEntity = companyContactRepository.save(companyContactEntity);
+                companyContactEntity.setCompany(companyEntity);
 
                 companyEntity.setFile(fileEntity);
                 companyEntity.setContact(companyContactEntity);
@@ -94,8 +95,8 @@ public class CompanyServiceImpl implements CompanyService {
 
                 CloudflareRequestDTO requestDTO = new CloudflareRequestDTO();
                 requestDTO.setType("CNAME");
-                requestDTO.setName(companyDTO.getSubDomain() + ".avand.hr");
-                requestDTO.setContent("avand.hr");
+                requestDTO.setName(companyDTO.getSubDomain() + ".pishehr.ir");
+                requestDTO.setContent("pishehr.ir");
                 requestDTO.setProxied(false);
                 cloudflareService.createDNSRecord(requestDTO);
 

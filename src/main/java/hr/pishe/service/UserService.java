@@ -20,6 +20,8 @@ public interface UserService {
 
     Optional<UserDTO> findByLogin(String login);
 
+    Optional<UserDTO> findByEmail(String email);
+
     Optional<UserDTO> findByActivationKey(String activationKey);
 
     Optional<UserDTO> findByInvitationKey(String invitationKey);

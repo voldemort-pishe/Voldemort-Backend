@@ -106,7 +106,7 @@ public class CompanyMemberComponentImpl implements CompanyMemberComponent {
     private Map<String, Object> createIncluded(CompanyMemberDTO companyMemberDTO) throws NotFoundException {
         Map<String, Object> included = new HashMap<>();
 
-        Optional<UserDTO> userDTOOptional = userService.findByLogin(companyMemberDTO.getUserEmail());
+        Optional<UserDTO> userDTOOptional = userService.findByEmail(companyMemberDTO.getUserEmail());
         userDTOOptional.ifPresent(userDTO -> included.put("user", userMapper.dtoToVm(userDTO)));
 
         included.put("company", companyMapper.dtoToVm(companyService.findById(companyMemberDTO.getCompanyId())));

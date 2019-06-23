@@ -156,6 +156,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserDTO> findByEmail(String email) {
+        log.debug("Request to find user by email : {}", email);
+        return userRepository.findByEmail(email)
+            .map(userMapper::toDto);
+    }
+
+    @Override
     public Optional<UserDTO> findByActivationKey(String activationKey) {
         log.debug("Request to find user by activation key : {}", activationKey);
         return userRepository.findByActivationKey(activationKey)
